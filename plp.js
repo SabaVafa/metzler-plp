@@ -244,23 +244,10 @@
 
   /* ---- In-grid promo banner (spans the full grid width) ---- */
   function bannerEl() {
-    var b = el('div', 'pgrid__banner');
+    var b = el('a', 'pgrid__banner');
+    b.href = '#grid';
     b.setAttribute('aria-label', 'Original Metzler Briefkästen');
-    b.innerHTML =
-      '<div class="bbanner__content">' +
-        '<h2 class="bbanner__title">Original Metzler Briefkästen</h2>' +
-        '<span class="bbanner__pill">Vergleichssieger bei ' +
-          '<span class="bbanner__vg"><span class="bbanner__vg-check">✓</span>Vergleich<span>.org</span></span>' +
-        '</span>' +
-        '<ul class="bbanner__list">' +
-          '<li><strong>Langlebig &amp; wetterfest</strong> – Pulverbeschichtet in vielen RAL-Farben</li>' +
-          '<li><strong>Minimalistisches Design</strong> – Passt sich jedem Haus perfekt an</li>' +
-          '<li><strong>Sicher &amp; durchdacht</strong> – Robustes Schließsystem schützt Ihre Post</li>' +
-          '<li><strong>Individuelle Gravur</strong> – Personalisiert nach Ihren Wünschen</li>' +
-          '<li><strong>Flexibel montierbar</strong> – Freistehend mit Standfuß oder Zaunbefestigung</li>' +
-        '</ul>' +
-      '</div>' +
-      '<figure class="bbanner__media"><img src="Banner/image%2069.png" alt="Frau entnimmt Post aus einem Metzler Briefkasten" loading="lazy"></figure>';
+    b.innerHTML = '<img src="Banner/image%2074.png" alt="Original Metzler Briefkästen — Vergleichssieger bei Vergleich.org. Langlebig & wetterfest, minimalistisches Design, sicheres Schließsystem, individuelle Gravur, flexibel montierbar." loading="lazy">';
     return b;
   }
 
