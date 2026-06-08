@@ -428,6 +428,7 @@
   .pcard__title { font-size: var(--text-body-sm); }
   .catalog__title { font-size: 17px; }
   .catalog__count { font-size: var(--text-body); }
+  .catalog__filter-btn { height: 34px; padding: 0 14px; }
   .subnav__arrow { display: none; }
   .crumb ol { height: 42px; }
 }
