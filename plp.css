@@ -105,7 +105,7 @@
 .subtile__thumb img { width: 88%; height: auto; transition: transform 0.35s ease; }
 .subtile:hover .subtile__thumb img { transform: scale(1.08); }
 .subtile__text { display: flex; flex-direction: column; gap: 2px; white-space: nowrap; }
-.subtile__label { font-size: var(--text-body-sm); font-weight: 700; color: var(--schwarz); line-height: 1.2; }
+.subtile__label { font-size: 18.4px; font-weight: 700; color: var(--schwarz); line-height: 1.2; }
 .subtile__count { font-size: var(--text-caption); color: var(--ink-60); font-weight: 500; }
 .subtile:hover .subtile__label { color: var(--teal); }
 
