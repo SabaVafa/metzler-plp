@@ -247,7 +247,11 @@
     var b = el('a', 'pgrid__banner');
     b.href = '#grid';
     b.setAttribute('aria-label', 'Original Metzler Briefkästen');
-    b.innerHTML = '<img src="Banner/image%2074.png" alt="Original Metzler Briefkästen — Vergleichssieger bei Vergleich.org. Langlebig & wetterfest, minimalistisches Design, sicheres Schließsystem, individuelle Gravur, flexibel montierbar." loading="lazy">';
+    b.innerHTML =
+      '<picture>' +
+        '<source media="(max-width: 767px)" srcset="Banner/image%2076.png">' +
+        '<img src="Banner/image%2074.png" alt="Original Metzler Briefkästen — Vergleichssieger bei Vergleich.org. Langlebig & wetterfest, minimalistisches Design, sicheres Schließsystem, individuelle Gravur, flexibel montierbar." loading="lazy">' +
+      '</picture>';
     return b;
   }
 
