@@ -426,6 +426,7 @@
   .pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
   .pcard__body { padding: var(--sp-3) var(--sp-3) var(--sp-4); }
   .pcard__title { font-size: var(--text-body-sm); }
+  .catalog__title { font-size: 17px; }
   .catalog__count { font-size: var(--text-body); }
   .subnav__arrow { display: none; }
   .crumb ol { height: 42px; }
