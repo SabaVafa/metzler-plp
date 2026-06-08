@@ -114,10 +114,13 @@
    ============================================================ */
 .catalog { padding-block: 0; }
 
-/* Title row — H1 left, article count right (matches the live website) */
+/* Title row — H1 left, Filter button + article count right.
+   On desktop the Filter button is hidden, so it's title | count.
+   On tablet/mobile the title takes a full line and the Filter button
+   + count share the next line (Filter left, count right). */
 .catalog__head {
-  display: flex; align-items: baseline; justify-content: space-between;
-  gap: var(--sp-5); flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--sp-3) var(--sp-5); flex-wrap: wrap;
   padding-top: var(--sp-8);
   margin-bottom: var(--sp-6);
 }
@@ -132,10 +135,9 @@
 
 .catalog__bar {
   display: flex; align-items: center; gap: var(--sp-3);
-  flex-wrap: wrap; empty-cells: hide;
+  flex-wrap: wrap;
 }
 .catalog__bar:has(.chip) { margin-bottom: var(--sp-5); }
-@media (max-width: 1023px) { .catalog__bar { margin-bottom: var(--sp-5); } }
 .catalog__chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); flex: 1; }
 .chip {
   display: inline-flex; align-items: center; gap: 6px;
@@ -403,6 +405,8 @@
 /* Filters become an off-canvas drawer below desktop */
 @media (max-width: 1023px) {
   .catalog__filter-btn { display: inline-flex; }
+  /* Title takes its own line; Filter button + count align on the next row */
+  .catalog__title { flex: 1 0 100%; }
   .catalog__layout { grid-template-columns: 1fr; }
   .filters {
     position: fixed; top: 0; left: 0; bottom: 0; z-index: 1100;
