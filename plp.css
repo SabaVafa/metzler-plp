@@ -318,16 +318,56 @@
 .pg-arrow--prev svg { transform: rotate(180deg); }
 
 /* ============================================================
-   Brand banner — full designed poster, spans the product grid,
-   with 2 rows of products after it.
+   Brand banner — responsive poster, spans the product grid, with
+   2 rows of products after it. Side-by-side on desktop, stacked
+   vertical on mobile so the photo never shrinks to a tiny strip.
    ============================================================ */
 .pgrid__banner {
   grid-column: 1 / -1;
-  display: block;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  background: #EAE6DF;
   border-radius: var(--r-xl);
   overflow: hidden;
+  min-height: 320px;
 }
-.pgrid__banner img { display: block; width: 100%; height: auto; }
+.bbanner__content {
+  display: flex; flex-direction: column;
+  padding: clamp(var(--sp-6), 3vw, var(--sp-10));
+}
+.bbanner__title {
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-weight: 700; line-height: 1.15; letter-spacing: -0.01em;
+  color: var(--schwarz); margin-bottom: var(--sp-4);
+}
+.bbanner__pill {
+  align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; color: var(--schwarz);
+  font-size: var(--text-body-sm); font-weight: 600;
+  padding: 7px 14px; border-radius: var(--r-pill);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--sp-5);
+}
+.bbanner__vg { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; }
+.bbanner__vg-check {
+  width: 17px; height: 17px; border-radius: 50%;
+  background: #1a8fe3; color: #fff; font-size: 10px;
+  display: inline-grid; place-items: center;
+}
+.bbanner__vg span { color: #1a8fe3; }
+.bbanner__list { display: flex; flex-direction: column; gap: 10px; }
+.bbanner__list li {
+  position: relative; padding-left: 18px;
+  font-size: var(--text-body); line-height: 1.45; color: var(--ink-72);
+}
+.bbanner__list strong { color: var(--teal); font-weight: 700; }
+.bbanner__list li::before {
+  content: ""; position: absolute; left: 0; top: 9px; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--teal);
+}
+.bbanner__media { position: relative; min-height: 100%; }
+.bbanner__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
 
 /* ============================================================
    SEO content block (bottom of page) — matches the live website
@@ -429,6 +469,9 @@
   .catalog__count { font-size: var(--text-body); }
   .subnav__arrow { display: none; }
   .crumb ol { height: 42px; }
+  /* Banner stacks vertically: content on top, photo below */
+  .pgrid__banner { grid-template-columns: 1fr; min-height: 0; }
+  .bbanner__media { min-height: 300px; order: 2; }
 }
 
 /* Very small phones — keep grid usable */
