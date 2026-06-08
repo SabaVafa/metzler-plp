@@ -265,8 +265,6 @@
       });
     });
     $('#clearAll').hidden = n === 0;
-    var badge = $('#filterBadge');
-    badge.hidden = n === 0; badge.textContent = n;
   }
 
   /* ---- Main render ---- */

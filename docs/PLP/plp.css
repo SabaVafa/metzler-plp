@@ -160,11 +160,6 @@
   background: var(--teal); color: #fff; font-weight: 700;
 }
 .catalog__filter-btn svg { width: 20px; height: 20px; }
-.catalog__filter-badge {
-  background: #fff; color: var(--teal); border-radius: var(--r-pill);
-  min-width: 20px; height: 20px; padding: 0 6px; font-size: 12px;
-  display: inline-flex; align-items: center; justify-content: center;
-}
 
 /* ============================================================
    Catalog layout
