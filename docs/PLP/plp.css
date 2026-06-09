@@ -38,13 +38,13 @@
 /* ============================================================
    Subcategory rail
    ============================================================ */
-.subnav { padding-block: var(--sp-6) 0; }
+.subnav { padding-block: var(--sp-3) 0; }
 .subnav__viewport { position: relative; }
 
 /* Edge fades hint that more content is scrollable; they retract at each end */
 .subnav__viewport::before,
 .subnav__viewport::after {
-  content: ""; position: absolute; top: 0; bottom: var(--sp-3); width: 72px; z-index: 2;
+  content: ""; position: absolute; top: 0; bottom: 8px; width: 72px; z-index: 2;
   pointer-events: none; opacity: 1; transition: opacity 0.25s ease;
 }
 .subnav__viewport::before { left: 0; background: linear-gradient(90deg, #fff 15%, rgba(255,255,255,0)); }
@@ -75,7 +75,7 @@
 .subnav__track {
   display: flex; gap: var(--sp-4);
   overflow-x: auto; scrollbar-width: none;
-  padding: 4px 4px var(--sp-3);
+  padding: 8px 4px;
   scroll-snap-type: x proximity;
 }
 .subnav__track::-webkit-scrollbar { display: none; }
@@ -121,7 +121,7 @@
 .catalog__head {
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--sp-3) var(--sp-5); flex-wrap: wrap;
-  padding-top: var(--sp-8);
+  padding-top: var(--sp-3);
   margin-bottom: var(--sp-6);
 }
 .catalog__title {
