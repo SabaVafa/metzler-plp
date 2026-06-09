@@ -65,9 +65,9 @@
 .subnav__arrow:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
 .subnav__arrow:focus-visible { outline: none; opacity: 1; box-shadow: 0 0 0 3px var(--teal-10); }
 .subnav__arrow svg { width: 24px; height: 24px; stroke-width: 1.5; }
-.subnav__arrow--prev { left: 6px; }
+.subnav__arrow--prev { left: 0; }
 .subnav__arrow--prev svg { transform: rotate(180deg); }
-.subnav__arrow--next { right: 6px; }
+.subnav__arrow--next { right: 0; }
 .subnav.is-start .subnav__arrow--prev,
 .subnav.is-end   .subnav__arrow--next { opacity: 0 !important; pointer-events: none; }
 
