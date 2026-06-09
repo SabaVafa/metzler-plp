@@ -22,7 +22,7 @@
     <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
     <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></symbol>
-    <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3l8 3v6c0 5-3.5 8.5-8 9-4.5-.5-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></symbol>
     <symbol id="i-factory" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M3 21V11l5 3V11l5 3V8l8 5v8H3z"/><path d="M7 17h2M11 17h2M15 17h2"/></symbol>
     <symbol id="i-diamond" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M9 3l3 6 3-6"/></symbol>
@@ -87,7 +87,76 @@
         <span class="header__nav-all-label">Alle</span>
       </button>
       <ul>
-        <li><a href="#" class="is-featured" aria-current="page">Briefkästen</a></li>
+        <li class="hnav-item" data-mega-item>
+          <a href="#" class="is-featured" aria-current="page"
+             id="mm-trigger-briefkasten" data-mega-trigger
+             aria-haspopup="true" aria-expanded="false" aria-controls="mm-panel-briefkasten">Briefkästen</a>
+
+          <!-- Drop-panel spans the full nav width; inner .container realigns content to the page grid -->
+          <div class="mega-panel" id="mm-panel-briefkasten" data-mega-panel
+               role="region" aria-label="Briefkästen – Unterkategorien" aria-hidden="true">
+            <!-- Asymmetric 75/25 split: subcategory grid (left) + persistent featured promo (right) -->
+            <div class="container mega-layout">
+
+              <!-- LEFT ZONE (~75%): standard subcategories as image tiles -->
+              <ul class="mega-grid">
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/image%2068.png" alt="Einfamilien-Briefkasten" loading="lazy"></span>
+                  <span class="mega-card__label">Einfamilien-Briefkasten</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Briefkasten%20ohne%20Gravur.webp" alt="Briefkasten ohne Gravur" loading="lazy"></span>
+                  <span class="mega-card__label">Briefkasten ohne Gravur</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Standbriefk%C3%A4sten.webp" alt="Standbriefkästen" loading="lazy"></span>
+                  <span class="mega-card__label">Standbriefkästen</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Briefkasten%20mit%20Klingel%20%26%20Sprechanlage.webp" alt="Briefkasten mit Klingel & Sprechanlage" loading="lazy"></span>
+                  <span class="mega-card__label">Briefkasten mit Klingel &amp; Sprechanlage</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Mehrfamilien%20Briefk%C3%A4sten.webp" alt="Mehrfamilien Briefkästen" loading="lazy"></span>
+                  <span class="mega-card__label">Mehrfamilien Briefkästen</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Unterputz%20Briefk%C3%A4sten.webp" alt="Unterputz Briefkästen" loading="lazy"></span>
+                  <span class="mega-card__label">Unterputz Briefkästen</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Paketboxen.webp" alt="Paketboxen" loading="lazy"></span>
+                  <span class="mega-card__label">Paketboxen</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Briefkastenschilder.webp" alt="Briefkastenschilder" loading="lazy"></span>
+                  <span class="mega-card__label">Briefkastenschilder</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Briefkastenst%C3%A4nder.webp" alt="Briefkastenständer" loading="lazy"></span>
+                  <span class="mega-card__label">Briefkastenständer</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Ersatzteile%20%26%20Zubeh%C3%B6r.webp" alt="Ersatzteile & Zubehör" loading="lazy"></span>
+                  <span class="mega-card__label">Ersatzteile &amp; Zubehör</span></a></li>
+              </ul>
+
+              <!-- RIGHT ZONE (~25%): persistent, full-height featured promo -->
+              <aside class="mega-feature" aria-label="Briefkastenanlagen Konfigurator">
+                <span class="mega-feature__badge">3D Konfigurator</span>
+                <span class="mega-feature__media"><img src="Product%20Image/Briefkastenanlage/brief_konfig_landingbild%202.png" alt="Briefkastenanlagen Konfigurator – Live-Vorschau" loading="lazy"></span>
+                <h3 class="mega-feature__title">Briefkastenanlage individuell gestalten</h3>
+                <ul class="mega-feature__list">
+                  <li>Design, Farbe &amp; Aufbau in der Live-Vorschau gestalten</li>
+                  <li>Passende Montageart wählen – Auf-/Unterputz oder Standanlage</li>
+                  <li>Audio- &amp; Video-Gegensprechanlage integrierbar</li>
+                </ul>
+                <a class="mega-feature__cta" href="#">Jetzt konfigurieren</a>
+              </aside>
+
+            </div>
+          </div>
+        </li>
         <li><a href="#">Paketboxen</a></li>
         <li><a href="#">Mülltonnenboxen</a></li>
         <li><a href="#">Sprechanlagen</a></li>
@@ -138,6 +207,15 @@
   </div>
 </nav>
 
+<!-- ===== PAGE TITLE ===== -->
+<section class="page-title">
+  <div class="container">
+    <div class="catalog__head">
+      <h1 class="catalog__title">Metzler Briefkästen mit Zeitungsfach | hochwertig &amp; modern</h1>
+    </div>
+  </div>
+</section>
+
 <!-- ===== SUBCATEGORY RAIL ===== -->
 <section class="subnav" aria-label="Briefkasten-Typen">
   <div class="container">
@@ -155,17 +233,13 @@
 <section class="catalog section" id="grid" aria-label="Produkte">
   <div class="container">
 
-    <div class="catalog__head">
-      <h1 class="catalog__title">Metzler Briefkästen mit Zeitungsfach | hochwertig &amp; modern</h1>
+    <div class="catalog__bar">
       <button class="catalog__filter-btn" id="openFilters" type="button">
         <svg><use href="#i-sliders"/></svg> Filter
       </button>
-      <div class="catalog__count" id="resultCount" aria-live="polite">80 Artikel</div>
-    </div>
-
-    <div class="catalog__bar">
       <div class="catalog__chips" id="activeChips" aria-label="Aktive Filter"></div>
       <button class="catalog__clear" id="clearAll" type="button" hidden>Alle entfernen</button>
+      <div class="catalog__count" id="resultCount" aria-live="polite">80 Artikel</div>
     </div>
 
     <div class="catalog__layout">
@@ -440,6 +514,77 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit); else window.addEventListener('load', fit);
     fit();
     var raf; window.addEventListener('resize', function(){ cancelAnimationFrame(raf); raf = requestAnimationFrame(fit); });
+  })();
+
+  /* ===== Rich mega-menu: intent-based hover, click/touch, keyboard, ARIA ===== */
+  (function(){
+    var DESKTOP     = window.matchMedia('(min-width: 768px)');   /* mega is active on tablet+ (≤767 uses the slide-in nav) */
+    var OPEN_DELAY  = 100;   /* ms — ignore incidental pass-through hovers */
+    var CLOSE_DELAY = 150;   /* ms — grace period that bridges diagonal cursor paths (anti-tunneling) */
+
+    var items = [].slice.call(document.querySelectorAll('[data-mega-item]'));
+    if (!items.length) return;
+
+    var openTimer, closeTimer, current = null;
+    var panelOf   = function(i){ return i.querySelector('[data-mega-panel]'); };
+    var triggerOf = function(i){ return i.querySelector('[data-mega-trigger]'); };
+
+    /* Single source of truth: class drives the CSS transition, ARIA drives assistive tech */
+    function setState(item, isOpen){
+      panelOf(item).classList.toggle('is-open', isOpen);
+      panelOf(item).setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+      triggerOf(item).setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+    function open(item){
+      if (current === item) return;
+      if (current) setState(current, false);     /* instant switch — no reopen delay */
+      setState(item, true);
+      current = item;
+    }
+    function close(item){
+      setState(item, false);
+      if (current === item) current = null;
+    }
+
+    items.forEach(function(item){
+      var trig = triggerOf(item);
+
+      /* Pointer: delayed open, grace-delayed close */
+      item.addEventListener('mouseenter', function(){
+        if (!DESKTOP.matches) return;
+        clearTimeout(closeTimer);
+        if (current && current !== item) { open(item); return; }   /* already browsing → switch now */
+        openTimer = setTimeout(function(){ open(item); }, OPEN_DELAY);
+      });
+      item.addEventListener('mouseleave', function(){
+        if (!DESKTOP.matches) return;
+        clearTimeout(openTimer);
+        closeTimer = setTimeout(function(){ close(item); }, CLOSE_DELAY);
+      });
+
+      /* Click / Enter / touch: toggle (Enter on the focused link fires click) */
+      trig.addEventListener('click', function(e){
+        if (!DESKTOP.matches) return;            /* mobile uses the slide-in nav */
+        e.preventDefault();
+        (current === item) ? close(item) : open(item);
+      });
+
+      /* Keyboard: close once focus leaves the item's subtree */
+      item.addEventListener('focusout', function(e){
+        if (!item.contains(e.relatedTarget)) close(item);
+      });
+    });
+
+    /* Escape closes the active panel and restores focus to its trigger */
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && current){ var t = triggerOf(current); close(current); if (t) t.focus(); }
+    });
+    /* Click outside closes */
+    document.addEventListener('click', function(e){
+      if (current && !current.contains(e.target)) close(current);
+    });
+    /* Dropping below desktop collapses any open panel */
+    DESKTOP.addEventListener('change', function(){ if (!DESKTOP.matches && current) close(current); });
   })();
 
   (function(){

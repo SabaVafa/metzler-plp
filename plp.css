@@ -14,6 +14,9 @@
   --ink-60: rgba(0,0,0,0.6);
   --ink-72: rgba(0,0,0,0.72);
   --sidebar-w: 288px;
+  /* Metzler Design System teal interactive states (§2) — used by DS buttons */
+  --teal-600: #014A4B;   /* hover / pressed */
+  --teal-700: #013E3E;   /* active */
   /* Radius follows the Metzler Design System (§3):
      sm 2px · default 4px · lg 8px · xl 12px · pill.
      Cards & filter sections use lg (8px). */
@@ -23,22 +26,22 @@
 /* ============================================================
    Breadcrumb
    ============================================================ */
-.crumb { background: var(--white); }
+.crumb { background: var(--white); padding-top: 14px; }   /* gap above the breadcrumb == gap below it */
 .crumb ol {
   display: flex; align-items: center; gap: var(--sp-2);
-  height: 48px; font-size: var(--text-body-sm); color: var(--ink-60);
+  font-size: var(--text-body-sm); color: var(--ink-60);
 }
 .crumb a { color: var(--ink-60); }
 .crumb a:hover { color: var(--teal); }
 .crumb li { display: inline-flex; align-items: center; }
 .crumb li svg { width: 14px; height: 14px; color: var(--graphite-500); }
-.crumb [aria-current] { color: var(--schwarz); font-weight: 600; }
+.crumb [aria-current] { color: var(--schwarz); font-weight: 500; }
 
 
 /* ============================================================
    Subcategory rail
    ============================================================ */
-.subnav { padding-block: 22px 0; }
+.subnav { padding-block: 7px 7px; }   /* symmetric; total gap (7 + 8px track) = 15px ≈ half of the previous 30px */
 .subnav__viewport { position: relative; }
 
 /* Edge fades hint that more content is scrollable; they retract at each end */
@@ -56,9 +59,9 @@
 .subnav__arrow {
   position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
   width: 40px; height: 40px; border-radius: var(--r-m);
-  border: 1px solid var(--line); background: #fff; color: var(--teal);
+  border: 1px solid var(--line); background: #fff; color: var(--schwarz);
   display: grid; place-items: center;
-  opacity: 0; transition: opacity 0.22s ease, background 0.15s ease, color 0.15s ease;
+  opacity: 1; transition: opacity 0.22s ease, background 0.15s ease, color 0.15s ease;
 }
 .subnav__viewport:hover .subnav__arrow,
 .subnav__viewport:focus-within .subnav__arrow { opacity: 1; }
@@ -72,22 +75,28 @@
 .subnav.is-end   .subnav__arrow--next { opacity: 0 !important; pointer-events: none; }
 
 /* Media-chip rail — compact product thumbnails, keeps the grid high */
+/* Carousel rail: square cards scroll horizontally; side arrows reveal on hover */
 .subnav__track {
   display: flex; gap: var(--sp-4);
+  align-items: stretch;             /* all cards share the tallest card's height → uniform size */
   overflow-x: auto; scrollbar-width: none;
   padding: 8px 4px;
   scroll-snap-type: x proximity;
 }
 .subnav__track::-webkit-scrollbar { display: none; }
 
+/* Square card: image fills the top, label + count beneath */
 .subtile {
   flex: 0 0 auto;
+  width: 210px;                      /* fits the longest label ("Mit Klingel & Sprechanlage") on one line;
+                                        identical on every card */
   scroll-snap-align: start;
-  display: flex; align-items: center; gap: 14px;
-  padding: 10px 22px 10px 10px;
+  display: flex; flex-direction: column;
+  padding: 10px;
   border: 1px solid var(--graphite-100); border-radius: var(--r-l);
   background: #fff; color: var(--schwarz);
   box-shadow: var(--shadow-sm);
+  text-align: center;
   transition: transform 0.22s cubic-bezier(.22,1,.36,1), box-shadow 0.22s ease, border-color 0.22s ease;
 }
 .subtile:hover {
@@ -96,17 +105,21 @@
   border-color: rgba(1,82,83,0.3);
 }
 .subtile__thumb {
-  flex: 0 0 auto;
-  width: 60px; height: 60px;
-  border-radius: var(--r-l);
+  align-self: center;
+  width: 112px;                      /* scaled-down image so the rail stays secondary to the grid */
+  aspect-ratio: 1 / 1;               /* consistent square image frame on every card */
+  margin-bottom: var(--sp-2);
+  padding: var(--sp-2);
+  border-radius: var(--r-m);
   background: #fff;
   display: grid; place-items: center; overflow: hidden;
 }
-.subtile__thumb img { width: 88%; height: auto; transition: transform 0.35s ease; }
-.subtile:hover .subtile__thumb img { transform: scale(1.08); }
-.subtile__text { display: flex; flex-direction: column; gap: 2px; white-space: nowrap; }
-.subtile__label { font-size: 18.4px; font-weight: 700; color: var(--schwarz); line-height: 1.2; }
+.subtile__thumb img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.35s ease; }
+.subtile:hover .subtile__thumb img { transform: scale(1.06); }
+.subtile__text { display: flex; flex-direction: column; gap: 2px; align-items: center; }
+.subtile__label { font-size: var(--text-body-sm); font-weight: 600; color: var(--schwarz); line-height: 1.3; }
 .subtile__count { font-size: var(--text-caption); color: var(--ink-60); font-weight: 500; }
+.subtile__count--cta { color: var(--teal); font-weight: 700; }
 .subtile:hover .subtile__label { color: var(--teal); }
 
 /* ============================================================
@@ -121,8 +134,8 @@
 .catalog__head {
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--sp-3) var(--sp-5); flex-wrap: wrap;
-  padding-top: 22px;
-  margin-bottom: var(--sp-6);
+  padding-top: 14px;              /* sits below the breadcrumb (matches breadcrumb's top gap) */
+  margin-bottom: 0;               /* strip's own top padding provides the gap below */
 }
 .catalog__title {
   font-size: 27px;
@@ -136,8 +149,8 @@
 .catalog__bar {
   display: flex; align-items: center; gap: var(--sp-3);
   flex-wrap: wrap;
+  margin-bottom: var(--sp-5);     /* gap from the toolbar (count/chips) to the grid */
 }
-.catalog__bar:has(.chip) { margin-bottom: var(--sp-5); }
 .catalog__chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); flex: 1; }
 .chip {
   display: inline-flex; align-items: center; gap: 6px;
@@ -310,11 +323,11 @@
 .pg-arrow {
   display: flex; align-items: center; justify-content: center;
   width: 40px; height: 40px; border-radius: var(--r-m);
-  background: transparent; border: 1px solid var(--line); color: var(--teal);
+  background: transparent; border: 1px solid var(--line); color: var(--schwarz);
   cursor: pointer; transition: background 0.15s ease;
 }
 .pg-arrow:hover { background: #E3F2F0; border-color: var(--teal); } /* Teal 75 — DS button hover fill */
-.pg-arrow svg { width: 18px; height: 18px; }
+.pg-arrow svg { width: 24px; height: 24px; stroke-width: 1.5; }   /* match the strip arrow icon size */
 .pg-arrow--prev svg { transform: rotate(180deg); }
 
 /* ============================================================
@@ -427,6 +440,7 @@
 
 /* Mobile */
 @media (max-width: 767px) {
+  .subtile { width: 150px; }        /* smaller cards on phones (image frame stays square) */
   .pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
   .pcard__body { padding: var(--sp-3) var(--sp-3) var(--sp-4); }
   .pcard__title { font-size: var(--text-body-sm); }
@@ -434,12 +448,266 @@
   .catalog__count { font-size: var(--text-body); }
   .catalog__filter-btn { height: 34px; padding: 0 14px; }
   .subnav__arrow { display: none; }
-  .crumb ol { height: 42px; }
 }
 
 /* Very small phones — keep grid usable */
 @media (max-width: 360px) {
   .pgrid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   Rich mega-menu (desktop nav drop-panel)
+   Asymmetric 4-col grid: 3 taxonomy columns + 1 CRO column.
+   Desktop-only (≥1024px); tablet/mobile keep the #mobileNav.
+   NOTE: `.header__nav ul/li/a` from the home design system have
+   specificity (0,1,1) and would force the inner lists horizontal
+   + nowrap — every inner rule below is scoped `.mega-panel …`
+   (≥ 0,2,0) so it wins and the lists stack/wrap correctly.
+   ============================================================ */
+.header__nav { position: relative; }          /* positioning context for the panel */
+.hnav-item   { position: static; }             /* panel anchors to .header__nav, not the li */
+
+/* ── Drop-panel: full nav width, GPU-friendly hide/show ── */
+.mega-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--white);
+  border-top: 1px solid var(--graphite-300);
+  box-shadow: var(--shadow-lg);
+  /* Never taller than the space below the header → won't block the page on short laptops;
+     overflow scrolls internally when the content is taller. */
+  max-height: calc(100vh - 170px);
+  overflow-y: auto;
+  /* Hidden state: animatable (no display:block jump). visibility + aria-hidden
+     keep it out of the a11y tree and tab order; transitions ride opacity/transform only. */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+  will-change: opacity, transform;
+}
+.mega-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition: opacity .2s ease, transform .2s ease, visibility 0s;
+}
+/* Invisible bridge over the nav→panel seam — kills diagonal hover-tunneling */
+.mega-panel::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: -8px;
+  height: 8px;
+}
+/* Keep the trigger visually active while its panel is open */
+[data-mega-trigger][aria-expanded="true"] {
+  color: var(--teal);
+  border-bottom-color: var(--teal);
+}
+
+/* ── Asymmetric 75/25 split ──
+   Left zone = subcategory tile grid; right zone = persistent featured promo.
+   align-items:stretch makes the promo card full-height regardless of row count. */
+.mega-panel .mega-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(280px, 24%, 340px);   /* ~75 / ~25 */
+  gap: 46px;                      /* tuned so the tiles→Konfigurator gap reads ~62px */
+  align-items: stretch;
+  padding-block: var(--sp-6);   /* keep .container's horizontal gutter so content isn't flush to the panel edges */
+}
+
+/* ── Left zone: live-style image-tile grid ──
+   Fixed column COUNT per breakpoint, so tiles (and the product images
+   inside them) get visibly LARGER as the screen widens.
+   `.mega-grid` is scoped-reset because it's a <ul> inside `.header__nav`. */
+.mega-panel .mega-grid {
+  display: grid;
+  /* 5-up, fixed-width columns distributed edge-to-edge so the first tile sits flush
+     with the header's left edge and the last with the zone's right — gaps auto-adjust
+     with the viewport (minmax shrinks the tiles on narrower screens). */
+  grid-template-columns: repeat(5, minmax(0, 146px));
+  justify-content: space-between;
+  column-gap: var(--sp-4);        /* minimum inner gap; space-between distributes the rest */
+  row-gap: var(--sp-5);
+  align-items: start;        /* override inherited `.header__nav ul{align-items:center}` so all tiles top-align */
+  align-content: start;      /* grid is stretched to the taller feature card; pack rows to top so the 32px row-gap isn't inflated */
+  overflow: visible;         /* override inherited `.header__nav ul{overflow:auto}` so hover-lifted first-row cards aren't clipped */
+  height: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mega-panel .mega-grid > li { display: block; margin: 0; padding: 0; }
+
+/* ── Tile: large product image on top, centered caption beneath ── */
+.mega-panel .mega-card {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;                                  /* reset inherited `.header__nav a{padding:6px 0}` (added 12px slack/row) */
+  border: 0;                                   /* drop inherited nav underline */
+  white-space: normal;                         /* override inherited nowrap */
+  text-align: center;
+  color: var(--schwarz);
+  transition: transform 0.22s cubic-bezier(.22,1,.36,1);   /* lift on hover — matches strip cards */
+}
+.mega-card__media {
+  position: relative;
+  display: block;
+  align-self: center;
+  width: 100%;
+  max-width: 146px;                            /* keep the menu compact so it doesn't fill the screen */
+  aspect-ratio: 1 / 1;                         /* square frame */
+  margin-bottom: var(--sp-3);
+  padding: var(--sp-3);                        /* breathing room around the product cut-out */
+  border-radius: var(--r-l);
+  background: var(--white);                    /* product photos sit on white, like the live menu */
+  box-shadow: inset 0 0 0 1px var(--graphite-100);  /* faint frame so white tiles stay defined */
+  overflow: hidden;
+  transition: box-shadow 0.22s ease;
+}
+.mega-card__media img {
+  width: 100%; height: 100%;
+  object-fit: contain;                         /* show the whole product, no crop */
+  display: block;
+  transition: transform .35s ease;             /* subtle premium zoom on hover */
+}
+/* Hover — consistent with .subtile: lift + teal frame + shadow + image zoom */
+.mega-card:hover,
+.mega-card:focus-visible { transform: translateY(-3px); }
+.mega-card:hover .mega-card__media,
+.mega-card:focus-visible .mega-card__media { box-shadow: inset 0 0 0 1px rgba(1,82,83,0.3), var(--shadow-md); }
+.mega-card:hover .mega-card__media img,
+.mega-card:focus-visible .mega-card__media img { transform: scale(1.06); }
+.mega-card__label {
+  /* DS Body SM Medium — labels / nav items: 0.875rem · 500 · line-height 1.5 */
+  min-height: 3em;              /* reserve 2 lines (1.5 × 2) so 1- and 2-line tiles are equal height → uniform rows */
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  line-height: 1.5;
+  transition: color .14s ease;
+}
+.mega-card:hover .mega-card__label,
+.mega-card:focus-visible .mega-card__label { color: var(--teal); }
+
+/* ── Badge / pill — shared DS treatment ──
+   DS Caption Bold (0.75rem · 700 · line-height 1.4), border-radius-sm,
+   Digital Schwarz fill, Pure White label. No uppercase / letter-spacing
+   (not defined for badges in the DS). Used by both the tile flag and the
+   featured-card badge so the two pills are identical. */
+.mega-card__flag,
+.mega-feature__badge {
+  padding: 0.25rem 0.5rem;                      /* 4px 8px */
+  border-radius: var(--r-s);                    /* DS: badges use border-radius-sm */
+  background: var(--schwarz);                   /* Digital Schwarz */
+  color: var(--white);                          /* Pure White */
+  font-size: var(--text-caption, 0.75rem);      /* DS Caption Bold */
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Corner flag for merchandising (e.g. Top-Seller) */
+.mega-card__flag {
+  position: absolute;
+  top: var(--sp-3); left: var(--sp-3);
+}
+
+/* ── Right zone: persistent featured promo (full-height) ── */
+.mega-feature {
+  display: flex;
+  flex-direction: column;
+  height: 100%;                                 /* fill the stretched grid cell → full-height anchor */
+  padding: var(--sp-4);
+  border-radius: var(--r-l);
+  /* Distinct brand-tinted background separates it from the white tile grid */
+  background: linear-gradient(165deg, var(--teal-5) 0%, #EEF2F2 100%);
+  box-shadow: inset 0 0 0 1px var(--teal-10);
+}
+.mega-feature__badge {
+  align-self: flex-start;
+  margin-bottom: var(--sp-3);
+}
+.mega-feature__media {
+  display: block;
+  aspect-ratio: 16 / 9;
+  max-height: 104px;                           /* keep the promo (and thus the menu) compact */
+  margin-bottom: var(--sp-3);
+  border-radius: var(--r-m);
+  background: var(--white);
+  overflow: hidden;
+}
+.mega-feature__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mega-feature__title {
+  margin: 0 0 var(--sp-2);
+  font-size: 1.125rem;                          /* DS H4 — compact card title */
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--schwarz);
+}
+/* Benefit list — scoped reset (it's a <ul> inside .header__nav: flex/nowrap leak) */
+.mega-panel .mega-feature__list {
+  display: block;
+  height: auto;
+  margin: 0 0 var(--sp-4);      /* guarantee breathing room before the CTA */
+  padding: 0 0 0 1.15em;
+  list-style: disc;
+}
+.mega-panel .mega-feature__list li {
+  display: list-item;
+  margin: 0 0 var(--sp-1);      /* tight spacing between bullets */
+  padding: 0;
+  white-space: normal;
+  font-size: var(--text-body-sm);               /* DS Body SM Regular */
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--ink-72);
+}
+.mega-panel .mega-feature__list li:last-child { margin-bottom: 0; }
+.mega-panel .mega-feature__list li::marker { color: var(--teal); }
+/* CTA — Metzler DS primary button (§6): Teal 500 fill, 2.625rem tall, .25rem radius, 1rem/500.
+   Scoped `.mega-panel …` so its white label beats the inherited `.header__nav a{color:#000}`. */
+.mega-panel .mega-feature__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 2.625rem;
+  margin-top: auto;                             /* pin CTA to card bottom */
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: var(--r-m);                    /* DS default radius (.25rem) */
+  background: var(--teal);                      /* Teal 500 */
+  color: var(--white);
+  font-size: var(--text-body);                  /* 1rem */
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+.mega-panel .mega-feature__cta:hover  { background: var(--teal-600); }   /* Teal 600 */
+.mega-panel .mega-feature__cta:active { background: var(--teal-700); }   /* Teal 700 */
+
+/* ── Tablet (768–1023): compact, stacked dropdown (height cap inherited from base) ── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .mega-panel .mega-layout {
+    grid-template-columns: 1fr;        /* stack: tiles, then the promo full-width below */
+    gap: var(--sp-6);
+    padding-block: var(--sp-6);
+  }
+  .mega-panel .mega-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ── Phones (≤767): no mega — the slide-in nav handles navigation ── */
+@media (max-width: 767px) {
+  .mega-panel { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

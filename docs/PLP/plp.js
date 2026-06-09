@@ -52,19 +52,19 @@
 
   /* ---- Subcategory rail ---- */
   var SUBCATS = [
-    { t: 'Einfamilien-Briefkasten', n: 80 },
-    { t: 'Briefkasten ohne Gravur', n: 22 },
-    { t: 'Standbriefkästen', n: 14 },
-    { t: 'Mit Klingel & Sprechanlage', n: 11 },
-    { t: 'Mehrfamilien-Anlagen', n: 9 },
-    { t: 'Unterputz-Briefkästen', n: 12 },
-    { t: 'Anlagen-Konfigurator', n: null, cta: true }
+    { t: 'Einfamilien-Briefkasten', n: 80, img: 'Product%20Image/image%2068.png' },
+    { t: 'Briefkasten ohne Gravur', n: 22, img: 'Product%20Image/Briefkasten%20ohne%20Gravur.webp' },
+    { t: 'Standbriefkästen', n: 14, img: 'Product%20Image/Standbriefk%C3%A4sten.webp' },
+    { t: 'Mit Klingel & Sprechanlage', n: 11, img: 'Product%20Image/Briefkasten%20mit%20Klingel%20%26%20Sprechanlage.webp' },
+    { t: 'Mehrfamilien-Anlagen', n: 9, img: 'Product%20Image/Mehrfamilien%20Briefk%C3%A4sten.webp' },
+    { t: 'Unterputz-Briefkästen', n: 12, img: 'Product%20Image/Unterputz%20Briefk%C3%A4sten.webp' },
+    { t: 'Anlagen-Konfigurator', n: null, cta: true, img: 'Product%20Image/Briefkastenanlage/image%2080.png' }
   ];
 
   /* ---- Product catalogue (single placeholder image for all) ---- */
   var PRODUCTS = [
     { id:'siebert', name:'Briefkasten aus hochwertigem Stahl | Siebert', line:'Bestseller', price:89.99, uvp:null, rating:5, reviews:657,
-      badge:{type:'best', text:'Bestseller'}, colors:['anthrazit','weiss','grau','schwarz'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'aufputz' },
+      badge:null, colors:['anthrazit','weiss','grau','schwarz'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'aufputz' },
     { id:'ebenhard', name:'Briefkasten mit austauschbarem Namensschild | Ebenhard', line:'Beliebt', price:89.99, uvp:null, rating:5, reviews:219,
       badge:null, colors:['anthrazit','weiss','grau'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'aufputz' },
     { id:'hermann', name:'Briefkasten mit Lasergravur | Hermann', line:null, price:99.99, uvp:117.99, rating:5, reviews:142,
@@ -88,7 +88,7 @@
     { id:'trias', name:'Mehrfamilien-Briefkastenanlage | 3 Parteien | Trias', line:null, price:349.00, uvp:399.00, rating:5, reviews:9,
       badge:{type:'sale', text:'−12 %'}, colors:['anthrazit','grau','edelstahl'], faecher:'3', material:'stahl', zeitung:'ohne', montage:'stand' },
     { id:'vossberg', name:'Briefkasten mit Klingel & Sprechanlage | Vossberg', line:'2-in-1', price:299.00, uvp:null, rating:4.5, reviews:27,
-      badge:{type:'best', text:'Bestseller'}, colors:['anthrazit','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'aufputz' },
+      badge:null, colors:['anthrazit','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'aufputz' },
     { id:'duo', name:'Doppel-Briefkasten | 2 Parteien | Duo', line:null, price:229.00, uvp:null, rating:5, reviews:15,
       badge:null, colors:['anthrazit','weiss','grau'], faecher:'2', material:'stahl', zeitung:'integriert', montage:'aufputz' },
     { id:'klar', name:'Briefkasten mit Acrylglas-Front | Klar', line:null, price:139.00, uvp:null, rating:4.5, reviews:8,
@@ -135,7 +135,7 @@
       var a = el('a', 'subtile' + (s.cta ? ' subtile--cta' : ''));
       a.href = '#grid';
       a.innerHTML =
-        '<span class="subtile__thumb"><img src="' + IMG + '" alt="" loading="lazy"></span>' +
+        '<span class="subtile__thumb"><img src="' + (s.img || IMG) + '" alt="" loading="lazy"></span>' +
         '<span class="subtile__text">' +
           '<span class="subtile__label">' + s.t + '</span>' +
           (s.n != null
@@ -172,9 +172,8 @@
 
   function buildFacetGroup(group) {
     var wrap = $('#facet-' + group); if (!wrap) return;
-    var plain = group === 'marke'; /* live shows Marke count without parentheses */
     FACETS[group].items.forEach(function (it) {
-      wrap.appendChild(optionRow(group, it.key, it.label, it.count, null, plain));
+      wrap.appendChild(optionRow(group, it.key, it.label, it.count, null, false));
     });
   }
 
@@ -359,28 +358,48 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
   }
 
-  /* ---- Subcategory rail arrows ---- */
+  /* ---- Subcategory rail — seamless circular carousel ---- */
   function wireSubnav() {
-    var track = $('#subTrack');
-    var section = document.querySelector('.subnav');
-    function updateState() {
-      var max = track.scrollWidth - track.clientWidth;
-      var noScroll = max <= 8;
-      section.classList.toggle('is-start', noScroll || track.scrollLeft <= 8);
-      section.classList.toggle('is-end', noScroll || track.scrollLeft >= max - 8);
+    var track = $('#subTrack'); if (!track) return;
+    var originals = Array.prototype.slice.call(track.children);
+    if (!originals.length) return;
+
+    /* Clone one full set after the originals so the rail can wrap continuously.
+       Clones are decorative duplicates — hidden from AT and the tab order. */
+    originals.forEach(function (node) {
+      var c = node.cloneNode(true);
+      c.setAttribute('aria-hidden', 'true');
+      c.setAttribute('tabindex', '-1');
+      track.appendChild(c);
+    });
+    var firstClone = track.children[originals.length];
+    /* exact width of one set (tiles + gaps), so the seam reset is pixel-perfect */
+    function loopW() { return firstClone.offsetLeft - track.children[0].offsetLeft; }
+
+    /* When the scroll passes the seam, shift by exactly one set — invisible
+       because the duplicate cards line up identically. */
+    function normalize() {
+      var w = loopW();
+      if (track.scrollLeft >= w) track.scrollLeft -= w;
+      else if (track.scrollLeft < 0) track.scrollLeft += w;
     }
+    var settle;
+    track.addEventListener('scroll', function () {
+      clearTimeout(settle);
+      settle = setTimeout(normalize, 90);   /* reset only once motion settles → no mid-scroll jump */
+    }, { passive: true });
+
     document.querySelectorAll('[data-sub-scroll]').forEach(function (b) {
       b.addEventListener('click', function () {
         var dir = b.getAttribute('data-sub-scroll') === 'next' ? 1 : -1;
-        track.scrollBy({ left: dir * track.clientWidth * 0.7, behavior: 'smooth' });
+        var w = loopW();
+        var step = track.clientWidth * 0.7;
+        /* pre-shift into the duplicate so there's always identical content to scroll into */
+        if (dir === 1 && track.scrollLeft >= w) track.scrollLeft -= w;
+        else if (dir === -1 && track.scrollLeft < step) track.scrollLeft += w;
+        track.scrollBy({ left: dir * step, behavior: 'smooth' });
       });
     });
-    track.addEventListener('scroll', updateState, { passive: true });
-    window.addEventListener('resize', updateState);
-    updateState();
-    requestAnimationFrame(updateState);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(updateState);
-    window.addEventListener('load', updateState);
   }
 
   /* ---- SEO "Mehr lesen" toggle ---- */
