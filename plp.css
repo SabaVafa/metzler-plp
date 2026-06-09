@@ -359,8 +359,8 @@
    ============================================================ */
 .faq .section-title { font-size: 27px; }
 .faq__inner {
-  display: grid; grid-template-columns: 340px 1fr;
-  gap: clamp(var(--sp-8), 4vw, var(--sp-12));
+  display: grid; grid-template-columns: var(--sidebar-w) 1fr;
+  gap: clamp(var(--sp-8), 3vw, var(--sp-12));
   align-items: start;
 }
 
