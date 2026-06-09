@@ -71,6 +71,9 @@
 .subnav__arrow--prev { left: 0; }
 .subnav__arrow--prev svg { transform: rotate(180deg); }
 .subnav__arrow--next { right: 0; }
+/* Prev arrow stays hidden until the user first advances the rail (JS adds .is-engaged).
+   (0,3,0) so it beats the .subnav__arrow{opacity:1} + :hover/:focus reveal rules. */
+.subnav:not(.is-engaged) .subnav__arrow--prev { opacity: 0; pointer-events: none; }
 .subnav.is-start .subnav__arrow--prev,
 .subnav.is-end   .subnav__arrow--next { opacity: 0 !important; pointer-events: none; }
 
@@ -533,9 +536,9 @@
   grid-template-columns: repeat(5, minmax(0, 146px));
   justify-content: space-between;
   column-gap: var(--sp-4);        /* minimum inner gap; space-between distributes the rest */
-  row-gap: var(--sp-5);
+  row-gap: var(--sp-5);          /* minimum row gap; space-between grows it so the last row's bottom meets the promo card's bottom */
   align-items: start;        /* override inherited `.header__nav ul{align-items:center}` so all tiles top-align */
-  align-content: start;      /* grid is stretched to the taller feature card; pack rows to top so the 32px row-gap isn't inflated */
+  align-content: space-between;  /* grid is stretched to the taller feature card → top-align row 1, bottom-align row 2, gap auto-fills so tile-grid bottom aligns with the promo's */
   overflow: visible;         /* override inherited `.header__nav ul{overflow:auto}` so hover-lifted first-row cards aren't clipped */
   height: auto;
   margin: 0;

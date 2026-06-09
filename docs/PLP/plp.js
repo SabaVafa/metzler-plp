@@ -364,6 +364,11 @@
     var originals = Array.prototype.slice.call(track.children);
     if (!originals.length) return;
 
+    /* The prev arrow is hidden (CSS) until the user first advances the rail.
+       Any forward move — arrow click or manual scroll — reveals it for good. */
+    var subnav = track.closest('.subnav');
+    function engage() { if (subnav) subnav.classList.add('is-engaged'); }
+
     /* Clone one full set after the originals so the rail can wrap continuously.
        Clones are decorative duplicates — hidden from AT and the tab order. */
     originals.forEach(function (node) {
@@ -385,12 +390,14 @@
     }
     var settle;
     track.addEventListener('scroll', function () {
+      engage();                               /* manual swipe/scroll also reveals the prev arrow */
       clearTimeout(settle);
       settle = setTimeout(normalize, 90);   /* reset only once motion settles → no mid-scroll jump */
     }, { passive: true });
 
     document.querySelectorAll('[data-sub-scroll]').forEach(function (b) {
       b.addEventListener('click', function () {
+        engage();                             /* first arrow click reveals the prev arrow */
         var dir = b.getAttribute('data-sub-scroll') === 'next' ? 1 : -1;
         var w = loopW();
         var step = track.clientWidth * 0.7;
