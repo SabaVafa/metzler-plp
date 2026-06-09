@@ -390,7 +390,6 @@
     }
     var settle;
     track.addEventListener('scroll', function () {
-      engage();                               /* manual swipe/scroll also reveals the prev arrow */
       clearTimeout(settle);
       settle = setTimeout(normalize, 90);   /* reset only once motion settles → no mid-scroll jump */
     }, { passive: true });
