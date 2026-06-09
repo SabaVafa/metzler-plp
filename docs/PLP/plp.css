@@ -358,7 +358,7 @@
    Reuse + tune the home FAQ block
    ============================================================ */
 .faq .section-title { font-size: 27px; }
-.faq__inner { display: block; max-width: 880px; margin-inline: auto; }
+.faq__inner { display: block; }
 
 .faq__list { display: flex; flex-direction: column; }
 .faq__item { border-bottom: 1px solid var(--line); }
