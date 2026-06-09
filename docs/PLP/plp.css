@@ -394,7 +394,7 @@
 .faq__q-icon { flex: 0 0 auto; width: 28px; height: 28px; border-radius: var(--r-pill); background: var(--teal-5); color: var(--teal); display: grid; place-items: center; transition: transform 0.2s ease, background 0.2s ease; }
 .faq__q-icon svg { width: 16px; height: 16px; }
 .faq__item[open] .faq__q-icon { transform: rotate(45deg); background: var(--teal); color: #fff; }
-.faq__a { padding: 0 40px var(--sp-5) var(--sp-5); color: var(--ink-72); line-height: 1.6; }
+.faq__a { padding: 0 40px var(--sp-5) var(--sp-5); color: var(--ink-72); line-height: 1.6; max-width: none; }
 
 /* ============================================================
    Responsive
