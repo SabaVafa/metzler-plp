@@ -38,7 +38,7 @@
 /* ============================================================
    Subcategory rail
    ============================================================ */
-.subnav { padding-block: var(--sp-3) 0; }
+.subnav { padding-block: 22px 0; }
 .subnav__viewport { position: relative; }
 
 /* Edge fades hint that more content is scrollable; they retract at each end */
@@ -121,7 +121,7 @@
 .catalog__head {
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--sp-3) var(--sp-5); flex-wrap: wrap;
-  padding-top: var(--sp-3);
+  padding-top: 22px;
   margin-bottom: var(--sp-6);
 }
 .catalog__title {
