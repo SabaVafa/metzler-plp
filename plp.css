@@ -375,11 +375,12 @@
 .faq__usp { display: flex; align-items: center; gap: var(--sp-3); }
 .faq__usp-ic {
   flex: 0 0 auto; width: 40px; height: 40px; border-radius: var(--r-l);
-  background: var(--teal-5); color: var(--teal); display: grid; place-items: center;
+  background: var(--teal-5); color: var(--teal);
+  display: flex; align-items: center; justify-content: center;
 }
 .faq__usp-ic svg { width: 22px; height: 22px; }
 .faq__usp strong { display: block; color: var(--schwarz); font-size: var(--text-body); line-height: 1.3; }
-.faq__usp span { display: block; font-size: var(--text-body-sm); color: var(--ink-60); margin-top: 2px; }
+.faq__usp div span { display: block; font-size: var(--text-body-sm); color: var(--ink-60); margin-top: 2px; }
 
 .faq__list { display: flex; flex-direction: column; }
 .faq__item { border-bottom: 1px solid var(--line); }
