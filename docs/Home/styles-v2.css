@@ -2437,7 +2437,21 @@ h1, h2, h3, h4, h5, h6, p { margin: 0; }
     min-width: 0;
     overflow-wrap: anywhere;
   }
+  /* Follow-us / Qualität block spans the FULL width (it was auto-placed into the
+     left column only, trapping the 4 Top-Shop badges in ~156px so the 4th wrapped
+     to a 2nd row). nth-child(5) (0,2,0) so it wins regardless of media-query order. */
+  .footer__top > *:nth-child(5) { grid-column: 1 / -1; }
+  /* Keep the 4 quality badges on a single line. */
+  .footer__labels { flex-wrap: nowrap; }
   .footer__quality-grid { grid-template-columns: 1fr; }
+  /* Legal links: wrap within the viewport instead of running off the right edge. */
+  .footer__legal-links {
+    flex-wrap: wrap;
+    white-space: normal;
+    justify-content: flex-start;
+    column-gap: var(--sp-4);
+    row-gap: var(--sp-2);
+  }
   .header__nav ul { gap: var(--sp-5); }
 }
 
