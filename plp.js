@@ -622,6 +622,15 @@
       var stepEl = quizEl.querySelector('.advisor__step');
       requestAnimationFrame(function () { stepEl.classList.add('is-in'); });
 
+      /* Keep the 1-line / 2-line format consistent within a question: if any
+         option's label+sub wraps to a second line, stack ALL options in this step. */
+      var optsEl = quizEl.querySelector('.advisor__opts');
+      var anyWrapped = [].some.call(quizEl.querySelectorAll('.advisor__opt'), function (o) {
+        var lab = o.querySelector('.advisor__opt-label'), sub = o.querySelector('.advisor__opt-sub');
+        return sub && sub.getBoundingClientRect().top >= lab.getBoundingClientRect().bottom - 2;
+      });
+      if (anyWrapped) optsEl.classList.add('advisor__opts--stacked');
+
       quizEl.querySelectorAll('[data-opt]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           picks[step] = s.opts[+btn.getAttribute('data-opt')];

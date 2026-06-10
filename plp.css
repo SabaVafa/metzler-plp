@@ -766,6 +766,8 @@
 .advisor__opt.is-active { border-color: var(--teal); background: var(--teal-5); }   /* selected row highlight = Teal 50 */
 .advisor__opt-label { font-size: var(--text-body-sm); font-weight: 500; color: var(--schwarz); }   /* Body SM Medium */
 .advisor__opt-sub { font-size: var(--text-caption); color: var(--ink-60); }
+/* Consistency: when any option in a question wraps, JS stacks ALL of them (label over sub). */
+.advisor__opts--stacked .advisor__opt { flex-flow: column nowrap; align-items: flex-start; gap: 3px; }
 
 .advisor__nav { display: flex; align-items: center; justify-content: space-between; margin-top: var(--sp-5); }
 .advisor__back, .advisor__skip {
