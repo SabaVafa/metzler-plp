@@ -910,7 +910,7 @@
 .advisor__chip::before { content: "✓"; color: var(--teal); font-size: .85em; }
 .advisor__note { margin: 0; font-size: var(--text-caption); color: var(--ink-60); }
 .advisor__note em { font-style: normal; font-weight: 600; color: var(--schwarz); }
-.advisor__actions { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-2); }
+.advisor__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--sp-2); margin-top: var(--sp-2); }
 
 /* Responsive: stack columns + single-column recs/skeleton */
 @media (max-width: 1023px) {
