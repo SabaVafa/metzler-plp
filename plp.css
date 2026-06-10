@@ -671,7 +671,7 @@
   color: var(--ink-72);
 }
 .mega-panel .mega-feature__list li:last-child { margin-bottom: 0; }
-.mega-panel .mega-feature__list li::marker { color: var(--teal); }
+.mega-panel .mega-feature__list li::marker { color: var(--schwarz); }   /* black bullets */
 /* CTA — Metzler DS primary button (§6): Teal 500 fill, 2.625rem tall, .25rem radius, 1rem/500.
    Scoped `.mega-panel …` so its white label beats the inherited `.header__nav a{color:#000}`. */
 .mega-panel .mega-feature__cta {
@@ -813,6 +813,9 @@
 .advisor__capture-q { margin: 0; font-size: var(--text-body-sm); font-weight: 700; color: var(--schwarz); }
 /* Field + opt-in + shared send button on one line */
 .advisor__capture-row { display: flex; align-items: stretch; gap: var(--sp-3); }
+.advisor__capture-row .advisor__field,
+.advisor__capture-row .advisor__optin,
+.advisor__capture-row .advisor__send { min-height: 3rem; }   /* consistent height across field, opt-in & CTA */
 .advisor__capture-row .advisor__field { flex: 1 1 auto; }
 .advisor__capture-row .advisor__optin { flex: 0 1 auto; }
 .advisor__send {
