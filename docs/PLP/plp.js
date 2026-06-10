@@ -649,7 +649,7 @@
               '<svg class="advisor__field-ico advisor__field-ico--mail" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>' +
               '<input type="email" class="advisor__input" data-email autocomplete="email" placeholder="E-Mail-Adresse eingeben" value="' + (lead.email || '') + '" aria-label="E-Mail-Adresse">' +
             '</div>' +
-            '<p class="advisor__capture-hint">Wir senden Ihnen Ihre Empfehlung + Produktlinks.</p>' +
+            '<p class="advisor__capture-hint">Wir senden Ihnen Ihre Empfehlung + Produktlinks – zum Bestätigen Enter drücken.</p>' +
             '<label class="advisor__optin' + (lead.news ? ' is-on' : '') + '">' +
               '<input type="checkbox" data-optin' + (lead.news ? ' checked' : '') + '>' +
               '<span class="advisor__optin-box" aria-hidden="true"></span>' +
@@ -660,7 +660,6 @@
             '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' +
             '<button type="button" class="advisor__skip" data-skip>Ohne E-Mail fortfahren<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
-          '<button type="button" class="advisor__view advisor__next" data-next>Weiter</button>' +
         '</div>';
       var stepEl = quizEl.querySelector('.advisor__step');
       requestAnimationFrame(function () { stepEl.classList.add('is-in'); });
@@ -669,10 +668,10 @@
       var optinEl = quizEl.querySelector('[data-optin]');
       var optinLabel = quizEl.querySelector('.advisor__optin');
       optinEl.addEventListener('change', function () { optinLabel.classList.toggle('is-on', optinEl.checked); });
-      quizEl.querySelector('[data-next]').addEventListener('click', function () {
-        lead.email = emailEl.value.trim();
-        lead.news = optinEl.checked;
-        go(finish);
+      /* No "Weiter" button: press Enter in the field to continue WITH the e-mail,
+         or use the link to continue WITHOUT it. */
+      emailEl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); lead.email = emailEl.value.trim(); lead.news = optinEl.checked; go(finish); }
       });
       quizEl.querySelector('[data-back]').addEventListener('click', function () { go(function () { step--; renderStep(); }); });
       quizEl.querySelector('[data-skip]').addEventListener('click', function () { lead.email = ''; lead.news = false; go(finish); });
