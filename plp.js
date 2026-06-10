@@ -22,9 +22,6 @@
 
   /* ---- Facet definitions (label + count). No price, no sort. ---- */
   var FACETS = {
-    marke: { items: [
-      { key: 'metzler', label: 'Metzler', count: 64 }
-    ]},
     faecher: { title: 'faecher', items: [
       { key: '1', label: '1 Fach', count: 64 },
       { key: '2', label: '2 Fächer', count: 9 },
@@ -108,7 +105,7 @@
   var TOTAL = 80; // catalogue headline figure
 
   /* ---- State ---- */
-  var active = { color: [], marke: [], zeitung: [], faecher: [], montage: [], zusatz: [] };
+  var active = { color: [], zeitung: [], faecher: [], montage: [], zusatz: [] };
   var page = 1;
 
   /* ---- Helpers ---- */
@@ -208,7 +205,6 @@
   /* ---- Filtering ---- */
   function matches(p) {
     if (active.color.length && !active.color.some(function (c) { return p.colors.indexOf(c) !== -1; })) return false;
-    if (active.marke.length && active.marke.indexOf('metzler') === -1) return false; /* all products are Metzler */
     if (active.faecher.length) {
       /* 'paketfach' is a separate attribute (parcel compartment), not a fach count —
          match it against p.paket; the count keys ('1'/'2'/'3') match p.faecher. */
@@ -439,7 +435,6 @@
   /* ---- Init ---- */
   buildSubnav();
   buildColorGroup();
-  buildFacetGroup('marke');
   buildFacetGroup('zeitung');
   buildFacetGroup('faecher');
   buildFacetGroup('montage');
