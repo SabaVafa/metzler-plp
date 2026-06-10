@@ -36,10 +36,9 @@
       { key: 'ohne', label: 'Ohne', count: 8 }
     ]},
     montage: { title: 'montage', items: [
-      { key: 'aufputz', label: 'Aufputz', count: 41 },
-      { key: 'unterputz', label: 'Unterputz', count: 12 },
+      { key: 'wand', label: 'Wandmontage', count: 49 },
       { key: 'stand', label: 'Standmontage', count: 14 },
-      { key: 'zaun', label: 'Zaunmontage', count: 8 }
+      { key: 'unterputz', label: 'Unterputzmontage', count: 12 }
     ]}
   };
 
@@ -64,39 +63,39 @@
   /* ---- Product catalogue (single placeholder image for all) ---- */
   var PRODUCTS = [
     { id:'siebert', name:'Briefkasten aus hochwertigem Stahl | Siebert', line:'Bestseller', price:89.99, uvp:null, rating:5, reviews:657,
-      badge:null, colors:['anthrazit','weiss','grau','schwarz'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'aufputz' },
+      badge:null, colors:['anthrazit','weiss','grau','schwarz'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'ebenhard', name:'Briefkasten mit austauschbarem Namensschild | Ebenhard', line:'Beliebt', price:89.99, uvp:null, rating:5, reviews:219,
-      badge:null, colors:['anthrazit','weiss','grau'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'aufputz' },
+      badge:null, colors:['anthrazit','weiss','grau'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'hermann', name:'Briefkasten mit Lasergravur | Hermann', line:null, price:99.99, uvp:117.99, rating:5, reviews:142,
-      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','weiss','grau','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'aufputz' },
+      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','weiss','grau','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'moris', name:'Briefkasten aus Edelstahl | personalisiert | Moris', line:'Edelstahl V4A', price:149.00, uvp:null, rating:4.5, reviews:25,
-      badge:null, colors:['edelstahl','anthrazit','weiss','wunschfarbe'], faecher:'1', material:'edelstahl', zeitung:'optional', montage:'aufputz' },
+      badge:null, colors:['edelstahl','anthrazit','weiss','wunschfarbe'], faecher:'1', material:'edelstahl', zeitung:'optional', montage:'wand' },
     { id:'lessing', name:'Standbriefkasten mit Zeitungsfach | Lessing', line:null, price:199.00, uvp:null, rating:5, reviews:38,
       badge:null, colors:['anthrazit','eisenglimmer','schwarz'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'stand' },
     { id:'gienger', name:'Briefkasten Design | Modell G | Gienger', line:null, price:99.99, uvp:null, rating:5, reviews:31,
-      badge:null, colors:['anthrazit','weiss','grau'], faecher:'1', material:'stahl', zeitung:'ohne', montage:'aufputz' },
+      badge:null, colors:['anthrazit','weiss','grau'], faecher:'1', material:'stahl', zeitung:'ohne', montage:'wand' },
     { id:'schneider', name:'Durchwurf-Briefkasten | Mauerdurchwurf | Schneider', line:null, price:120.00, uvp:null, rating:5, reviews:2,
-      badge:null, colors:['anthrazit','edelstahl'], faecher:'1', material:'edelstahl', zeitung:'ohne', montage:'durchwurf' },
+      badge:null, colors:['anthrazit','edelstahl'], faecher:'1', material:'edelstahl', zeitung:'ohne', montage:'unterputz' },
     { id:'lepo', name:'Briefkasten Anthrazit RAL 7016 | Lepo 2', line:null, price:149.00, uvp:175.00, rating:4.5, reviews:64,
-      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','schwarz','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'aufputz' },
+      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','schwarz','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'zaun', name:'Zaunbriefkasten | personalisiert mit Gravur', line:null, price:149.00, uvp:null, rating:5, reviews:18,
-      badge:null, colors:['anthrazit','weiss','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'optional', montage:'zaun' },
+      badge:null, colors:['anthrazit','weiss','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'optional', montage:'wand' },
     { id:'flora', name:'Briefkasten mit Blumenkasten | personalisiert | Flora', line:null, price:159.00, uvp:null, rating:4.5, reviews:12,
-      badge:null, colors:['anthrazit','weiss','braun','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'aufputz' },
+      badge:null, colors:['anthrazit','weiss','braun','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'castor', name:'Unterputz-Briefkasten aus Edelstahl | Castor', line:'Edelstahl V2A', price:179.00, uvp:null, rating:5, reviews:21,
       badge:null, colors:['edelstahl','anthrazit'], faecher:'1', material:'edelstahl', zeitung:'optional', montage:'unterputz' },
     { id:'trias', name:'Mehrfamilien-Briefkastenanlage | 3 Parteien | Trias', line:null, price:349.00, uvp:399.00, rating:5, reviews:9,
       badge:{type:'sale', text:'−12 %'}, colors:['anthrazit','grau','edelstahl'], faecher:'3', material:'stahl', zeitung:'ohne', montage:'stand' },
     { id:'vossberg', name:'Briefkasten mit Klingel & Sprechanlage | Vossberg', line:'2-in-1', price:299.00, uvp:null, rating:4.5, reviews:27,
-      badge:null, colors:['anthrazit','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'aufputz' },
+      badge:null, colors:['anthrazit','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'duo', name:'Doppel-Briefkasten | 2 Parteien | Duo', line:null, price:229.00, uvp:null, rating:5, reviews:15,
-      badge:null, colors:['anthrazit','weiss','grau'], faecher:'2', material:'stahl', zeitung:'integriert', montage:'aufputz' },
+      badge:null, colors:['anthrazit','weiss','grau'], faecher:'2', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'klar', name:'Briefkasten mit Acrylglas-Front | Klar', line:null, price:139.00, uvp:null, rating:4.5, reviews:8,
-      badge:null, colors:['schwarz','anthrazit'], faecher:'1', material:'acrylglas', zeitung:'ohne', montage:'aufputz' },
+      badge:null, colors:['schwarz','anthrazit'], faecher:'1', material:'acrylglas', zeitung:'ohne', montage:'wand' },
     { id:'nordkap', name:'Edelstahl-Briefkasten V4A | Küste | Nordkap', line:'Salzwasserfest', price:219.00, uvp:null, rating:5, reviews:11,
       badge:null, colors:['edelstahl'], faecher:'1', material:'edelstahl', zeitung:'integriert', montage:'stand' },
     { id:'kompakt', name:'Kompakt-Briefkasten ohne Gravur | Basic', line:null, price:69.99, uvp:84.99, rating:4.5, reviews:96,
-      badge:{type:'sale', text:'−18 %'}, colors:['weiss','anthrazit','grau','schwarz','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'ohne', montage:'aufputz' },
+      badge:{type:'sale', text:'−18 %'}, colors:['weiss','anthrazit','grau','schwarz','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'ohne', montage:'wand' },
     { id:'quartett', name:'Briefkastenanlage | 4 Parteien | Quartett', line:null, price:459.00, uvp:null, rating:5, reviews:6,
       badge:null, colors:['anthrazit','grau','edelstahl'], faecher:'3', material:'stahl', zeitung:'ohne', montage:'unterputz' }
   ];
