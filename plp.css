@@ -826,7 +826,7 @@
 }
 .advisor__send:hover { background: var(--teal-600); }
 .advisor__send svg { width: 22px; height: 22px; stroke-width: 1.5; }
-.advisor__sent { margin: 0; }
+.advisor__note.advisor__sent { margin: 0; color: var(--schwarz); }   /* confirmation = full-contrast body ink (AA); 2-class wins over .advisor__note */
 @media (max-width: 760px) {
   .advisor__capture-row { flex-wrap: wrap; }
   .advisor__capture-row .advisor__field { flex: 1 1 100%; }
