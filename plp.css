@@ -896,8 +896,8 @@
 .advisor__rec-name { font-size: var(--text-body-sm); font-weight: 700; line-height: 1.375; color: var(--schwarz); }   /* Body SM Bold */
 .advisor__rec-price { font-size: var(--text-body); font-weight: 700; color: var(--schwarz); }   /* Body Bold */
 .advisor__rec-price s { margin-left: 6px; font-size: var(--text-body-sm); font-weight: 400; color: var(--ink-60); }
-.advisor__rec-go { flex: 0 0 auto; width: 22px; height: 22px; stroke-width: 1.5; color: var(--teal); transition: transform .15s ease; }   /* right chevron */
-.advisor__rec:hover .advisor__rec-go { transform: translateX(3px); }
+.advisor__rec-go { flex: 0 0 auto; margin-left: auto; width: 32px; height: 32px; color: var(--teal); transition: transform .15s ease; }   /* right-aligned chevron */
+.advisor__rec:hover .advisor__rec-go { transform: translateX(4px); }
 
 /* Summary aside (right column): applied-filter chips + notes + actions */
 .advisor__aside { display: flex; flex-direction: column; gap: var(--sp-3); }
