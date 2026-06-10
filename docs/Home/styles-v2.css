@@ -1997,6 +1997,13 @@ h1, h2, h3, h4, h5, h6, p { margin: 0; }
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
   .footer__details[open] .footer__links { padding-top: var(--sp-2); }
+  /* Negate the .footer__top grid row-gap (sp-10 = 40px) between
+     adjacent accordions so the two rows sit flush against each
+     other, separated only by the 1px hairline. Other footer
+     blocks keep their 40px gap. */
+  .footer__details + .footer__details {
+    margin-top: calc(-1 * var(--sp-10));
+  }
 }
 .footer__links a {
   font-size: var(--text-body-sm);
