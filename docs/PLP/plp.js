@@ -616,7 +616,7 @@
           '<div class="advisor__opts">' + opts + '</div>' +
           '<div class="advisor__nav">' +
             (step > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>') +
-            '<button type="button" class="advisor__skip" data-skip>Überspringen</button>' +
+            '<button type="button" class="advisor__skip" data-skip>Überspringen<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
         '</div>';
       var stepEl = quizEl.querySelector('.advisor__step');
@@ -658,7 +658,7 @@
           '</div>' +
           '<div class="advisor__nav">' +
             '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' +
-            '<button type="button" class="advisor__skip" data-skip>Ohne E-Mail fortfahren</button>' +
+            '<button type="button" class="advisor__skip" data-skip>Ohne E-Mail fortfahren<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
           '<button type="button" class="advisor__view advisor__next" data-next>Weiter</button>' +
         '</div>';
