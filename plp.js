@@ -421,6 +421,21 @@
     });
   }
 
+  /* ---- Footer accordions: collapsed on mobile, expanded on tablet+ ---- */
+  function wireFooterAccordions() {
+    var details = document.querySelectorAll('.footer__details');
+    if (!details.length) return;
+    var mobileMq = window.matchMedia('(max-width: 640px)');
+    function sync() {
+      details.forEach(function (el) {
+        if (mobileMq.matches) el.removeAttribute('open');
+        else el.setAttribute('open', '');
+      });
+    }
+    sync();
+    mobileMq.addEventListener ? mobileMq.addEventListener('change', sync) : mobileMq.addListener(sync);
+  }
+
   /* ---- SEO "Mehr lesen" toggle ---- */
   function wireSeo() {
     var text = $('#seoText'), btn = $('#seoToggle');
@@ -441,6 +456,7 @@
   buildFacetGroup('zusatz');
   wireDrawer();
   wireSubnav();
+  wireFooterAccordions();
   wireSeo();
   $('#clearAll').addEventListener('click', clearAll);
   $('#emptyReset').addEventListener('click', clearAll);

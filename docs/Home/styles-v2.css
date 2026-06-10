@@ -1955,6 +1955,49 @@ h1, h2, h3, h4, h5, h6, p { margin: 0; }
 
 /* Link columns */
 .footer__links { display: flex; flex-direction: column; gap: var(--sp-3); }
+
+/* Footer accordions — collapsible on mobile, always expanded on
+   tablet/desktop. Uses native <details>/<summary> for zero JS. */
+.footer__details summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.footer__details summary::-webkit-details-marker { display: none; }
+.footer__details summary::marker { content: ""; }
+.footer__details summary h4 { margin: 0; }
+/* Chevron — rotates when section is open */
+.footer__details summary::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+  margin-bottom: 2px;
+}
+.footer__details[open] summary::after { transform: rotate(-135deg); }
+/* On tablet + desktop the section is always expanded; hide the
+   chevron and make the summary non-interactive so it reads as a
+   normal column heading. */
+@media (min-width: 641px) {
+  .footer__details summary { cursor: default; pointer-events: none; }
+  .footer__details summary::after { display: none; }
+}
+/* Hairline below each accordion on mobile so the sections read
+   as distinct rows (matches the production live site). */
+@media (max-width: 640px) {
+  .footer__details {
+    padding-block: var(--sp-2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .footer__details[open] .footer__links { padding-top: var(--sp-2); }
+}
 .footer__links a {
   font-size: var(--text-body-sm);
   color: rgba(255, 255, 255, 0.85);
@@ -2409,38 +2452,11 @@ h1, h2, h3, h4, h5, h6, p { margin: 0; }
 @media (max-width: 640px) {
   :root { --section-y: var(--sp-12); }
   /* (cats__grid sized exclusively by the 900px @media — no override here) */
-  /* Footer: 2-col grid where the brand, hotline, and follow-us
-     blocks span the full width, but the Informationen + Service
-     link lists sit side-by-side instead of stacking.
-     Service column right-aligned so its right margin (distance
-     from viewport edge to the last character) matches the left
-     column's left margin — visually symmetric.
-     Mobile gap reduced from the desktop default (40px) so the
-     two columns fit comfortably on a 375px viewport. */
-  .footer__top {
-    /* minmax(0,…) instead of 1fr (= minmax(auto,1fr)): the auto floor let a
-       full-width spanning block (the long support email) skew the two link
-       tracks uneven (~248/63). minmax(0,1fr) forces a clean 50/50 split. */
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: var(--sp-4);
-  }
+  /* Footer: single-column stack on mobile. Informationen + Service
+     are full-width collapsible <details> accordions (see
+     .footer__details styling above). */
+  .footer__top { grid-template-columns: 1fr; }
   .footer__top > * { grid-column: 1 / -1; }
-  /* Both link columns shrinkable + wrap long German words (e.g. "Auszeichnungen",
-     "Begriffserklärung") so the two columns stay equal width. */
-  .footer__top > *:nth-child(3) {
-    grid-column: 1;
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-  .footer__top > *:nth-child(4) {
-    grid-column: 2;
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-  /* Follow-us / Qualität block spans the FULL width (it was auto-placed into the
-     left column only, trapping the 4 Top-Shop badges in ~156px so the 4th wrapped
-     to a 2nd row). nth-child(5) (0,2,0) so it wins regardless of media-query order. */
-  .footer__top > *:nth-child(5) { grid-column: 1 / -1; }
   /* Keep the 4 quality badges on a single line. */
   .footer__labels { flex-wrap: nowrap; }
   .footer__quality-grid { grid-template-columns: 1fr; }
