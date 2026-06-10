@@ -573,18 +573,15 @@
       return false;
     }
     function recCardHTML(p, percent) {
-      return '<article class="advisor__rec">' +
-        '<div class="advisor__rec-top">' +
-          '<span class="advisor__rec-thumb"><img src="' + pickImg(p) + '" alt="" loading="lazy"></span>' +
-          '<div class="advisor__rec-info">' +
-            '<span class="advisor__match">' + percent + '% Passend für Sie</span>' +
-            '<span class="advisor__rec-name">' + p.name + '</span>' +
-            '<span class="advisor__rec-price">' + fmtPrice(p.price) + (p.uvp ? '<s>' + fmtPrice(p.uvp) + '</s>' : '') + '</span>' +
-          '</div>' +
-        '</div>' +
-        '<ul class="advisor__rec-specs">' + specsOf(p).map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ul>' +
-        '<a class="advisor__details" href="#grid" data-details>Details anzeigen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><use href="#i-chevron-right"/></svg></a>' +
-      '</article>';
+      return '<a class="advisor__rec" href="#grid" data-details>' +
+        '<span class="advisor__rec-thumb"><img src="' + pickImg(p) + '" alt="" loading="lazy"></span>' +
+        '<span class="advisor__rec-info">' +
+          '<span class="advisor__match">' + percent + '% Passend für Sie</span>' +
+          '<span class="advisor__rec-name">' + p.name + '</span>' +
+          '<span class="advisor__rec-price">' + fmtPrice(p.price) + (p.uvp ? '<s>' + fmtPrice(p.uvp) + '</s>' : '') + '</span>' +
+        '</span>' +
+        '<svg class="advisor__rec-go" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>' +
+      '</a>';
     }
 
     /* Shared progress-dots strip (questions + the capture screen). */
