@@ -862,19 +862,15 @@
 /* Result — two columns (cards left, summary aside right) to fill the width;
    animates in (GPU). */
 .advisor__result {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  column-gap: var(--sp-5); row-gap: var(--sp-4);
-  align-items: start;
+  display: flex; flex-direction: column; gap: var(--sp-4);
   opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .4s ease; will-change: opacity, transform;
 }
 .advisor__result.is-in { opacity: 1; transform: none; }
-.advisor__result-head { grid-column: 1 / -1; }
 .advisor__result-title { margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--schwarz); }   /* H3 */
 .advisor__result-title strong { color: var(--teal); }   /* Teal 500 */
 
 /* Curated recommendation cards — DS product-card treatment (radius-lg, Graphite 300) */
-.advisor__recs { grid-column: 1; display: grid; grid-template-columns: 1fr; gap: var(--sp-4); align-content: start; }
+.advisor__recs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-4); align-items: stretch; }   /* horizontal, equal-height cards */
 .advisor__rec {
   display: flex; flex-direction: column;
   padding: var(--sp-4); border: 1px solid var(--graphite-300); border-radius: var(--r-l);
@@ -915,7 +911,7 @@
 .advisor__details svg { width: 16px; height: 16px; stroke-width: 1.8; }
 
 /* Summary aside (right column): applied-filter chips + notes + actions */
-.advisor__aside { grid-column: 2; align-self: start; display: flex; flex-direction: column; gap: var(--sp-3); }
+.advisor__aside { display: flex; flex-direction: column; gap: var(--sp-3); }
 .advisor__chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
 .advisor__chip {                                   /* selected filter chip = Teal 100 · Teal 700 */
   display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: var(--r-pill);
@@ -931,8 +927,6 @@
 @media (max-width: 1023px) {
   .advisor__card { grid-template-columns: 1fr; gap: var(--sp-5); }
   .advisor__skeleton { grid-template-columns: 1fr; }
-  .advisor__result { grid-template-columns: 1fr; }
-  .advisor__recs, .advisor__aside { grid-column: 1; }
 }
 @media (max-width: 600px) {
   .advisor__actions { flex-direction: column; }
