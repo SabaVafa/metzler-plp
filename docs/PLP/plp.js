@@ -735,6 +735,7 @@
 
     function finish() {
       clearTimeout(thinkTimer);
+      root.classList.add('is-result');   /* hide the intro block on the result step */
       quizEl.innerHTML = '';
       results.hidden = false;
       results.innerHTML = loaderHTML();
@@ -761,6 +762,7 @@
 
     function restart() {
       step = 0; picks = []; lead = { email: '', news: false };
+      root.classList.remove('is-result');   /* bring the intro block back */
       clearAll();                 /* clears active filters + re-renders the full grid */
       results.hidden = true; results.innerHTML = '';
       renderStep();
