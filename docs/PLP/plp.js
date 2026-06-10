@@ -494,7 +494,7 @@
     var step = 0;
     var picks = [];   /* picks[i] = chosen option object for step i */
     var lead = { email: '', news: false };   /* optional e-mail capture (final step) */
-    var STEPS = QUIZ.length + 1;              /* questions + the e-mail capture screen */
+    var STEPS = QUIZ.length;                  /* questions only — e-mail capture now lives on the result */
 
     function labelFor(group, key) {
       if (group === 'color') return (COLORS[key] && COLORS[key].label) || key;
@@ -591,7 +591,7 @@
     }
 
     function renderStep() {
-      if (step >= QUIZ.length) { renderCapture(); return; }   /* final screen = e-mail capture */
+      if (step >= QUIZ.length) { finish(); return; }   /* after the last question → result (with e-mail capture) */
       results.hidden = true; results.innerHTML = '';
       var s = QUIZ[step];
       var dots = dotsHTML();
@@ -639,49 +639,6 @@
       if (skip) skip.addEventListener('click', function () { picks[step] = null; go(function () { step++; renderStep(); }); });
     }
 
-    /* Final screen — optional e-mail capture, then → finish(). */
-    function renderCapture() {
-      results.hidden = true; results.innerHTML = '';
-      quizEl.innerHTML =
-        '<div class="advisor__step">' +
-          '<div class="advisor__progress">' +
-            '<span class="advisor__progress-dots">' + dotsHTML() + '</span>' +
-            '<span class="advisor__progress-label">Schritt ' + STEPS + ' von ' + STEPS + '</span>' +
-          '</div>' +
-          '<h3 class="advisor__q">Möchten Sie Ihre Empfehlung per E-Mail erhalten?</h3>' +
-          '<div class="advisor__capture">' +
-            '<div class="advisor__field">' +
-              '<svg class="advisor__field-ico advisor__field-ico--mail" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>' +
-              '<input type="email" class="advisor__input" data-email autocomplete="email" placeholder="E-Mail-Adresse eingeben" value="' + (lead.email || '') + '" aria-label="E-Mail-Adresse">' +
-            '</div>' +
-            '<p class="advisor__capture-hint">Wir senden Ihnen Ihre Empfehlung + Produktlinks – zum Bestätigen Enter drücken.</p>' +
-            '<label class="advisor__optin' + (lead.news ? ' is-on' : '') + '">' +
-              '<input type="checkbox" data-optin' + (lead.news ? ' checked' : '') + '>' +
-              '<span class="advisor__optin-box" aria-hidden="true"></span>' +
-              '<span>Schicken Sie mir Metzler News &amp; Angebote.</span>' +
-            '</label>' +
-          '</div>' +
-          '<div class="advisor__nav">' +
-            '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' +
-            '<button type="button" class="advisor__skip" data-skip>Ohne E-Mail fortfahren<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
-          '</div>' +
-        '</div>';
-      var stepEl = quizEl.querySelector('.advisor__step');
-      requestAnimationFrame(function () { stepEl.classList.add('is-in'); });
-
-      var emailEl = quizEl.querySelector('[data-email]');
-      var optinEl = quizEl.querySelector('[data-optin]');
-      var optinLabel = quizEl.querySelector('.advisor__optin');
-      optinEl.addEventListener('change', function () { optinLabel.classList.toggle('is-on', optinEl.checked); });
-      /* No "Weiter" button: press Enter in the field to continue WITH the e-mail,
-         or use the link to continue WITHOUT it. */
-      emailEl.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') { e.preventDefault(); lead.email = emailEl.value.trim(); lead.news = optinEl.checked; go(finish); }
-      });
-      quizEl.querySelector('[data-back]').addEventListener('click', function () { go(function () { step--; renderStep(); }); });
-      quizEl.querySelector('[data-skip]').addEventListener('click', function () { lead.email = ''; lead.news = false; go(finish); });
-    }
-
     /* Premium loader: pulsing geometric wave + shimmer skeleton cards. */
     function loaderHTML() {
       var sk = '<div class="adv-sk">' +
@@ -713,15 +670,27 @@
       var prefs = res.prefs.length
         ? '<p class="advisor__note">Ihre Wünsche notiert: <em>' + res.prefs.map(function (o) { return o.value; }).join(', ') + '</em></p>'
         : '';
-      var sent = lead.email
-        ? '<p class="advisor__note">📬 Ihre Empfehlung wird an <em>' + lead.email + '</em> gesendet' + (lead.news ? ' – inkl. News &amp; Angebote' : '') + '.</p>'
-        : '';
+      var capture =
+        '<div class="advisor__capture" data-result-capture>' +
+          '<p class="advisor__capture-q">Empfehlung per E-Mail erhalten?</p>' +
+          '<div class="advisor__field">' +
+            '<svg class="advisor__field-ico advisor__field-ico--mail" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>' +
+            '<input type="email" class="advisor__input" data-email autocomplete="email" placeholder="E-Mail-Adresse eingeben" aria-label="E-Mail-Adresse">' +
+            '<button type="button" class="advisor__send" data-email-send aria-label="Empfehlung senden"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+          '</div>' +
+          '<label class="advisor__optin">' +
+            '<input type="checkbox" data-optin>' +
+            '<span class="advisor__optin-box" aria-hidden="true"></span>' +
+            '<span>Schicken Sie mir Metzler News &amp; Angebote.</span>' +
+          '</label>' +
+        '</div>';
       return '<div class="advisor__result">' +
         '<div class="advisor__result-head"><h3 class="advisor__result-title">' + headText + '</h3></div>' +
         '<div class="advisor__recs">' + cards + '</div>' +
+        capture +
         '<div class="advisor__aside">' +
           (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '') +
-          note + prefs + sent +
+          note + prefs +
           '<div class="advisor__actions">' +
             '<button type="button" class="advisor__view" data-ai-view>Alle ' + res.count + ' Modelle ansehen</button>' +
             '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>' +
@@ -753,6 +722,23 @@
         if (view) view.addEventListener('click', scrollToGrid);
         var reset = results.querySelector('[data-ai-reset]');
         if (reset) reset.addEventListener('click', restart);
+
+        /* E-mail capture (now on the result): submit via Enter or the arrow → inline confirmation. */
+        var cap = results.querySelector('[data-result-capture]');
+        if (cap) {
+          var emailEl = cap.querySelector('[data-email]');
+          var optinEl = cap.querySelector('[data-optin]');
+          var optinLabel = cap.querySelector('.advisor__optin');
+          optinEl.addEventListener('change', function () { optinLabel.classList.toggle('is-on', optinEl.checked); });
+          var submitEmail = function () {
+            var v = emailEl.value.trim();
+            if (!v) { emailEl.focus(); return; }
+            lead.email = v; lead.news = optinEl.checked;
+            cap.innerHTML = '<p class="advisor__note advisor__sent">📬 Ihre Empfehlung wird an <em>' + v + '</em> gesendet' + (lead.news ? ' – inkl. News &amp; Angebote' : '') + '.</p>';
+          };
+          emailEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); submitEmail(); } });
+          cap.querySelector('[data-email-send]').addEventListener('click', submitEmail);
+        }
       }, 1500);
     }
 
