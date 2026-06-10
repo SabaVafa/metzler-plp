@@ -707,7 +707,7 @@
    DS radii (lg cards / default buttons / pill chips) · Graphite-100 skeleton.
    Colour comments name the DS token; hex is the token value.
    ════════════════════════════════════════════════════════════════════ */
-.advisor { padding-block: var(--sp-4) var(--sp-8); }
+.advisor { padding-block: var(--sp-4); }   /* symmetric top/bottom */
 .advisor__card {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.6fr);
