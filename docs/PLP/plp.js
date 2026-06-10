@@ -494,6 +494,8 @@
 
     var step = 0;
     var picks = [];   /* picks[i] = chosen option object for step i */
+    var lead = { email: '', news: false };   /* optional e-mail capture (final step) */
+    var STEPS = QUIZ.length + 1;              /* questions + the e-mail capture screen */
 
     function labelFor(group, key) {
       if (group === 'color') return (COLORS[key] && COLORS[key].label) || key;
@@ -537,12 +539,18 @@
       window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
     }
 
+    /* Shared progress-dots strip (questions + the capture screen). */
+    function dotsHTML() {
+      var out = '';
+      for (var i = 0; i < STEPS; i++) out += '<span class="' + (i < step ? 'is-done' : (i === step ? 'is-current' : '')) + '"></span>';
+      return out;
+    }
+
     function renderStep() {
+      if (step >= QUIZ.length) { renderCapture(); return; }   /* final screen = e-mail capture */
       results.hidden = true; results.innerHTML = '';
       var s = QUIZ[step];
-      var dots = QUIZ.map(function (_, i) {
-        return '<span class="' + (i < step ? 'is-done' : (i === step ? 'is-current' : '')) + '"></span>';
-      }).join('');
+      var dots = dotsHTML();
       var opts = s.opts.map(function (o, i) {
         var on = (picks[step] && picks[step].label === o.label) ? ' is-active' : '';
         return '<button type="button" class="advisor__opt' + on + '" data-opt="' + i + '">' +
@@ -554,7 +562,7 @@
         '<div class="advisor__step">' +
           '<div class="advisor__progress">' +
             '<span class="advisor__progress-dots">' + dots + '</span>' +
-            '<span class="advisor__progress-label">Schritt ' + (step + 1) + ' von ' + QUIZ.length + '</span>' +
+            '<span class="advisor__progress-label">Schritt ' + (step + 1) + ' von ' + STEPS + '</span>' +
           '</div>' +
           '<h3 class="advisor__q">' + s.q + '</h3>' +
           '<div class="advisor__opts">' + opts + '</div>' +
@@ -569,17 +577,57 @@
       quizEl.querySelectorAll('[data-opt]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           picks[step] = s.opts[+btn.getAttribute('data-opt')];
-          if (step < QUIZ.length - 1) { step++; renderStep(); }
-          else finish();
+          step++; renderStep();   /* past the last question → capture screen */
         });
       });
       var back = quizEl.querySelector('[data-back]');
       if (back) back.addEventListener('click', function () { if (step > 0) { step--; renderStep(); } });
       var skip = quizEl.querySelector('[data-skip]');
-      if (skip) skip.addEventListener('click', function () {
-        picks[step] = null;
-        if (step < QUIZ.length - 1) { step++; renderStep(); } else finish();
+      if (skip) skip.addEventListener('click', function () { picks[step] = null; step++; renderStep(); });
+    }
+
+    /* Final screen — optional e-mail capture, then → finish(). */
+    function renderCapture() {
+      results.hidden = true; results.innerHTML = '';
+      quizEl.innerHTML =
+        '<div class="advisor__step">' +
+          '<div class="advisor__progress">' +
+            '<span class="advisor__progress-dots">' + dotsHTML() + '</span>' +
+            '<span class="advisor__progress-label">Schritt ' + STEPS + ' von ' + STEPS + '</span>' +
+          '</div>' +
+          '<h3 class="advisor__q">Möchten Sie Ihre Empfehlung per E-Mail erhalten?</h3>' +
+          '<div class="advisor__capture">' +
+            '<div class="advisor__field">' +
+              '<svg class="advisor__field-ico advisor__field-ico--mail" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>' +
+              '<input type="email" class="advisor__input" data-email autocomplete="email" placeholder="E-Mail-Adresse eingeben" value="' + (lead.email || '') + '" aria-label="E-Mail-Adresse">' +
+            '</div>' +
+            '<p class="advisor__capture-hint">Wir senden Ihnen Ihre Empfehlung + Produktlinks.</p>' +
+            '<label class="advisor__optin' + (lead.news ? ' is-on' : '') + '">' +
+              '<input type="checkbox" data-optin' + (lead.news ? ' checked' : '') + '>' +
+              '<span class="advisor__optin-box" aria-hidden="true"></span>' +
+              '<span>Schicken Sie mir Metzler News, Angebote &amp; Tipps.</span>' +
+            '</label>' +
+          '</div>' +
+          '<div class="advisor__nav">' +
+            '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' +
+            '<button type="button" class="advisor__skip" data-skip>Ohne E-Mail fortfahren</button>' +
+          '</div>' +
+          '<button type="button" class="advisor__view advisor__next" data-next>Weiter</button>' +
+        '</div>';
+      var stepEl = quizEl.querySelector('.advisor__step');
+      requestAnimationFrame(function () { stepEl.classList.add('is-in'); });
+
+      var emailEl = quizEl.querySelector('[data-email]');
+      var optinEl = quizEl.querySelector('[data-optin]');
+      var optinLabel = quizEl.querySelector('.advisor__optin');
+      optinEl.addEventListener('change', function () { optinLabel.classList.toggle('is-on', optinEl.checked); });
+      quizEl.querySelector('[data-next]').addEventListener('click', function () {
+        lead.email = emailEl.value.trim();
+        lead.news = optinEl.checked;
+        finish();
       });
+      quizEl.querySelector('[data-back]').addEventListener('click', function () { step--; renderStep(); });
+      quizEl.querySelector('[data-skip]').addEventListener('click', function () { lead.email = ''; lead.news = false; finish(); });
     }
 
     function summaryHTML(res) {
@@ -596,10 +644,14 @@
         ? '<p class="advisor__note">Ihre Wünsche notiert: <em>' +
             res.prefs.map(function (o) { return o.value; }).join(', ') + '</em></p>'
         : '';
+      var sent = lead.email
+        ? '<p class="advisor__note">📬 Ihre Empfehlung wird an <em>' + lead.email + '</em> gesendet' +
+            (lead.news ? ' – inkl. News &amp; Angebote' : '') + '.</p>'
+        : '';
       return '<div class="advisor__summary">' +
         '<p class="advisor__summary-text">' + text + '</p>' +
         (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '') +
-        note + prefs +
+        note + prefs + sent +
         '<div class="advisor__actions">' +
           '<button type="button" class="advisor__view" data-ai-view>Auswahl ansehen</button>' +
           '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>' +
@@ -625,7 +677,7 @@
     }
 
     function restart() {
-      step = 0; picks = [];
+      step = 0; picks = []; lead = { email: '', news: false };
       clearAll();                 /* clears active filters + re-renders the full grid */
       results.hidden = true; results.innerHTML = '';
       renderStep();

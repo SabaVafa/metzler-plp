@@ -774,6 +774,45 @@
 .advisor__back svg { width: 18px; height: 18px; stroke-width: 1.5; transform: rotate(180deg); }
 .advisor__skip { text-decoration: underline; text-underline-offset: 3px; }
 
+/* ── Final step: e-mail capture ── */
+.advisor__capture { display: flex; flex-direction: column; gap: var(--sp-3); }
+.advisor__field {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: 0 var(--sp-4);
+  background: var(--white);
+  border: 1.5px solid var(--graphite-300); border-radius: var(--r-l);
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.advisor__field:focus-within { border-color: var(--teal); box-shadow: 0 0 0 4px var(--teal-10); }
+.advisor__field-ico { width: 20px; height: 20px; flex: 0 0 auto; }
+.advisor__field-ico--mail { fill: none; stroke: var(--teal); stroke-width: 1.8; }
+.advisor__input {
+  flex: 1 1 auto; min-width: 0; border: 0; outline: 0; background: transparent;
+  padding: 14px 0; font-size: var(--text-body); color: var(--schwarz);
+}
+.advisor__input::placeholder { color: var(--graphite-500); }
+.advisor__capture-hint { margin: 0; font-size: var(--text-body-sm); color: var(--ink-60); }
+.advisor__optin {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: 12px 16px; border-radius: var(--r-l); cursor: pointer;
+  background: var(--teal-5); border: 1px solid var(--teal-10);
+  font-size: var(--text-body-sm); color: var(--schwarz);
+  transition: background .15s ease, border-color .15s ease;
+}
+.advisor__optin.is-on { background: var(--teal); border-color: var(--teal); color: var(--white); }
+.advisor__optin input { position: absolute; opacity: 0; width: 0; height: 0; }
+.advisor__optin-box {
+  flex: 0 0 auto; width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--teal); background: var(--white);
+  display: grid; place-items: center; transition: background .15s ease, border-color .15s ease;
+}
+.advisor__optin.is-on .advisor__optin-box { border-color: var(--white); }
+.advisor__optin.is-on .advisor__optin-box::after {
+  content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--white);
+}
+.advisor__optin input:focus-visible + .advisor__optin-box { box-shadow: 0 0 0 3px var(--teal-10); }
+.advisor__next { display: block; width: 100%; margin-top: var(--sp-4); padding: 13px 18px; font-size: var(--text-body); }
+
 /* ── Results / summary (full width, below) ── */
 .advisor__results { grid-column: 1 / -1; }
 .advisor__results[hidden] { display: none; }
