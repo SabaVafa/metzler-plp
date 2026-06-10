@@ -714,11 +714,13 @@
       return '<div class="advisor__result">' +
         '<div class="advisor__result-head"><h3 class="advisor__result-title">' + headText + '</h3></div>' +
         '<div class="advisor__recs">' + cards + '</div>' +
-        (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '') +
-        note + prefs + sent +
-        '<div class="advisor__actions">' +
-          '<button type="button" class="advisor__view" data-ai-view>Alle ' + res.count + ' Modelle ansehen</button>' +
-          '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>' +
+        '<div class="advisor__aside">' +
+          (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '') +
+          note + prefs + sent +
+          '<div class="advisor__actions">' +
+            '<button type="button" class="advisor__view" data-ai-view>Alle ' + res.count + ' Modelle ansehen</button>' +
+            '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>' +
+          '</div>' +
         '</div></div>';
     }
 
