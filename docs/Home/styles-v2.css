@@ -1546,7 +1546,7 @@ h1, h2, h3, h4, h5, h6, p { margin: 0; }
 .reviews { background: var(--paper-white); }
 .reviews__head {
   display: flex;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
   gap: var(--sp-8);
   margin-bottom: var(--sp-12);
@@ -2409,7 +2409,34 @@ h1, h2, h3, h4, h5, h6, p { margin: 0; }
 @media (max-width: 640px) {
   :root { --section-y: var(--sp-12); }
   /* (cats__grid sized exclusively by the 900px @media — no override here) */
-  .footer__top,
+  /* Footer: 2-col grid where the brand, hotline, and follow-us
+     blocks span the full width, but the Informationen + Service
+     link lists sit side-by-side instead of stacking.
+     Service column right-aligned so its right margin (distance
+     from viewport edge to the last character) matches the left
+     column's left margin — visually symmetric.
+     Mobile gap reduced from the desktop default (40px) so the
+     two columns fit comfortably on a 375px viewport. */
+  .footer__top {
+    /* minmax(0,…) instead of 1fr (= minmax(auto,1fr)): the auto floor let a
+       full-width spanning block (the long support email) skew the two link
+       tracks uneven (~248/63). minmax(0,1fr) forces a clean 50/50 split. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--sp-4);
+  }
+  .footer__top > * { grid-column: 1 / -1; }
+  /* Both link columns shrinkable + wrap long German words (e.g. "Auszeichnungen",
+     "Begriffserklärung") so the two columns stay equal width. */
+  .footer__top > *:nth-child(3) {
+    grid-column: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .footer__top > *:nth-child(4) {
+    grid-column: 2;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
   .footer__quality-grid { grid-template-columns: 1fr; }
   .header__nav ul { gap: var(--sp-5); }
 }
