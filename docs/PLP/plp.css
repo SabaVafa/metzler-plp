@@ -693,8 +693,13 @@
   white-space: nowrap;
   transition: background 0.15s ease;
 }
-.mega-panel .mega-feature__cta:hover  { background: var(--teal-600); }   /* Teal 600 */
-.mega-panel .mega-feature__cta:active { background: var(--teal-700); }   /* Teal 700 */
+/* DS primary-button hover: only the fill darkens — label stays Pure White.
+   color + border-bottom are re-pinned here at (0,3,0) so they beat the inherited
+   `.header__nav a:hover { color: var(--teal); border-bottom-color: var(--teal) }`
+   (0,2,1), which otherwise turned the label teal-on-teal (invisible) on hover. */
+.mega-panel .mega-feature__cta:hover,
+.mega-panel .mega-feature__cta:focus-visible { background: var(--teal-600); color: var(--white); border-bottom: 0; }   /* Teal 600 */
+.mega-panel .mega-feature__cta:active        { background: var(--teal-700); color: var(--white); border-bottom: 0; }   /* Teal 700 */
 
 /* ── Tablet (768–1023): compact, stacked dropdown (height cap inherited from base) ── */
 @media (min-width: 768px) and (max-width: 1023px) {
