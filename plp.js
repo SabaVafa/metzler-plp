@@ -447,30 +447,48 @@
     if (!quizEl) return;
     var thinkTimer;
 
-    /* Each option carries the facet (group/value) it maps to; group:null = "no preference". */
+    /* Each option maps to a catalogue facet (group = color/faecher/zeitung/zusatz/montage)
+       that filters the grid, or group:'pref' for a noted preference the catalogue can't
+       filter on (Gravur, Öffnungsrichtung). Steps are skippable. */
     var QUIZ = [
-      { q: 'Für wie viele Haushalte suchen Sie einen Briefkasten?', opts: [
-        { label: 'Einfamilienhaus',  sub: '1 Briefkasten', group: 'faecher', value: '1' },
-        { label: '2 Parteien',       sub: 'Doppel',        group: 'faecher', value: '2' },
-        { label: 'Mehrfamilienhaus', sub: '3+ Fächer',     group: 'faecher', value: '3' }
-      ]},
-      { q: 'Wie soll der Briefkasten montiert werden?', opts: [
-        { label: 'An der Wand', sub: 'Aufputz',      group: 'montage', value: 'wand' },
-        { label: 'Freistehend', sub: 'mit Standfuß', group: 'montage', value: 'stand' },
-        { label: 'Unterputz',   sub: 'wandbündig',   group: 'montage', value: 'unterputz' },
-        { label: 'Noch offen',  sub: '',             group: null,      value: null }
-      ]},
-      { q: 'Welche Zusatzfunktion ist Ihnen am wichtigsten?', opts: [
-        { label: 'Kamera & Sprechanlage', sub: 'Gegensprechanlage', group: 'zusatz',  value: 'sprech' },
-        { label: 'Paketfach',             sub: 'für Pakete',        group: 'faecher', value: 'paketfach' },
-        { label: 'Zeitungsfach',          sub: 'integriert',        group: 'zeitung', value: 'integriert' },
-        { label: 'Keine',                 sub: '',                  group: null,      value: null }
-      ]},
-      { q: 'Welche Farbe bevorzugen Sie?', opts: [
+      { q: '1. Welche Farbe bevorzugen Sie?', opts: [
         { label: 'Anthrazit', group: 'color', value: 'anthrazit' },
         { label: 'Edelstahl', group: 'color', value: 'edelstahl' },
         { label: 'Weiß',      group: 'color', value: 'weiss' },
-        { label: 'Egal',      group: null,    value: null }
+        { label: 'Grau',      group: 'color', value: 'grau' }
+      ]},
+      { q: '2. Wie viele Brieffächer benötigen Sie?', opts: [
+        { label: '1 Fach',          sub: 'Einfamilienhaus',  group: 'faecher', value: '1' },
+        { label: '2 Fächer',        sub: 'Zweifamilienhaus', group: 'faecher', value: '2' },
+        { label: '3+ Fächer',       sub: 'Mehrfamilienhaus', group: 'faecher', value: '3' },
+        { label: 'Inkl. Paketfach', sub: 'für Pakete',       group: 'faecher', value: 'paketfach' }
+      ]},
+      { q: '3. Wünschen Sie ein Zeitungsfach?', opts: [
+        { label: 'Mit Zeitungsfach',          group: 'zeitung', value: 'integriert' },
+        { label: 'Nur Briefkasten',           group: 'zeitung', value: 'ohne' },
+        { label: 'Optionales Fach verfügbar', group: 'zeitung', value: 'optional' }
+      ]},
+      { q: '4. Kombiniert mit …?', opts: [
+        { label: 'Klingel',      group: 'zusatz', value: 'klingel' },
+        { label: 'Sprechanlage', group: 'zusatz', value: 'sprech' }
+      ]},
+      { q: '5. Welche Montageart passt zu Ihnen?', opts: [
+        { label: 'Wandmontage',      sub: 'Wall-Mounted',  group: 'montage', value: 'wand' },
+        { label: 'Standmontage',     sub: 'Free-Standing', group: 'montage', value: 'stand' },
+        { label: 'Unterputzmontage', sub: 'Flush-Mounted', group: 'montage', value: 'unterputz' }
+      ]},
+      { q: '6. Welche Zusatzfunktion ist Ihnen wichtig?', opts: [
+        { label: 'Mit Klingel',      group: 'zusatz', value: 'klingel' },
+        { label: 'Mit Sprechanlage', group: 'zusatz', value: 'sprech' }
+      ]},
+      { q: '7. Welche Gravuroption wünschen Sie?', opts: [
+        { label: 'Lasergravur',         group: 'pref', value: 'Lasergravur' },
+        { label: 'Namensschild',        group: 'pref', value: 'Namensschild' },
+        { label: 'Standard-Ausführung', group: 'pref', value: 'Standard-Ausführung' }
+      ]},
+      { q: '8. Öffnungsrichtung der Tür?', opts: [
+        { label: 'Klappbar nach unten', group: 'pref', value: 'Klappbar nach unten' },
+        { label: 'Seitlich öffnend', sub: 'Links / Rechts', group: 'pref', value: 'Seitlich öffnend' }
       ]}
     ];
 
@@ -488,8 +506,12 @@
        advisor always returns a recommendation. Returns {kept, dropped, count}. */
     function applyPicks() {
       var priority = ['faecher', 'zusatz', 'montage', 'zeitung', 'color']; /* later = dropped first */
-      var sel = [];
-      picks.forEach(function (o) { if (o && o.group) sel.push(o); });
+      var sel = [], prefs = [];
+      picks.forEach(function (o) {
+        if (!o || !o.group) return;
+        if (active[o.group]) sel.push(o);   /* real facet → filters the grid */
+        else prefs.push(o);                 /* 'pref' (Gravur / Öffnung) → noted, not filterable */
+      });
       function setActive(list) {
         Object.keys(active).forEach(function (g) { active[g] = []; });
         list.forEach(function (o) { if (active[o.group] && active[o.group].indexOf(o.value) === -1) active[o.group].push(o.value); });
@@ -508,7 +530,7 @@
         current.splice(worst, 1);
         count = setActive(current);
       }
-      return { kept: current, dropped: dropped, count: count };
+      return { kept: current, dropped: dropped, count: count, prefs: prefs };
     }
     function scrollToGrid() {
       var top = $('#grid').getBoundingClientRect().top + window.scrollY - 80;
@@ -536,7 +558,10 @@
           '</div>' +
           '<h3 class="advisor__q">' + s.q + '</h3>' +
           '<div class="advisor__opts">' + opts + '</div>' +
-          (step > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '') +
+          '<div class="advisor__nav">' +
+            (step > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>') +
+            '<button type="button" class="advisor__skip" data-skip>Überspringen</button>' +
+          '</div>' +
         '</div>';
       var stepEl = quizEl.querySelector('.advisor__step');
       requestAnimationFrame(function () { stepEl.classList.add('is-in'); });
@@ -550,6 +575,11 @@
       });
       var back = quizEl.querySelector('[data-back]');
       if (back) back.addEventListener('click', function () { if (step > 0) { step--; renderStep(); } });
+      var skip = quizEl.querySelector('[data-skip]');
+      if (skip) skip.addEventListener('click', function () {
+        picks[step] = null;
+        if (step < QUIZ.length - 1) { step++; renderStep(); } else finish();
+      });
     }
 
     function summaryHTML(res) {
@@ -562,10 +592,14 @@
             res.dropped.map(function (o) { return labelFor(o.group, o.value); }).join(', ') +
             '</em> – wir zeigen die besten Alternativen.</p>'
         : '';
+      var prefs = res.prefs.length
+        ? '<p class="advisor__note">Ihre Wünsche notiert: <em>' +
+            res.prefs.map(function (o) { return o.value; }).join(', ') + '</em></p>'
+        : '';
       return '<div class="advisor__summary">' +
         '<p class="advisor__summary-text">' + text + '</p>' +
         (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '') +
-        note +
+        note + prefs +
         '<div class="advisor__actions">' +
           '<button type="button" class="advisor__view" data-ai-view>Auswahl ansehen</button>' +
           '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>' +

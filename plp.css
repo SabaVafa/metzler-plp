@@ -763,15 +763,16 @@
 .advisor__opt.is-active { border-color: var(--teal); background: var(--teal-5); }
 .advisor__opt-label { font-size: var(--text-body-sm); font-weight: 600; color: var(--schwarz); }
 .advisor__opt-sub { font-size: var(--text-caption); color: var(--ink-60); }
-.advisor__back {
-  margin-top: var(--sp-4); padding: 6px 0;
-  border: 0; background: none; cursor: pointer;
+.advisor__nav { display: flex; align-items: center; justify-content: space-between; margin-top: var(--sp-4); }
+.advisor__back, .advisor__skip {
+  padding: 6px 0; border: 0; background: none; cursor: pointer;
   font-size: var(--text-body-sm); font-weight: 500; color: var(--ink-60);
   display: inline-flex; align-items: center; gap: 6px;
   transition: color .15s ease;
 }
-.advisor__back:hover { color: var(--teal); }
+.advisor__back:hover, .advisor__skip:hover { color: var(--teal); }
 .advisor__back svg { width: 18px; height: 18px; stroke-width: 1.5; transform: rotate(180deg); }
+.advisor__skip { text-decoration: underline; text-underline-offset: 3px; }
 
 /* ── Results / summary (full width, below) ── */
 .advisor__results { grid-column: 1 / -1; }
