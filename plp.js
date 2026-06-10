@@ -436,6 +436,87 @@
     mobileMq.addEventListener ? mobileMq.addEventListener('change', sync) : mobileMq.addListener(sync);
   }
 
+  /* ---- KI-Kaufberater: input + pills → simulated "thinking" → 2 recommendations ---- */
+  function wireAiAdvisor() {
+    var root = document.querySelector('[data-ai]');
+    if (!root) return;
+    var form    = root.querySelector('[data-ai-form]');
+    var input   = root.querySelector('[data-ai-input]');
+    var pills   = [].slice.call(root.querySelectorAll('[data-ai-pill]'));
+    var results = root.querySelector('[data-ai-results]');
+    var thinkTimer, typeTimer;
+
+    /* Mock recommendation catalogue, matched loosely by intent keywords. */
+    var REX = {
+      kamera: [
+        { name: 'Briefkasten mit Klingel & Sprechanlage | Vossberg', tag: 'Mit Video-Gegensprechanlage', price: '299,00 €', img: 'Product%20Image/Briefkasten%20mit%20Klingel%20%26%20Sprechanlage.webp' },
+        { name: 'Mehrfamilien-Anlage mit Klingelpanel | Trias',       tag: 'Kamera-ready',                price: '349,00 €', old: '399,00 €', img: 'Product%20Image/Mehrfamilien%20Briefk%C3%A4sten.webp' }
+      ],
+      mehr: [
+        { name: 'Mehrfamilien-Briefkastenanlage | 3 Parteien | Trias', tag: 'Für Mehrparteienhäuser', price: '349,00 €', old: '399,00 €', img: 'Product%20Image/Mehrfamilien%20Briefk%C3%A4sten.webp' },
+        { name: 'Briefkastenanlage | 4 Parteien | Quartett',           tag: 'Modular erweiterbar',     price: '459,00 €', img: 'Product%20Image/Standbriefk%C3%A4sten.webp' }
+      ],
+      stand: [
+        { name: 'Standbriefkasten mit Zeitungsfach | Lessing', tag: 'Freistehend, mit Standfuß', price: '199,00 €', img: 'Product%20Image/Standbriefk%C3%A4sten.webp' },
+        { name: 'Edelstahl-Briefkasten V4A | Nordkap',         tag: 'Salzwasserfest',           price: '219,00 €', img: 'Product%20Image/image%2068.png' }
+      ],
+      'default': [
+        { name: 'Briefkasten aus Edelstahl | personalisiert | Moris', tag: 'Top-Empfehlung',                 price: '149,00 €', img: 'Product%20Image/image%2068.png' },
+        { name: 'Standbriefkasten mit Zeitungsfach | Lessing',         tag: 'Beliebt für Einfamilienhäuser', price: '199,00 €', img: 'Product%20Image/Standbriefk%C3%A4sten.webp' }
+      ]
+    };
+    function pick(q) {
+      q = (q || '').toLowerCase();
+      if (/kamera|video|sprech|klingel/.test(q))      return REX.kamera;
+      if (/mehrfamilien|anlage|parteien|wohnungen/.test(q)) return REX.mehr;
+      if (/stand|freistehend|standfu|garten/.test(q)) return REX.stand;
+      return REX['default'];
+    }
+    function recHTML(r) {
+      return '<a class="mega-ai__rec" href="#grid">' +
+        '<span class="mega-ai__rec-media"><img src="' + r.img + '" alt="" loading="lazy"></span>' +
+        '<span class="mega-ai__rec-body">' +
+          '<span class="mega-ai__rec-tag">' + r.tag + '</span>' +
+          '<span class="mega-ai__rec-name">' + r.name + '</span>' +
+          '<span class="mega-ai__rec-price">' + r.price + (r.old ? '<s>' + r.old + '</s>' : '') + '</span>' +
+        '</span></a>';
+    }
+    function run(q) {
+      clearTimeout(thinkTimer);
+      results.hidden = false;
+      results.innerHTML =
+        '<div class="mega-ai__thinking"><span class="mega-ai__dots"><i></i><i></i><i></i></span>' +
+        '<span>KI analysiert Ihre Anforderungen…</span></div>';
+      thinkTimer = setTimeout(function () {
+        var recs = pick(q);
+        results.innerHTML = '<div class="mega-ai__slots">' + recs.map(recHTML).join('') + '</div>';
+        var slots = results.querySelector('.mega-ai__slots');
+        requestAnimationFrame(function () { if (slots) slots.classList.add('is-in'); });
+      }, 1150);
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (input.value.trim()) run(input.value);
+    });
+    pills.forEach(function (p) {
+      p.addEventListener('click', function () {
+        pills.forEach(function (x) { x.classList.remove('is-active'); });
+        p.classList.add('is-active');
+        input.value = p.textContent.trim();
+        run(input.value);
+      });
+    });
+    /* As-you-type: debounced so the "thinking" state feels intentional, not jittery. */
+    input.addEventListener('input', function () {
+      clearTimeout(typeTimer);
+      pills.forEach(function (x) { x.classList.remove('is-active'); });
+      var v = input.value.trim();
+      if (v.length < 3) return;
+      typeTimer = setTimeout(function () { run(v); }, 700);
+    });
+  }
+
   /* ---- SEO "Mehr lesen" toggle ---- */
   function wireSeo() {
     var text = $('#seoText'), btn = $('#seoToggle');
@@ -457,6 +538,7 @@
   wireDrawer();
   wireSubnav();
   wireFooterAccordions();
+  wireAiAdvisor();
   wireSeo();
   $('#clearAll').addEventListener('click', clearAll);
   $('#emptyReset').addEventListener('click', clearAll);

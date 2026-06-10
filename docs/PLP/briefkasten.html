@@ -6,7 +6,7 @@
 <title>Briefkästen aus Edelstahl | hochwertig & modern — Metzler</title>
 <meta name="description" content="Premium Briefkästen aus massivem Edelstahl, Made in Germany. Mit individueller Lasergravur, Zeitungsfach & 10 Jahren Garantie. Vergleichssieger 2026." />
 <link rel="stylesheet" href="../Home/styles-v2.css?v=9" />
-<link rel="stylesheet" href="plp.css?v=10" />
+<link rel="stylesheet" href="plp.css?v=11" />
 </head>
 <body class="plp">
 
@@ -155,6 +155,46 @@
               </aside>
 
             </div>
+
+            <!-- AI ADVISOR — full-width band pinned to the panel bottom -->
+            <section class="mega-ai" data-ai aria-label="KI-Kaufberater">
+              <div class="container mega-ai__inner">
+
+                <!-- Intro -->
+                <div class="mega-ai__intro">
+                  <span class="mega-ai__badge">
+                    <svg class="mega-ai__spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.1 6.3L20 10l-5.9 1.7L12 18l-2.1-6.3L4 10l5.9-1.7z"/></svg>
+                    KI-Kaufberater
+                  </span>
+                  <h3 class="mega-ai__title">Finden statt Suchen</h3>
+                  <p class="mega-ai__sub">Beschreiben Sie Ihr Vorhaben – unser KI-Berater empfiehlt in Sekunden den passenden Briefkasten.</p>
+                </div>
+
+                <!-- Interactive panel -->
+                <form class="mega-ai__panel" data-ai-form novalidate>
+                  <div class="mega-ai__field">
+                    <svg class="mega-ai__field-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.1 6.3L20 10l-5.9 1.7L12 18l-2.1-6.3L4 10l5.9-1.7z"/></svg>
+                    <input type="text" class="mega-ai__input" data-ai-input autocomplete="off"
+                           placeholder="z. B. „Einfamilienhaus, anthrazit, mit Paketfach“"
+                           aria-label="Beschreiben Sie Ihren Wunsch-Briefkasten">
+                    <button type="submit" class="mega-ai__go" data-ai-submit aria-label="Empfehlung anzeigen">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+                    </button>
+                  </div>
+                  <div class="mega-ai__pills">
+                    <span class="mega-ai__pills-label">Beliebt:</span>
+                    <button type="button" class="mega-ai__pill" data-ai-pill>Einfamilienhaus</button>
+                    <button type="button" class="mega-ai__pill" data-ai-pill>Mit Kamera</button>
+                    <button type="button" class="mega-ai__pill" data-ai-pill>Anthrazit</button>
+                    <button type="button" class="mega-ai__pill" data-ai-pill>Mehrfamilienhaus</button>
+                  </div>
+                </form>
+
+                <!-- Results (injected) -->
+                <div class="mega-ai__results" data-ai-results aria-live="polite" hidden></div>
+
+              </div>
+            </section>
           </div>
         </li>
         <li><a href="#">Paketboxen</a></li>
@@ -473,7 +513,7 @@
   </div>
 </footer>
 
-<script src="plp.js?v=10"></script>
+<script src="plp.js?v=11"></script>
 <script>
   /* ===== Header behaviour (ported from home design system) ===== */
   (function(){
