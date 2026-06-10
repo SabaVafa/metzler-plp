@@ -31,9 +31,9 @@
       { key: '3', label: '3 Fächer & mehr', count: 7 }
     ]},
     zeitung: { title: 'zeitung', items: [
-      { key: 'integriert', label: 'Integriert', count: 63 },
-      { key: 'optional', label: 'Optional', count: 9 },
-      { key: 'ohne', label: 'Ohne', count: 8 }
+      { key: 'integriert', label: 'Mit Zeitungsfach', count: 63 },
+      { key: 'ohne', label: 'Nur Briefkasten', count: 8 },
+      { key: 'optional', label: 'Optionales Fach verfügbar', count: 9 }
     ]},
     montage: { title: 'montage', items: [
       { key: 'wand', label: 'Wandmontage', count: 49 },
