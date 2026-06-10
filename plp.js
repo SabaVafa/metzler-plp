@@ -50,6 +50,7 @@
   Object.keys(FACETS).forEach(function (g) {
     FACETS[g].items.forEach(function (it) { LABELS[g + ':' + it.key] = it.label; });
   });
+  LABELS['zusatz:klingel+sprech'] = 'Mit Klingel & Sprechanlage';   /* advisor combined option */
 
   /* ---- Subcategory rail ---- */
   var SUBCATS = [
@@ -217,8 +218,10 @@
     if (active.montage.length && active.montage.indexOf(p.montage) === -1) return false;
     if (active.zusatz.length) {
       /* Extra functions — boolean attributes on the product (p.klingel / p.sprech).
-         OR within the group: any ticked feature the product has qualifies it. */
-      var zOk = active.zusatz.some(function (k) { return !!p[k]; });
+         OR within the group; a "klingel+sprech" key requires BOTH (combined unit). */
+      var zOk = active.zusatz.some(function (k) {
+        return k.indexOf('+') !== -1 ? k.split('+').every(function (x) { return !!p[x]; }) : !!p[k];
+      });
       if (!zOk) return false;
     }
     return true;
@@ -468,25 +471,22 @@
         { label: 'Nur Briefkasten',           group: 'zeitung', value: 'ohne' },
         { label: 'Optionales Fach verfügbar', group: 'zeitung', value: 'optional' }
       ]},
-      { q: '4. Kombiniert mit …?', opts: [
-        { label: 'Klingel',      group: 'zusatz', value: 'klingel' },
-        { label: 'Sprechanlage', group: 'zusatz', value: 'sprech' }
-      ]},
-      { q: '5. Welche Montageart passt zu Ihnen?', opts: [
+      { q: '4. Welche Montageart passt zu Ihnen?', opts: [
         { label: 'Wandmontage',      sub: 'Wall-Mounted',  group: 'montage', value: 'wand' },
         { label: 'Standmontage',     sub: 'Free-Standing', group: 'montage', value: 'stand' },
         { label: 'Unterputzmontage', sub: 'Flush-Mounted', group: 'montage', value: 'unterputz' }
       ]},
-      { q: '6. Welche Zusatzfunktion ist Ihnen wichtig?', opts: [
-        { label: 'Mit Klingel',      group: 'zusatz', value: 'klingel' },
-        { label: 'Mit Sprechanlage', group: 'zusatz', value: 'sprech' }
+      { q: '5. Welche Zusatzfunktion ist Ihnen wichtig?', opts: [
+        { label: 'Mit Klingel',                group: 'zusatz', value: 'klingel' },
+        { label: 'Mit Sprechanlage',           group: 'zusatz', value: 'sprech' },
+        { label: 'Mit Klingel & Sprechanlage', group: 'zusatz', value: 'klingel+sprech' }   /* combined: both */
       ]},
-      { q: '7. Welche Gravuroption wünschen Sie?', opts: [
+      { q: '6. Welche Gravuroption wünschen Sie?', opts: [
         { label: 'Lasergravur',         group: 'pref', value: 'Lasergravur' },
         { label: 'Namensschild',        group: 'pref', value: 'Namensschild' },
         { label: 'Standard-Ausführung', group: 'pref', value: 'Standard-Ausführung' }
       ]},
-      { q: '8. Öffnungsrichtung der Tür?', opts: [
+      { q: '7. Öffnungsrichtung der Tür?', opts: [
         { label: 'Klappbar nach unten', group: 'pref', value: 'Klappbar nach unten' },
         { label: 'Seitlich öffnend', sub: 'Links / Rechts', group: 'pref', value: 'Seitlich öffnend' }
       ]}
@@ -567,7 +567,7 @@
     function sat(p, o) {
       if (o.group === 'color')   return p.colors.indexOf(o.value) !== -1;
       if (o.group === 'faecher') return o.value === 'paketfach' ? !!p.paket : p.faecher === o.value;
-      if (o.group === 'zusatz')  return !!p[o.value];
+      if (o.group === 'zusatz')  return o.value.indexOf('+') !== -1 ? o.value.split('+').every(function (x) { return !!p[x]; }) : !!p[o.value];
       if (o.group === 'zeitung') return p.zeitung === o.value;
       if (o.group === 'montage') return p.montage === o.value;
       return false;
@@ -710,9 +710,9 @@
         var percent = Math.max(82, Math.round(87 + t.ratio * 12) - i);   /* premium, deterministic, strictly descending */
         return recCardHTML(t.p, percent);
       }).join('');
-      var chips = res.kept.map(function (o) { return '<span class="advisor__chip">' + labelFor(o.group, o.value) + '</span>'; });
+      var chips = res.kept.map(function (o) { return '<span class="advisor__chip">' + (o.label || labelFor(o.group, o.value)) + '</span>'; });
       var note = res.dropped.length
-        ? '<p class="advisor__note">Kein exakter Treffer für <em>' + res.dropped.map(function (o) { return labelFor(o.group, o.value); }).join(', ') + '</em> – wir zeigen die besten Alternativen.</p>'
+        ? '<p class="advisor__note">Kein exakter Treffer für <em>' + res.dropped.map(function (o) { return o.label || labelFor(o.group, o.value); }).join(', ') + '</em> – wir zeigen die besten Alternativen.</p>'
         : '';
       var prefs = res.prefs.length
         ? '<p class="advisor__note">Ihre Wünsche notiert: <em>' + res.prefs.map(function (o) { return o.value; }).join(', ') + '</em></p>'
