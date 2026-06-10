@@ -720,11 +720,12 @@
 }
 
 /* ── Intro ── */
-.advisor__badge {                                  /* Teal 100 fill · Teal 700 text — info/accent chip */
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 5px 12px; border-radius: var(--r-pill);
-  background: #E6EEEE; color: var(--teal-700);
-  font-size: var(--text-caption); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; line-height: 1.4;
+.advisor__badge {                                  /* identical to .mega-feature__badge (3D Konfigurator):
+                                                      Digital Schwarz fill, Pure White label, radius-sm, Caption Bold */
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0.25rem 0.5rem; border-radius: var(--r-s);
+  background: var(--schwarz); color: var(--white);
+  font-size: var(--text-caption); font-weight: 700; line-height: 1.4;
 }
 .advisor__spark { width: 13px; height: 13px; fill: currentColor; flex: 0 0 auto; }
 .advisor__title {                                  /* H2 — 1.5rem / 700, Digital Schwarz */
