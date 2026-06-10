@@ -658,7 +658,7 @@
             '<label class="advisor__optin' + (lead.news ? ' is-on' : '') + '">' +
               '<input type="checkbox" data-optin' + (lead.news ? ' checked' : '') + '>' +
               '<span class="advisor__optin-box" aria-hidden="true"></span>' +
-              '<span>Schicken Sie mir Metzler News, Angebote &amp; Tipps.</span>' +
+              '<span>Schicken Sie mir Metzler News &amp; Angebote.</span>' +
             '</label>' +
           '</div>' +
           '<div class="advisor__nav">' +
