@@ -6,7 +6,7 @@
 <title>Briefkästen aus Edelstahl | hochwertig & modern — Metzler</title>
 <meta name="description" content="Premium Briefkästen aus massivem Edelstahl, Made in Germany. Mit individueller Lasergravur, Zeitungsfach & 10 Jahren Garantie. Vergleichssieger 2026." />
 <link rel="stylesheet" href="../Home/styles-v2.css?v=9" />
-<link rel="stylesheet" href="plp.css?v=12" />
+<link rel="stylesheet" href="plp.css?v=14" />
 </head>
 <body class="plp">
 
@@ -241,28 +241,11 @@
           KI-Kaufberater
         </span>
         <h2 class="advisor__title">Finden statt Suchen</h2>
-        <p class="advisor__sub">Beschreiben Sie Ihre Situation – der KI-Berater grenzt die passenden Briefkästen unten automatisch für Sie ein.</p>
+        <p class="advisor__sub">Beantworten Sie ein paar kurze Fragen – der KI-Berater empfiehlt Ihnen die passenden Briefkästen.</p>
       </div>
 
-      <!-- Interactive form -->
-      <form class="advisor__form" data-ai-form novalidate>
-        <div class="advisor__field">
-          <svg class="advisor__field-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.1 6.3L20 10l-5.9 1.7L12 18l-2.1-6.3L4 10l5.9-1.7z"/></svg>
-          <input type="text" class="advisor__input" data-ai-input autocomplete="off"
-                 placeholder="z. B. „Einfamilienhaus in Anthrazit mit Paketfach“"
-                 aria-label="Beschreiben Sie Ihren Wunsch-Briefkasten">
-          <button type="submit" class="advisor__go" data-ai-submit aria-label="Auswahl eingrenzen">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>
-          </button>
-        </div>
-        <div class="advisor__pills">
-          <span class="advisor__pills-label">Beliebt:</span>
-          <button type="button" class="advisor__pill" data-ai-pill data-ai-q="einfamilienhaus">Einfamilienhaus</button>
-          <button type="button" class="advisor__pill" data-ai-pill data-ai-q="mehrfamilienhaus">Mehrfamilienhaus</button>
-          <button type="button" class="advisor__pill" data-ai-pill data-ai-q="mit kamera">Mit Kamera</button>
-          <button type="button" class="advisor__pill" data-ai-pill data-ai-q="anthrazit">Anthrazit</button>
-        </div>
-      </form>
+      <!-- Guided quiz (steps rendered by JS) -->
+      <div class="advisor__quiz" data-ai-quiz></div>
 
       <!-- Result summary (injected) -->
       <div class="advisor__results" data-ai-results aria-live="polite" hidden></div>
@@ -515,7 +498,7 @@
   </div>
 </footer>
 
-<script src="plp.js?v=12"></script>
+<script src="plp.js?v=14"></script>
 <script>
   /* ===== Header behaviour (ported from home design system) ===== */
   (function(){

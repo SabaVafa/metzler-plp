@@ -436,142 +436,168 @@
     mobileMq.addEventListener ? mobileMq.addEventListener('change', sync) : mobileMq.addListener(sync);
   }
 
-  /* ---- KI-Kaufberater: free-text/pill intent → simulated "thinking" →
-         applies real filters to NARROW the catalogue + a summary of what it did ---- */
+  /* ---- KI-Kaufberater: a guided recommendation quiz. Each answer maps to a
+         catalogue facet; the final step "thinks", applies the combined filters
+         to narrow the grid, and summarises the recommendation. ---- */
   function wireAiAdvisor() {
     var root = document.querySelector('[data-ai]');
     if (!root) return;
-    var form    = root.querySelector('[data-ai-form]');
-    var input   = root.querySelector('[data-ai-input]');
-    var pills   = [].slice.call(root.querySelectorAll('[data-ai-pill]'));
+    var quizEl  = root.querySelector('[data-ai-quiz]');
     var results = root.querySelector('[data-ai-results]');
-    var thinkTimer, typeTimer;
+    if (!quizEl) return;
+    var thinkTimer;
 
-    /* Colour words → existing COLORS keys */
-    var COLOR_WORDS = {
-      'anthrazit': 'anthrazit', 'weiß': 'weiss', 'weiss': 'weiss', 'grau': 'grau',
-      'schwarz': 'schwarz', 'edelstahl': 'edelstahl', 'eisenglimmer': 'eisenglimmer', 'braun': 'braun'
-    };
+    /* Each option carries the facet (group/value) it maps to; group:null = "no preference". */
+    var QUIZ = [
+      { q: 'Für wie viele Haushalte suchen Sie einen Briefkasten?', opts: [
+        { label: 'Einfamilienhaus',  sub: '1 Briefkasten', group: 'faecher', value: '1' },
+        { label: '2 Parteien',       sub: 'Doppel',        group: 'faecher', value: '2' },
+        { label: 'Mehrfamilienhaus', sub: '3+ Fächer',     group: 'faecher', value: '3' }
+      ]},
+      { q: 'Wie soll der Briefkasten montiert werden?', opts: [
+        { label: 'An der Wand', sub: 'Aufputz',      group: 'montage', value: 'wand' },
+        { label: 'Freistehend', sub: 'mit Standfuß', group: 'montage', value: 'stand' },
+        { label: 'Unterputz',   sub: 'wandbündig',   group: 'montage', value: 'unterputz' },
+        { label: 'Noch offen',  sub: '',             group: null,      value: null }
+      ]},
+      { q: 'Welche Zusatzfunktion ist Ihnen am wichtigsten?', opts: [
+        { label: 'Kamera & Sprechanlage', sub: 'Gegensprechanlage', group: 'zusatz',  value: 'sprech' },
+        { label: 'Paketfach',             sub: 'für Pakete',        group: 'faecher', value: 'paketfach' },
+        { label: 'Zeitungsfach',          sub: 'integriert',        group: 'zeitung', value: 'integriert' },
+        { label: 'Keine',                 sub: '',                  group: null,      value: null }
+      ]},
+      { q: 'Welche Farbe bevorzugen Sie?', opts: [
+        { label: 'Anthrazit', group: 'color', value: 'anthrazit' },
+        { label: 'Edelstahl', group: 'color', value: 'edelstahl' },
+        { label: 'Weiß',      group: 'color', value: 'weiss' },
+        { label: 'Egal',      group: null,    value: null }
+      ]}
+    ];
 
-    /* Map a free-text query to concrete filter selections (same keys the
-       sidebar facets use, so the existing engine narrows the grid). */
-    function parseIntent(q) {
-      q = ' ' + (q || '').toLowerCase() + ' ';
-      var sel = { color: [], zeitung: [], faecher: [], montage: [], zusatz: [] };
-      var push = function (g, k) { if (sel[g].indexOf(k) === -1) sel[g].push(k); };
+    var step = 0;
+    var picks = [];   /* picks[i] = chosen option object for step i */
 
-      Object.keys(COLOR_WORDS).forEach(function (w) { if (q.indexOf(w) !== -1) push('color', COLOR_WORDS[w]); });
-
-      if (/einfamilien|einzelhaus|\bein\b.*haus|\b1\s?fach\b/.test(q)) push('faecher', '1');
-      if (/mehrfamilien|parteien|wohneinheit|wohnungen|\banlage\b/.test(q)) push('faecher', '3');
-      if (/doppel|2\s?parteien|zwei\s?parteien/.test(q)) push('faecher', '2');
-      if (/paket/.test(q)) push('faecher', 'paketfach');
-
-      if (/kamera|video|gegensprech|sprechanlage|\bsprech|klingel/.test(q)) push('zusatz', 'sprech');
-
-      if (/zeitungsfach|zeitung/.test(q)) push('zeitung', 'integriert');
-      if (/ohne zeitung|nur briefkasten/.test(q)) { sel.zeitung = ['ohne']; }
-
-      if (/freistehend|standbrief|standfu|mit\s?fuß|garten|stand\b/.test(q)) push('montage', 'stand');
-      if (/unterputz|wandbündig|bündig|einbau/.test(q)) push('montage', 'unterputz');
-      if (/aufputz|wandmontage|an die wand|an der wand/.test(q)) push('montage', 'wand');
-
-      return sel;
-    }
-
-    /* Human-readable label for an applied filter (reuses COLORS / FACETS). */
     function labelFor(group, key) {
       if (group === 'color') return (COLORS[key] && COLORS[key].label) || key;
       var items = (FACETS[group] && FACETS[group].items) || [];
       for (var i = 0; i < items.length; i++) if (items[i].key === key) return items[i].label;
       return key;
     }
-
-    /* Replace the active filters with the parsed selection and re-render. */
-    function applyIntent(sel) {
-      Object.keys(active).forEach(function (g) { active[g] = []; });
-      Object.keys(sel).forEach(function (g) {
-        if (!active[g]) return;
-        sel[g].forEach(function (k) { if (active[g].indexOf(k) === -1) active[g].push(k); });
-      });
-      page = 1;
-      syncControls();
-      render();
+    /* Apply the picks; if the full AND-combination has no match, progressively
+       relax the lowest-priority answer (colour first, household last) so the
+       advisor always returns a recommendation. Returns {kept, dropped, count}. */
+    function applyPicks() {
+      var priority = ['faecher', 'zusatz', 'montage', 'zeitung', 'color']; /* later = dropped first */
+      var sel = [];
+      picks.forEach(function (o) { if (o && o.group) sel.push(o); });
+      function setActive(list) {
+        Object.keys(active).forEach(function (g) { active[g] = []; });
+        list.forEach(function (o) { if (active[o.group] && active[o.group].indexOf(o.value) === -1) active[o.group].push(o.value); });
+        page = 1; syncControls(); render();
+        return PRODUCTS.filter(matches).length;
+      }
+      var current = sel.slice(), dropped = [];
+      var count = setActive(current);
+      while (count === 0 && current.length) {
+        var worst = 0, worstPri = -1;
+        current.forEach(function (o, i) {
+          var p = priority.indexOf(o.group); if (p === -1) p = 99;
+          if (p > worstPri) { worstPri = p; worst = i; }
+        });
+        dropped.push(current[worst]);
+        current.splice(worst, 1);
+        count = setActive(current);
+      }
+      return { kept: current, dropped: dropped, count: count };
     }
-
     function scrollToGrid() {
       var top = $('#grid').getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
     }
 
-    function summaryHTML(sel, count) {
-      var chips = [];
-      Object.keys(sel).forEach(function (g) {
-        sel[g].forEach(function (k) { chips.push('<span class="advisor__chip">' + labelFor(g, k) + '</span>'); });
+    function renderStep() {
+      results.hidden = true; results.innerHTML = '';
+      var s = QUIZ[step];
+      var dots = QUIZ.map(function (_, i) {
+        return '<span class="' + (i < step ? 'is-done' : (i === step ? 'is-current' : '')) + '"></span>';
+      }).join('');
+      var opts = s.opts.map(function (o, i) {
+        var on = (picks[step] && picks[step].label === o.label) ? ' is-active' : '';
+        return '<button type="button" class="advisor__opt' + on + '" data-opt="' + i + '">' +
+          '<span class="advisor__opt-label">' + o.label + '</span>' +
+          (o.sub ? '<span class="advisor__opt-sub">' + o.sub + '</span>' : '') +
+        '</button>';
+      }).join('');
+      quizEl.innerHTML =
+        '<div class="advisor__step">' +
+          '<div class="advisor__progress">' +
+            '<span class="advisor__progress-dots">' + dots + '</span>' +
+            '<span class="advisor__progress-label">Schritt ' + (step + 1) + ' von ' + QUIZ.length + '</span>' +
+          '</div>' +
+          '<h3 class="advisor__q">' + s.q + '</h3>' +
+          '<div class="advisor__opts">' + opts + '</div>' +
+          (step > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '') +
+        '</div>';
+      var stepEl = quizEl.querySelector('.advisor__step');
+      requestAnimationFrame(function () { stepEl.classList.add('is-in'); });
+
+      quizEl.querySelectorAll('[data-opt]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          picks[step] = s.opts[+btn.getAttribute('data-opt')];
+          if (step < QUIZ.length - 1) { step++; renderStep(); }
+          else finish();
+        });
       });
-      if (!chips.length) {
-        return '<div class="advisor__summary">' +
-          '<p class="advisor__summary-text">Ich konnte noch keine klaren Kriterien erkennen – versuchen Sie z. B. „anthrazit mit Kamera“ oder eine der Empfehlungen.</p></div>';
-      }
+      var back = quizEl.querySelector('[data-back]');
+      if (back) back.addEventListener('click', function () { if (step > 0) { step--; renderStep(); } });
+    }
+
+    function summaryHTML(res) {
+      var chips = res.kept.map(function (o) { return '<span class="advisor__chip">' + labelFor(o.group, o.value) + '</span>'; });
+      var text = res.kept.length
+        ? '<strong>' + res.count + '</strong> passende ' + (res.count === 1 ? 'Empfehlung' : 'Empfehlungen') + ' für Sie:'
+        : 'Hier ist unsere gesamte Auswahl – verfeinern Sie sie jederzeit über die Filter.';
+      var note = res.dropped.length
+        ? '<p class="advisor__note">Kein exakter Treffer für <em>' +
+            res.dropped.map(function (o) { return labelFor(o.group, o.value); }).join(', ') +
+            '</em> – wir zeigen die besten Alternativen.</p>'
+        : '';
       return '<div class="advisor__summary">' +
-        '<p class="advisor__summary-text"><strong>' + count + '</strong> passende ' + (count === 1 ? 'Modell' : 'Modelle') + ' für Sie eingegrenzt:</p>' +
-        '<div class="advisor__chips">' + chips.join('') + '</div>' +
+        '<p class="advisor__summary-text">' + text + '</p>' +
+        (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '') +
+        note +
         '<div class="advisor__actions">' +
           '<button type="button" class="advisor__view" data-ai-view>Auswahl ansehen</button>' +
-          '<button type="button" class="advisor__reset" data-ai-reset>Neu starten</button>' +
+          '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>' +
         '</div></div>';
     }
 
-    function run(q) {
+    function finish() {
       clearTimeout(thinkTimer);
+      quizEl.innerHTML = '';
       results.hidden = false;
-      results.innerHTML =
-        '<div class="advisor__thinking"><span class="advisor__dots"><i></i><i></i><i></i></span>' +
-        '<span>KI grenzt die passenden Briefkästen ein…</span></div>';
+      results.innerHTML = '<div class="advisor__thinking"><span class="advisor__dots"><i></i><i></i><i></i></span>' +
+        '<span>KI ermittelt Ihre Empfehlungen…</span></div>';
       thinkTimer = setTimeout(function () {
-        var sel = parseIntent(q);
-        applyIntent(sel);
-        var count = PRODUCTS.filter(matches).length;
-        results.innerHTML = summaryHTML(sel, count);
+        var res = applyPicks();
+        results.innerHTML = summaryHTML(res);
         var sum = results.querySelector('.advisor__summary');
         requestAnimationFrame(function () { if (sum) sum.classList.add('is-in'); });
-
         var view = results.querySelector('[data-ai-view]');
         if (view) view.addEventListener('click', scrollToGrid);
         var reset = results.querySelector('[data-ai-reset]');
-        if (reset) reset.addEventListener('click', function () {
-          pills.forEach(function (x) { x.classList.remove('is-active'); });
-          input.value = '';
-          clearAll();                 /* clears active filters + re-renders the full grid */
-          results.hidden = true;
-          results.innerHTML = '';
-          input.focus();
-        });
+        if (reset) reset.addEventListener('click', restart);
       }, 1050);
     }
 
-    function queryOf(p) { return p.getAttribute('data-ai-q') || p.textContent.trim(); }
+    function restart() {
+      step = 0; picks = [];
+      clearAll();                 /* clears active filters + re-renders the full grid */
+      results.hidden = true; results.innerHTML = '';
+      renderStep();
+    }
 
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (input.value.trim()) run(input.value);
-    });
-    pills.forEach(function (p) {
-      p.addEventListener('click', function () {
-        pills.forEach(function (x) { x.classList.remove('is-active'); });
-        p.classList.add('is-active');
-        input.value = p.textContent.trim();
-        run(queryOf(p));
-      });
-    });
-    /* As-you-type: debounced so the "thinking" state feels intentional, not jittery. */
-    input.addEventListener('input', function () {
-      clearTimeout(typeTimer);
-      pills.forEach(function (x) { x.classList.remove('is-active'); });
-      var v = input.value.trim();
-      if (v.length < 3) return;
-      typeTimer = setTimeout(function () { run(v); }, 700);
-    });
+    renderStep();
   }
 
   /* ---- SEO "Mehr lesen" toggle ---- */
