@@ -436,7 +436,8 @@
     mobileMq.addEventListener ? mobileMq.addEventListener('change', sync) : mobileMq.addListener(sync);
   }
 
-  /* ---- KI-Kaufberater: input + pills → simulated "thinking" → 2 recommendations ---- */
+  /* ---- KI-Kaufberater: free-text/pill intent → simulated "thinking" →
+         applies real filters to NARROW the catalogue + a summary of what it did ---- */
   function wireAiAdvisor() {
     var root = document.querySelector('[data-ai]');
     if (!root) return;
@@ -446,54 +447,110 @@
     var results = root.querySelector('[data-ai-results]');
     var thinkTimer, typeTimer;
 
-    /* Mock recommendation catalogue, matched loosely by intent keywords. */
-    var REX = {
-      kamera: [
-        { name: 'Briefkasten mit Klingel & Sprechanlage | Vossberg', tag: 'Mit Video-Gegensprechanlage', price: '299,00 €', img: 'Product%20Image/Briefkasten%20mit%20Klingel%20%26%20Sprechanlage.webp' },
-        { name: 'Mehrfamilien-Anlage mit Klingelpanel | Trias',       tag: 'Kamera-ready',                price: '349,00 €', old: '399,00 €', img: 'Product%20Image/Mehrfamilien%20Briefk%C3%A4sten.webp' }
-      ],
-      mehr: [
-        { name: 'Mehrfamilien-Briefkastenanlage | 3 Parteien | Trias', tag: 'Für Mehrparteienhäuser', price: '349,00 €', old: '399,00 €', img: 'Product%20Image/Mehrfamilien%20Briefk%C3%A4sten.webp' },
-        { name: 'Briefkastenanlage | 4 Parteien | Quartett',           tag: 'Modular erweiterbar',     price: '459,00 €', img: 'Product%20Image/Standbriefk%C3%A4sten.webp' }
-      ],
-      stand: [
-        { name: 'Standbriefkasten mit Zeitungsfach | Lessing', tag: 'Freistehend, mit Standfuß', price: '199,00 €', img: 'Product%20Image/Standbriefk%C3%A4sten.webp' },
-        { name: 'Edelstahl-Briefkasten V4A | Nordkap',         tag: 'Salzwasserfest',           price: '219,00 €', img: 'Product%20Image/image%2068.png' }
-      ],
-      'default': [
-        { name: 'Briefkasten aus Edelstahl | personalisiert | Moris', tag: 'Top-Empfehlung',                 price: '149,00 €', img: 'Product%20Image/image%2068.png' },
-        { name: 'Standbriefkasten mit Zeitungsfach | Lessing',         tag: 'Beliebt für Einfamilienhäuser', price: '199,00 €', img: 'Product%20Image/Standbriefk%C3%A4sten.webp' }
-      ]
+    /* Colour words → existing COLORS keys */
+    var COLOR_WORDS = {
+      'anthrazit': 'anthrazit', 'weiß': 'weiss', 'weiss': 'weiss', 'grau': 'grau',
+      'schwarz': 'schwarz', 'edelstahl': 'edelstahl', 'eisenglimmer': 'eisenglimmer', 'braun': 'braun'
     };
-    function pick(q) {
-      q = (q || '').toLowerCase();
-      if (/kamera|video|sprech|klingel/.test(q))      return REX.kamera;
-      if (/mehrfamilien|anlage|parteien|wohnungen/.test(q)) return REX.mehr;
-      if (/stand|freistehend|standfu|garten/.test(q)) return REX.stand;
-      return REX['default'];
+
+    /* Map a free-text query to concrete filter selections (same keys the
+       sidebar facets use, so the existing engine narrows the grid). */
+    function parseIntent(q) {
+      q = ' ' + (q || '').toLowerCase() + ' ';
+      var sel = { color: [], zeitung: [], faecher: [], montage: [], zusatz: [] };
+      var push = function (g, k) { if (sel[g].indexOf(k) === -1) sel[g].push(k); };
+
+      Object.keys(COLOR_WORDS).forEach(function (w) { if (q.indexOf(w) !== -1) push('color', COLOR_WORDS[w]); });
+
+      if (/einfamilien|einzelhaus|\bein\b.*haus|\b1\s?fach\b/.test(q)) push('faecher', '1');
+      if (/mehrfamilien|parteien|wohneinheit|wohnungen|\banlage\b/.test(q)) push('faecher', '3');
+      if (/doppel|2\s?parteien|zwei\s?parteien/.test(q)) push('faecher', '2');
+      if (/paket/.test(q)) push('faecher', 'paketfach');
+
+      if (/kamera|video|gegensprech|sprechanlage|\bsprech|klingel/.test(q)) push('zusatz', 'sprech');
+
+      if (/zeitungsfach|zeitung/.test(q)) push('zeitung', 'integriert');
+      if (/ohne zeitung|nur briefkasten/.test(q)) { sel.zeitung = ['ohne']; }
+
+      if (/freistehend|standbrief|standfu|mit\s?fuß|garten|stand\b/.test(q)) push('montage', 'stand');
+      if (/unterputz|wandbündig|bündig|einbau/.test(q)) push('montage', 'unterputz');
+      if (/aufputz|wandmontage|an die wand|an der wand/.test(q)) push('montage', 'wand');
+
+      return sel;
     }
-    function recHTML(r) {
-      return '<a class="mega-ai__rec" href="#grid">' +
-        '<span class="mega-ai__rec-media"><img src="' + r.img + '" alt="" loading="lazy"></span>' +
-        '<span class="mega-ai__rec-body">' +
-          '<span class="mega-ai__rec-tag">' + r.tag + '</span>' +
-          '<span class="mega-ai__rec-name">' + r.name + '</span>' +
-          '<span class="mega-ai__rec-price">' + r.price + (r.old ? '<s>' + r.old + '</s>' : '') + '</span>' +
-        '</span></a>';
+
+    /* Human-readable label for an applied filter (reuses COLORS / FACETS). */
+    function labelFor(group, key) {
+      if (group === 'color') return (COLORS[key] && COLORS[key].label) || key;
+      var items = (FACETS[group] && FACETS[group].items) || [];
+      for (var i = 0; i < items.length; i++) if (items[i].key === key) return items[i].label;
+      return key;
     }
+
+    /* Replace the active filters with the parsed selection and re-render. */
+    function applyIntent(sel) {
+      Object.keys(active).forEach(function (g) { active[g] = []; });
+      Object.keys(sel).forEach(function (g) {
+        if (!active[g]) return;
+        sel[g].forEach(function (k) { if (active[g].indexOf(k) === -1) active[g].push(k); });
+      });
+      page = 1;
+      syncControls();
+      render();
+    }
+
+    function scrollToGrid() {
+      var top = $('#grid').getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    }
+
+    function summaryHTML(sel, count) {
+      var chips = [];
+      Object.keys(sel).forEach(function (g) {
+        sel[g].forEach(function (k) { chips.push('<span class="advisor__chip">' + labelFor(g, k) + '</span>'); });
+      });
+      if (!chips.length) {
+        return '<div class="advisor__summary">' +
+          '<p class="advisor__summary-text">Ich konnte noch keine klaren Kriterien erkennen – versuchen Sie z. B. „anthrazit mit Kamera“ oder eine der Empfehlungen.</p></div>';
+      }
+      return '<div class="advisor__summary">' +
+        '<p class="advisor__summary-text"><strong>' + count + '</strong> passende ' + (count === 1 ? 'Modell' : 'Modelle') + ' für Sie eingegrenzt:</p>' +
+        '<div class="advisor__chips">' + chips.join('') + '</div>' +
+        '<div class="advisor__actions">' +
+          '<button type="button" class="advisor__view" data-ai-view>Auswahl ansehen</button>' +
+          '<button type="button" class="advisor__reset" data-ai-reset>Neu starten</button>' +
+        '</div></div>';
+    }
+
     function run(q) {
       clearTimeout(thinkTimer);
       results.hidden = false;
       results.innerHTML =
-        '<div class="mega-ai__thinking"><span class="mega-ai__dots"><i></i><i></i><i></i></span>' +
-        '<span>KI analysiert Ihre Anforderungen…</span></div>';
+        '<div class="advisor__thinking"><span class="advisor__dots"><i></i><i></i><i></i></span>' +
+        '<span>KI grenzt die passenden Briefkästen ein…</span></div>';
       thinkTimer = setTimeout(function () {
-        var recs = pick(q);
-        results.innerHTML = '<div class="mega-ai__slots">' + recs.map(recHTML).join('') + '</div>';
-        var slots = results.querySelector('.mega-ai__slots');
-        requestAnimationFrame(function () { if (slots) slots.classList.add('is-in'); });
-      }, 1150);
+        var sel = parseIntent(q);
+        applyIntent(sel);
+        var count = PRODUCTS.filter(matches).length;
+        results.innerHTML = summaryHTML(sel, count);
+        var sum = results.querySelector('.advisor__summary');
+        requestAnimationFrame(function () { if (sum) sum.classList.add('is-in'); });
+
+        var view = results.querySelector('[data-ai-view]');
+        if (view) view.addEventListener('click', scrollToGrid);
+        var reset = results.querySelector('[data-ai-reset]');
+        if (reset) reset.addEventListener('click', function () {
+          pills.forEach(function (x) { x.classList.remove('is-active'); });
+          input.value = '';
+          clearAll();                 /* clears active filters + re-renders the full grid */
+          results.hidden = true;
+          results.innerHTML = '';
+          input.focus();
+        });
+      }, 1050);
     }
+
+    function queryOf(p) { return p.getAttribute('data-ai-q') || p.textContent.trim(); }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -504,7 +561,7 @@
         pills.forEach(function (x) { x.classList.remove('is-active'); });
         p.classList.add('is-active');
         input.value = p.textContent.trim();
-        run(input.value);
+        run(queryOf(p));
       });
     });
     /* As-you-type: debounced so the "thinking" state feels intentional, not jittery. */

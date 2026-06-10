@@ -6,7 +6,7 @@
 <title>Briefkästen aus Edelstahl | hochwertig & modern — Metzler</title>
 <meta name="description" content="Premium Briefkästen aus massivem Edelstahl, Made in Germany. Mit individueller Lasergravur, Zeitungsfach & 10 Jahren Garantie. Vergleichssieger 2026." />
 <link rel="stylesheet" href="../Home/styles-v2.css?v=9" />
-<link rel="stylesheet" href="plp.css?v=11" />
+<link rel="stylesheet" href="plp.css?v=12" />
 </head>
 <body class="plp">
 
@@ -155,46 +155,6 @@
               </aside>
 
             </div>
-
-            <!-- AI ADVISOR — full-width band pinned to the panel bottom -->
-            <section class="mega-ai" data-ai aria-label="KI-Kaufberater">
-              <div class="container mega-ai__inner">
-
-                <!-- Intro -->
-                <div class="mega-ai__intro">
-                  <span class="mega-ai__badge">
-                    <svg class="mega-ai__spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.1 6.3L20 10l-5.9 1.7L12 18l-2.1-6.3L4 10l5.9-1.7z"/></svg>
-                    KI-Kaufberater
-                  </span>
-                  <h3 class="mega-ai__title">Finden statt Suchen</h3>
-                  <p class="mega-ai__sub">Beschreiben Sie Ihr Vorhaben – unser KI-Berater empfiehlt in Sekunden den passenden Briefkasten.</p>
-                </div>
-
-                <!-- Interactive panel -->
-                <form class="mega-ai__panel" data-ai-form novalidate>
-                  <div class="mega-ai__field">
-                    <svg class="mega-ai__field-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.1 6.3L20 10l-5.9 1.7L12 18l-2.1-6.3L4 10l5.9-1.7z"/></svg>
-                    <input type="text" class="mega-ai__input" data-ai-input autocomplete="off"
-                           placeholder="z. B. „Einfamilienhaus, anthrazit, mit Paketfach“"
-                           aria-label="Beschreiben Sie Ihren Wunsch-Briefkasten">
-                    <button type="submit" class="mega-ai__go" data-ai-submit aria-label="Empfehlung anzeigen">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>
-                    </button>
-                  </div>
-                  <div class="mega-ai__pills">
-                    <span class="mega-ai__pills-label">Beliebt:</span>
-                    <button type="button" class="mega-ai__pill" data-ai-pill>Einfamilienhaus</button>
-                    <button type="button" class="mega-ai__pill" data-ai-pill>Mit Kamera</button>
-                    <button type="button" class="mega-ai__pill" data-ai-pill>Anthrazit</button>
-                    <button type="button" class="mega-ai__pill" data-ai-pill>Mehrfamilienhaus</button>
-                  </div>
-                </form>
-
-                <!-- Results (injected) -->
-                <div class="mega-ai__results" data-ai-results aria-live="polite" hidden></div>
-
-              </div>
-            </section>
           </div>
         </li>
         <li><a href="#">Paketboxen</a></li>
@@ -265,6 +225,48 @@
         <!-- tiles injected by JS -->
       </div>
       <button class="subnav__arrow subnav__arrow--next" data-sub-scroll="next" aria-label="Weiter"><svg><use href="#i-chevron-right"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== KI-KAUFBERATER (narrows the catalogue below) ===== -->
+<section class="advisor" data-ai aria-label="KI-Kaufberater">
+  <div class="container">
+    <div class="advisor__card">
+
+      <!-- Intro -->
+      <div class="advisor__head">
+        <span class="advisor__badge">
+          <svg class="advisor__spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.1 6.3L20 10l-5.9 1.7L12 18l-2.1-6.3L4 10l5.9-1.7z"/></svg>
+          KI-Kaufberater
+        </span>
+        <h2 class="advisor__title">Finden statt Suchen</h2>
+        <p class="advisor__sub">Beschreiben Sie Ihre Situation – der KI-Berater grenzt die passenden Briefkästen unten automatisch für Sie ein.</p>
+      </div>
+
+      <!-- Interactive form -->
+      <form class="advisor__form" data-ai-form novalidate>
+        <div class="advisor__field">
+          <svg class="advisor__field-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.1 6.3L20 10l-5.9 1.7L12 18l-2.1-6.3L4 10l5.9-1.7z"/></svg>
+          <input type="text" class="advisor__input" data-ai-input autocomplete="off"
+                 placeholder="z. B. „Einfamilienhaus in Anthrazit mit Paketfach“"
+                 aria-label="Beschreiben Sie Ihren Wunsch-Briefkasten">
+          <button type="submit" class="advisor__go" data-ai-submit aria-label="Auswahl eingrenzen">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </button>
+        </div>
+        <div class="advisor__pills">
+          <span class="advisor__pills-label">Beliebt:</span>
+          <button type="button" class="advisor__pill" data-ai-pill data-ai-q="einfamilienhaus">Einfamilienhaus</button>
+          <button type="button" class="advisor__pill" data-ai-pill data-ai-q="mehrfamilienhaus">Mehrfamilienhaus</button>
+          <button type="button" class="advisor__pill" data-ai-pill data-ai-q="mit kamera">Mit Kamera</button>
+          <button type="button" class="advisor__pill" data-ai-pill data-ai-q="anthrazit">Anthrazit</button>
+        </div>
+      </form>
+
+      <!-- Result summary (injected) -->
+      <div class="advisor__results" data-ai-results aria-live="polite" hidden></div>
+
     </div>
   </div>
 </section>
@@ -513,7 +515,7 @@
   </div>
 </footer>
 
-<script src="plp.js?v=11"></script>
+<script src="plp.js?v=12"></script>
 <script>
   /* ===== Header behaviour (ported from home design system) ===== */
   (function(){
