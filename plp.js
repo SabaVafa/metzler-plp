@@ -477,8 +477,7 @@
         { label: 'Unterputzmontage', sub: 'Flush-Mounted', group: 'montage', value: 'unterputz' }
       ]},
       { q: '5. Welche Zusatzfunktion ist Ihnen wichtig?', opts: [
-        { label: 'Mit Klingel',                group: 'zusatz', value: 'klingel' },
-        { label: 'Mit Sprechanlage',           group: 'zusatz', value: 'sprech' },
+        { label: 'Mit Funkklingel',            group: 'zusatz', value: 'klingel' },
         { label: 'Mit Klingel & Sprechanlage', group: 'zusatz', value: 'klingel+sprech' }   /* combined: both */
       ]},
       { q: '6. Welche Gravuroption wünschen Sie?', opts: [
