@@ -673,16 +673,18 @@
       var capture =
         '<div class="advisor__capture" data-result-capture>' +
           '<p class="advisor__capture-q">Empfehlung per E-Mail erhalten?</p>' +
-          '<div class="advisor__field">' +
-            '<svg class="advisor__field-ico advisor__field-ico--mail" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>' +
-            '<input type="email" class="advisor__input" data-email autocomplete="email" placeholder="E-Mail-Adresse eingeben" aria-label="E-Mail-Adresse">' +
+          '<div class="advisor__capture-row">' +
+            '<div class="advisor__field">' +
+              '<svg class="advisor__field-ico advisor__field-ico--mail" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>' +
+              '<input type="email" class="advisor__input" data-email autocomplete="email" placeholder="E-Mail-Adresse eingeben" aria-label="E-Mail-Adresse">' +
+            '</div>' +
+            '<label class="advisor__optin">' +
+              '<input type="checkbox" data-optin>' +
+              '<span class="advisor__optin-box" aria-hidden="true"></span>' +
+              '<span>Schicken Sie mir Metzler News &amp; Angebote.</span>' +
+            '</label>' +
             '<button type="button" class="advisor__send" data-email-send aria-label="Empfehlung senden"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
-          '<label class="advisor__optin">' +
-            '<input type="checkbox" data-optin>' +
-            '<span class="advisor__optin-box" aria-hidden="true"></span>' +
-            '<span>Schicken Sie mir Metzler News &amp; Angebote.</span>' +
-          '</label>' +
         '</div>';
       return '<div class="advisor__result">' +
         '<div class="advisor__result-head"><h3 class="advisor__result-title">' + headText + '</h3></div>' +

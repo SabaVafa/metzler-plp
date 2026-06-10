@@ -782,7 +782,7 @@
 /* ── Final step: e-mail capture — DS .form-control treatment ── */
 .advisor__capture { display: flex; flex-direction: column; gap: var(--sp-3); }
 .advisor__field {
-  display: flex; align-items: center; gap: var(--sp-3); padding: 4px 4px 4px 0.9375rem;
+  display: flex; align-items: center; gap: var(--sp-3); padding: 0 0.9375rem;
   background: var(--white); border: 1px solid var(--graphite-300); border-radius: var(--r-m);   /* input: 1px Graphite 300, radius 4px */
   transition: border-color .15s ease;
 }
@@ -811,15 +811,24 @@
 /* E-mail capture on the result screen */
 .advisor__result .advisor__capture { padding-top: var(--sp-4); border-top: 1px solid var(--graphite-300); }
 .advisor__capture-q { margin: 0; font-size: var(--text-body-sm); font-weight: 700; color: var(--schwarz); }
+/* Field + opt-in + shared send button on one line */
+.advisor__capture-row { display: flex; align-items: stretch; gap: var(--sp-3); }
+.advisor__capture-row .advisor__field { flex: 1 1 auto; }
+.advisor__capture-row .advisor__optin { flex: 0 1 auto; }
 .advisor__send {
-  flex: 0 0 auto; display: grid; place-items: center;
-  width: 34px; height: 34px; border: 0; border-radius: var(--r-m);
+  flex: 0 0 auto; align-self: stretch; display: grid; place-items: center;
+  width: 48px; border: 0; border-radius: var(--r-m);
   background: var(--teal); color: var(--white); cursor: pointer;
   transition: background .15s ease;
 }
 .advisor__send:hover { background: var(--teal-600); }
-.advisor__send svg { width: 20px; height: 20px; stroke-width: 1.5; }
+.advisor__send svg { width: 22px; height: 22px; stroke-width: 1.5; }
 .advisor__sent { margin: 0; }
+@media (max-width: 760px) {
+  .advisor__capture-row { flex-wrap: wrap; }
+  .advisor__capture-row .advisor__field { flex: 1 1 100%; }
+  .advisor__capture-row .advisor__optin { flex: 1 1 auto; }
+}
 
 /* ── Buttons — DS .btn-primary / .btn-secondary semantics ── */
 .advisor__next, .advisor__view {                   /* .btn-primary — Teal 500 fill, white */
