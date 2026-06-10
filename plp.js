@@ -539,6 +539,54 @@
       window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
     }
 
+    /* Fluid phase change: fade-and-slide the current step out, THEN run fn
+       (which renders the next phase and fades it in). No instant swap. */
+    function go(fn) {
+      var cur = quizEl.querySelector('.advisor__step');
+      if (cur) { cur.classList.remove('is-in'); cur.classList.add('is-out'); setTimeout(fn, 190); }
+      else fn();
+    }
+
+    /* ── Recommendation-card helpers ── */
+    function fmtPrice(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
+    var MAT = { edelstahl: 'Edelstahl V4A', stahl: 'Pulverbeschichteter Stahl', acrylglas: 'Acrylglas-Front' };
+    function specsOf(p) {
+      return [
+        MAT[p.material] || p.material,
+        labelFor('faecher', p.faecher) + (p.paket ? ' · inkl. Paketfach' : ''),
+        labelFor('montage', p.montage) + ' · ' + labelFor('zeitung', p.zeitung)
+      ];
+    }
+    function pickImg(p) {
+      if (p.montage === 'stand')      return 'Product%20Image/Standbriefk%C3%A4sten.webp';
+      if (p.faecher === '3')          return 'Product%20Image/Mehrfamilien%20Briefk%C3%A4sten.webp';
+      if (p.montage === 'unterputz')  return 'Product%20Image/Unterputz%20Briefk%C3%A4sten.webp';
+      return 'Product%20Image/image%2068.png';
+    }
+    /* Does product p satisfy a single facet pick? (mirrors matches()) */
+    function sat(p, o) {
+      if (o.group === 'color')   return p.colors.indexOf(o.value) !== -1;
+      if (o.group === 'faecher') return o.value === 'paketfach' ? !!p.paket : p.faecher === o.value;
+      if (o.group === 'zusatz')  return !!p[o.value];
+      if (o.group === 'zeitung') return p.zeitung === o.value;
+      if (o.group === 'montage') return p.montage === o.value;
+      return false;
+    }
+    function recCardHTML(p, percent) {
+      return '<article class="advisor__rec">' +
+        '<div class="advisor__rec-top">' +
+          '<span class="advisor__rec-thumb"><img src="' + pickImg(p) + '" alt="" loading="lazy"></span>' +
+          '<div class="advisor__rec-info">' +
+            '<span class="advisor__match">' + percent + '% Passend für Sie</span>' +
+            '<span class="advisor__rec-name">' + p.name + '</span>' +
+            '<span class="advisor__rec-price">' + fmtPrice(p.price) + (p.uvp ? '<s>' + fmtPrice(p.uvp) + '</s>' : '') + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<ul class="advisor__rec-specs">' + specsOf(p).map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ul>' +
+        '<a class="advisor__details" href="#grid" data-details>Details anzeigen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><use href="#i-chevron-right"/></svg></a>' +
+      '</article>';
+    }
+
     /* Shared progress-dots strip (questions + the capture screen). */
     function dotsHTML() {
       var out = '';
@@ -577,13 +625,13 @@
       quizEl.querySelectorAll('[data-opt]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           picks[step] = s.opts[+btn.getAttribute('data-opt')];
-          step++; renderStep();   /* past the last question → capture screen */
+          go(function () { step++; renderStep(); });   /* past the last question → capture screen */
         });
       });
       var back = quizEl.querySelector('[data-back]');
-      if (back) back.addEventListener('click', function () { if (step > 0) { step--; renderStep(); } });
+      if (back) back.addEventListener('click', function () { if (step > 0) go(function () { step--; renderStep(); }); });
       var skip = quizEl.querySelector('[data-skip]');
-      if (skip) skip.addEventListener('click', function () { picks[step] = null; step++; renderStep(); });
+      if (skip) skip.addEventListener('click', function () { picks[step] = null; go(function () { step++; renderStep(); }); });
     }
 
     /* Final screen — optional e-mail capture, then → finish(). */
@@ -624,36 +672,53 @@
       quizEl.querySelector('[data-next]').addEventListener('click', function () {
         lead.email = emailEl.value.trim();
         lead.news = optinEl.checked;
-        finish();
+        go(finish);
       });
-      quizEl.querySelector('[data-back]').addEventListener('click', function () { step--; renderStep(); });
-      quizEl.querySelector('[data-skip]').addEventListener('click', function () { lead.email = ''; lead.news = false; finish(); });
+      quizEl.querySelector('[data-back]').addEventListener('click', function () { go(function () { step--; renderStep(); }); });
+      quizEl.querySelector('[data-skip]').addEventListener('click', function () { lead.email = ''; lead.news = false; go(finish); });
     }
 
-    function summaryHTML(res) {
+    /* Premium loader: pulsing geometric wave + shimmer skeleton cards. */
+    function loaderHTML() {
+      var sk = '<div class="adv-sk">' +
+        '<span class="adv-sk__thumb"></span>' +
+        '<span class="adv-sk__lines">' +
+          '<span class="adv-sk__line adv-sk__line--sm"></span>' +
+          '<span class="adv-sk__line adv-sk__line--lg"></span>' +
+          '<span class="adv-sk__line adv-sk__line--md"></span>' +
+        '</span></div>';
+      return '<div class="advisor__thinking">' +
+        '<span class="advisor__thinking-head"><span class="advisor__wave"><i></i><i></i><i></i><i></i><i></i></span>' +
+        'KI analysiert Ihre Antworten und kuratiert passende Modelle…</span>' +
+        '<div class="advisor__skeleton">' + sk + sk + '</div>' +
+      '</div>';
+    }
+
+    function resultHTML(res, top) {
+      var headText = res.kept.length
+        ? '<strong>' + res.count + '</strong> passende ' + (res.count === 1 ? 'Empfehlung' : 'Empfehlungen') + ' für Sie kuratiert'
+        : 'Unsere Top-Empfehlungen für Sie';
+      var cards = top.map(function (t, i) {
+        var percent = Math.max(82, Math.round(87 + t.ratio * 12) - i);   /* premium, deterministic, strictly descending */
+        return recCardHTML(t.p, percent);
+      }).join('');
       var chips = res.kept.map(function (o) { return '<span class="advisor__chip">' + labelFor(o.group, o.value) + '</span>'; });
-      var text = res.kept.length
-        ? '<strong>' + res.count + '</strong> passende ' + (res.count === 1 ? 'Empfehlung' : 'Empfehlungen') + ' für Sie:'
-        : 'Hier ist unsere gesamte Auswahl – verfeinern Sie sie jederzeit über die Filter.';
       var note = res.dropped.length
-        ? '<p class="advisor__note">Kein exakter Treffer für <em>' +
-            res.dropped.map(function (o) { return labelFor(o.group, o.value); }).join(', ') +
-            '</em> – wir zeigen die besten Alternativen.</p>'
+        ? '<p class="advisor__note">Kein exakter Treffer für <em>' + res.dropped.map(function (o) { return labelFor(o.group, o.value); }).join(', ') + '</em> – wir zeigen die besten Alternativen.</p>'
         : '';
       var prefs = res.prefs.length
-        ? '<p class="advisor__note">Ihre Wünsche notiert: <em>' +
-            res.prefs.map(function (o) { return o.value; }).join(', ') + '</em></p>'
+        ? '<p class="advisor__note">Ihre Wünsche notiert: <em>' + res.prefs.map(function (o) { return o.value; }).join(', ') + '</em></p>'
         : '';
       var sent = lead.email
-        ? '<p class="advisor__note">📬 Ihre Empfehlung wird an <em>' + lead.email + '</em> gesendet' +
-            (lead.news ? ' – inkl. News &amp; Angebote' : '') + '.</p>'
+        ? '<p class="advisor__note">📬 Ihre Empfehlung wird an <em>' + lead.email + '</em> gesendet' + (lead.news ? ' – inkl. News &amp; Angebote' : '') + '.</p>'
         : '';
-      return '<div class="advisor__summary">' +
-        '<p class="advisor__summary-text">' + text + '</p>' +
+      return '<div class="advisor__result">' +
+        '<div class="advisor__result-head"><h3 class="advisor__result-title">' + headText + '</h3></div>' +
+        '<div class="advisor__recs">' + cards + '</div>' +
         (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '') +
         note + prefs + sent +
         '<div class="advisor__actions">' +
-          '<button type="button" class="advisor__view" data-ai-view>Auswahl ansehen</button>' +
+          '<button type="button" class="advisor__view" data-ai-view>Alle ' + res.count + ' Modelle ansehen</button>' +
           '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>' +
         '</div></div>';
     }
@@ -662,18 +727,26 @@
       clearTimeout(thinkTimer);
       quizEl.innerHTML = '';
       results.hidden = false;
-      results.innerHTML = '<div class="advisor__thinking"><span class="advisor__dots"><i></i><i></i><i></i></span>' +
-        '<span>KI ermittelt Ihre Empfehlungen…</span></div>';
+      results.innerHTML = loaderHTML();
       thinkTimer = setTimeout(function () {
         var res = applyPicks();
-        results.innerHTML = summaryHTML(res);
-        var sum = results.querySelector('.advisor__summary');
-        requestAnimationFrame(function () { if (sum) sum.classList.add('is-in'); });
+        var selAll = res.kept.concat(res.dropped);
+        var ranked = PRODUCTS.filter(matches).map(function (p) {
+          var r = selAll.length ? selAll.filter(function (o) { return sat(p, o); }).length / selAll.length : 1;
+          return { p: p, ratio: r };
+        }).sort(function (a, b) { return b.ratio - a.ratio; });
+        var top = ranked.slice(0, 2);
+        results.innerHTML = resultHTML(res, top);
+        var el = results.querySelector('.advisor__result');
+        requestAnimationFrame(function () { if (el) el.classList.add('is-in'); });
+        results.querySelectorAll('[data-details]').forEach(function (d) {
+          d.addEventListener('click', function (e) { e.preventDefault(); scrollToGrid(); });
+        });
         var view = results.querySelector('[data-ai-view]');
         if (view) view.addEventListener('click', scrollToGrid);
         var reset = results.querySelector('[data-ai-reset]');
         if (reset) reset.addEventListener('click', restart);
-      }, 1050);
+      }, 1500);
     }
 
     function restart() {
