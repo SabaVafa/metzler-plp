@@ -752,7 +752,7 @@
 
 .advisor__opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--sp-3); }
 .advisor__opt {
-  display: flex; flex-direction: column; gap: 3px; text-align: left;
+  display: flex; flex-flow: row wrap; align-items: baseline; gap: 2px 8px; text-align: left;   /* label + sub inline; wrap only when needed */
   padding: 14px 16px; cursor: pointer; color: var(--schwarz);
   background: var(--white); border: 1px solid var(--graphite-300); border-radius: var(--r-l);   /* card outline Graphite 300 */
   transition: transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s ease, border-color .22s ease, background .22s ease;
