@@ -829,7 +829,8 @@
 .advisor__send svg { width: 22px; height: 22px; stroke-width: 1.5; }
 /* Success confirmation = DS success alert (Green / Select #009951) */
 .advisor__sent {
-  display: flex; align-items: center; gap: var(--sp-2);
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  align-self: flex-start; width: fit-content; max-width: 100%;   /* shrink to text length (capture is a flex column → must opt out of stretch) */
   margin: 0; padding: 12px 16px; border-radius: var(--r-m);
   background: rgba(0,153,81,0.08);          /* light tint of --green */
   border: 1px solid rgba(0,153,81,0.30);
