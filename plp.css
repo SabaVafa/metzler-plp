@@ -912,10 +912,11 @@
   transition: background .15s ease, color .15s ease;
 }
 .advisor__view:hover { background: #E6EEEE; }      /* Teal 100 */
-.advisor__reset {                                  /* secondary action — text link */
+.advisor__reset {                                  /* secondary action — underlined text link */
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 2.625rem; padding: .7rem 0; border: 0; background: none; cursor: pointer;
   color: var(--teal); font-size: var(--text-body); font-weight: 600; line-height: 1.2;
+  text-decoration: underline; text-underline-offset: 3px;
   transition: color .15s ease;
 }
 .advisor__reset:hover { color: var(--teal-700); }
