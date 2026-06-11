@@ -988,11 +988,17 @@
 /* Summary aside (right column): applied-filter chips + notes + actions */
 .advisor__aside { display: flex; flex-direction: column; gap: var(--sp-3); }
 .advisor__chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
-.advisor__chip {                                   /* text-only pill: Teal 100 fill · Teal 700 label · hairline */
-  display: inline-flex; align-items: center; padding: 4px 11px; border-radius: var(--r-pill);
+.advisor__chip {                                   /* removable pill: Teal 100 fill · Teal 700 label · hairline */
+  display: inline-flex; align-items: center; gap: 4px; padding: 4px 6px 4px 12px; border-radius: var(--r-pill);
   background: #E6EEEE; border: 1px solid var(--teal-10);
   font-size: var(--text-body-sm); font-weight: 500; color: var(--teal-700);   /* KI flow floor: 14px min */
 }
+.advisor__chip-x {
+  display: grid; place-items: center; width: 18px; height: 18px; padding: 0; border: 0; border-radius: 50%;
+  background: transparent; color: var(--teal-700); cursor: pointer; transition: background .15s ease;
+}
+.advisor__chip-x:hover { background: rgba(1,82,83,0.14); }
+.advisor__chip-x svg { width: 10px; height: 10px; }
 .advisor__note { margin: 0; font-size: var(--text-body-sm); color: var(--ink-60); }   /* KI flow floor: 14px min */
 .advisor__note em { font-style: normal; font-weight: 600; color: var(--schwarz); }
 /* Summary row: chips on the left, action buttons on the right — one horizontal line */

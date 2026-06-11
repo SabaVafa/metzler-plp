@@ -704,7 +704,13 @@
         ? '<strong>' + res.count + '</strong> passende Empfehlungen für Sie kuratiert'
         : 'Unsere Top-Empfehlungen für Sie';
       var cards = top.map(function (t) { return recCardHTML(t.p); }).join('');
-      var chips = res.kept.map(function (o) { return '<span class="advisor__chip">' + (o.label || labelFor(o.group, o.value)) + '</span>'; });
+      var chips = res.kept.map(function (o) {
+        var lab = o.label || labelFor(o.group, o.value);
+        return '<span class="advisor__chip">' + lab +
+          '<button type="button" class="advisor__chip-x" data-ai-chip="' + o.group + '" data-ai-chip-val="' + o.value + '" aria-label="Filter ' + lab + ' entfernen">' +
+            '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg>' +
+          '</button></span>';
+      });
       var note = res.dropped.length
         ? '<p class="advisor__note">Kein exakter Treffer – wir zeigen die besten Alternativen.</p>'
         : '';
@@ -746,41 +752,55 @@
         '</div>';
     }
 
-    function finish() {
-      clearTimeout(thinkTimer);
-      root.classList.add('is-result');   /* hide the intro block on the result step */
-      quizEl.innerHTML = '';
-      results.hidden = false;
-      results.innerHTML = loaderHTML();
-      thinkTimer = setTimeout(function () {
-        var res = applyPicks();
-        var selAll = res.kept.concat(res.dropped);
-        function ratioOf(p) { return selAll.length ? selAll.filter(function (o) { return sat(p, o); }).length / selAll.length : 1; }
-        var ranked = PRODUCTS.filter(matches).map(function (p) {
-          return { p: p, ratio: ratioOf(p) };
-        }).sort(function (a, b) { return b.ratio - a.ratio || b.p.rating - a.p.rating || b.p.reviews - a.p.reviews; });
-        var top = ranked.slice(0, 2);
-        if (top.length < 2) {   /* always fill 2 cards — pad with the next-best alternatives (no lone card / blank) */
-          var have = top.map(function (t) { return t.p.id; });
-          var fill = PRODUCTS.filter(function (p) { return have.indexOf(p.id) === -1; })
-            .map(function (p) { return { p: p, ratio: ratioOf(p) }; })
-            .sort(function (a, b) { return b.ratio - a.ratio || b.p.rating - a.p.rating || b.p.reviews - a.p.reviews; });
-          top = top.concat(fill).slice(0, 2);
+    /* Remove every pick matching a group+value (used by the removable result chips). */
+    function removePick(group, value) {
+      picks.forEach(function (arr) {
+        if (!Array.isArray(arr)) return;
+        for (var i = arr.length - 1; i >= 0; i--) {
+          if (arr[i].group === group && arr[i].value === value) arr.splice(i, 1);
         }
-        results.innerHTML = resultHTML(res, top);
-        var el = results.querySelector('.advisor__result');
-        requestAnimationFrame(function () { if (el) el.classList.add('is-in'); });
-        results.querySelectorAll('[data-details]').forEach(function (d) {
-          d.addEventListener('click', function (e) { e.preventDefault(); scrollToGrid(); });
-        });
-        var view = results.querySelector('[data-ai-view]');
-        if (view) view.addEventListener('click', scrollToGrid);
-        var reset = results.querySelector('[data-ai-reset]');
-        if (reset) reset.addEventListener('click', restart);
+      });
+    }
 
-        /* E-mail capture (on the result): submit → inline confirmation that
-           auto-reverts to the pristine form after a few seconds. */
-        var cap = results.querySelector('[data-result-capture]');
+    /* Build + wire the result (no loader). Called after the loader, and again
+       instantly when a result chip is removed → re-curate. */
+    function renderResult() {
+      var res = applyPicks();
+      var selAll = res.kept.concat(res.dropped);
+      function ratioOf(p) { return selAll.length ? selAll.filter(function (o) { return sat(p, o); }).length / selAll.length : 1; }
+      var ranked = PRODUCTS.filter(matches).map(function (p) {
+        return { p: p, ratio: ratioOf(p) };
+      }).sort(function (a, b) { return b.ratio - a.ratio || b.p.rating - a.p.rating || b.p.reviews - a.p.reviews; });
+      var top = ranked.slice(0, 2);
+      if (top.length < 2) {   /* always fill 2 cards — pad with the next-best alternatives (no lone card / blank) */
+        var have = top.map(function (t) { return t.p.id; });
+        var fill = PRODUCTS.filter(function (p) { return have.indexOf(p.id) === -1; })
+          .map(function (p) { return { p: p, ratio: ratioOf(p) }; })
+          .sort(function (a, b) { return b.ratio - a.ratio || b.p.rating - a.p.rating || b.p.reviews - a.p.reviews; });
+        top = top.concat(fill).slice(0, 2);
+      }
+      results.innerHTML = resultHTML(res, top);
+      var el = results.querySelector('.advisor__result');
+      requestAnimationFrame(function () { if (el) el.classList.add('is-in'); });
+      results.querySelectorAll('[data-details]').forEach(function (d) {
+        d.addEventListener('click', function (e) { e.preventDefault(); scrollToGrid(); });
+      });
+      var view = results.querySelector('[data-ai-view]');
+      if (view) view.addEventListener('click', scrollToGrid);
+      var reset = results.querySelector('[data-ai-reset]');
+      if (reset) reset.addEventListener('click', restart);
+
+      /* Removable filter chips — drop the filter and re-curate instantly */
+      results.querySelectorAll('[data-ai-chip]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          removePick(b.getAttribute('data-ai-chip'), b.getAttribute('data-ai-chip-val'));
+          renderResult();
+        });
+      });
+
+      /* E-mail capture (on the result): submit → inline confirmation that
+         auto-reverts to the pristine form after a few seconds. */
+      var cap = results.querySelector('[data-result-capture]');
         if (cap) {
           var captureInner = cap.innerHTML;   /* pristine form markup, restored after the confirmation */
           var revertTimer;
@@ -811,7 +831,15 @@
           };
           wireCapture();
         }
-      }, 1500);
+    }
+
+    function finish() {
+      clearTimeout(thinkTimer);
+      root.classList.add('is-result');   /* hide the intro block on the result step */
+      quizEl.innerHTML = '';
+      results.hidden = false;
+      results.innerHTML = loaderHTML();
+      thinkTimer = setTimeout(renderResult, 1500);
     }
 
     function restart() {
