@@ -725,6 +725,23 @@
   box-shadow: inset 0 0 0 1px var(--teal-10), 0 1px 3px rgba(26,23,27,.05);
 }
 
+/* ════════════════════════════════════════════════════════════════════
+   PILL RULE — every pill (badge / chip / match) is a tinted chip whose
+   surface is derived from the container it sits on; brand teal appears
+   only as the label and a single accent glyph. Applies to .advisor__badge,
+   .advisor__chip, .advisor__match and .mega-feature__badge.
+
+   1. FILL  = the light 100-tint of the CONTAINER's background hue
+              · teal-tinted surface (advisor/promo panel) → Teal 100  #E6EEEE
+              · white / neutral surface (product card)    → Graphite 100 var(--graphite-100)
+   2. HAIRLINE = 1px, the faint next step of the fill's own family
+              · teal → var(--teal-10)   · neutral → var(--graphite-300)
+   3. LABEL = family dark step var(--teal-700) — bold, ≥14px, letter-spacing .02em (~10:1)
+   4. ACCENT = the one brand pop: spark / status-dot / check in var(--teal)
+              (Teal-Mint var(--teal-mint) on dark surfaces)
+   5. SHAPE = border-radius var(--r-pill); padding ~4–5px / 10–12px
+   ════════════════════════════════════════════════════════════════════ */
+
 /* ── Intro ── */
 .advisor__badge {                                  /* KI label — light Teal 100 pill drawn from the teal
                                                       advisor panel (same shade family, a touch deeper);
