@@ -770,8 +770,8 @@
 /* Checkbox affordance — empty circle, fills with a teal check when selected (multi-select) */
 .advisor__opt::after {
   content: ""; position: absolute; top: 50%; right: 14px; transform: translateY(-50%);
-  width: 20px; height: 20px; border-radius: 50%;
-  border: 1.5px solid var(--graphite-300); background: var(--white) center/0 no-repeat;
+  width: 20px; height: 20px; border-radius: var(--r-m);   /* DS checkbox = square, radius-m (matches .fopt__box) */
+  border: 1px solid var(--graphite-300); background: var(--white) center/0 no-repeat;
   transition: border-color .15s ease, background-color .15s ease;
 }
 .advisor__opt.is-active::after {
