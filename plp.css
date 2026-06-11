@@ -964,7 +964,6 @@
 
 /* Curated recommendation cards — DS product-card treatment (radius-lg, Graphite 300) */
 .advisor__recs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-4); align-items: stretch; }   /* horizontal, equal-height cards */
-.advisor__recs--single { grid-template-columns: minmax(260px, 530px); }   /* lone card: ~paired width, left-aligned (full width on mobile) */
 .advisor__rec {
   display: flex; align-items: center; gap: var(--sp-3);
   padding: var(--sp-3); border: 1px solid var(--graphite-300); border-radius: var(--r-l);
@@ -999,9 +998,6 @@
 /* Summary row: chips on the left, action buttons on the right — one horizontal line */
 .advisor__summary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-3) var(--sp-4); }
 .advisor__summary .advisor__chips { flex: 1 1 auto; }   /* fill the row so the buttons sit at the right edge */
-/* Single recommendation → left-cluster chips + actions under the lone card (no floating right) */
-.advisor__result--single .advisor__summary { justify-content: flex-start; }
-.advisor__result--single .advisor__summary .advisor__chips { flex: 0 1 auto; }
 .advisor__actions { flex: 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-5); }   /* roomy gap between the filled CTA and the link */
 
 /* Responsive: stack columns + single-column recs/skeleton */

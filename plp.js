@@ -695,8 +695,8 @@
     }
 
     function resultHTML(res, top) {
-      var headText = res.kept.length
-        ? '<strong>' + res.count + '</strong> passende ' + (res.count === 1 ? 'Empfehlung' : 'Empfehlungen') + ' für Sie kuratiert'
+      var headText = (res.kept.length && res.count >= 2)   /* count title only when it matches the 2 cards shown */
+        ? '<strong>' + res.count + '</strong> passende Empfehlungen für Sie kuratiert'
         : 'Unsere Top-Empfehlungen für Sie';
       var cards = top.map(function (t) { return recCardHTML(t.p); }).join('');
       var chips = res.kept.map(function (o) { return '<span class="advisor__chip">' + (o.label || labelFor(o.group, o.value)) + '</span>'; });
@@ -724,9 +724,9 @@
           '</p>' +
           '<p class="advisor__legal">Hinweise zum Datenschutz finden Sie <a href="#">hier</a>.</p>' +
         '</div>';
-      return '<div class="advisor__result' + (top.length === 1 ? ' advisor__result--single' : '') + '">' +
+      return '<div class="advisor__result">' +
         '<div class="advisor__result-head"><h3 class="advisor__result-title">' + headText + '</h3></div>' +
-        '<div class="advisor__recs' + (top.length === 1 ? ' advisor__recs--single' : '') + '">' + cards + '</div>' +
+        '<div class="advisor__recs">' + cards + '</div>' +
         '<div class="advisor__aside">' +
           '<div class="advisor__summary">' +                  /* chips left · actions right, one horizontal row */
             (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '<span></span>') +
@@ -750,11 +750,18 @@
       thinkTimer = setTimeout(function () {
         var res = applyPicks();
         var selAll = res.kept.concat(res.dropped);
+        function ratioOf(p) { return selAll.length ? selAll.filter(function (o) { return sat(p, o); }).length / selAll.length : 1; }
         var ranked = PRODUCTS.filter(matches).map(function (p) {
-          var r = selAll.length ? selAll.filter(function (o) { return sat(p, o); }).length / selAll.length : 1;
-          return { p: p, ratio: r };
-        }).sort(function (a, b) { return b.ratio - a.ratio; });
+          return { p: p, ratio: ratioOf(p) };
+        }).sort(function (a, b) { return b.ratio - a.ratio || b.p.rating - a.p.rating || b.p.reviews - a.p.reviews; });
         var top = ranked.slice(0, 2);
+        if (top.length < 2) {   /* always fill 2 cards — pad with the next-best alternatives (no lone card / blank) */
+          var have = top.map(function (t) { return t.p.id; });
+          var fill = PRODUCTS.filter(function (p) { return have.indexOf(p.id) === -1; })
+            .map(function (p) { return { p: p, ratio: ratioOf(p) }; })
+            .sort(function (a, b) { return b.ratio - a.ratio || b.p.rating - a.p.rating || b.p.reviews - a.p.reviews; });
+          top = top.concat(fill).slice(0, 2);
+        }
         results.innerHTML = resultHTML(res, top);
         var el = results.querySelector('.advisor__result');
         requestAnimationFrame(function () { if (el) el.classList.add('is-in'); });
