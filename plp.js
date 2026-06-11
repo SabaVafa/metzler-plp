@@ -496,7 +496,7 @@
     ];
 
     var step = 0;
-    var picks = [];   /* picks[i] = chosen option object for step i */
+    var picks = [];   /* picks[i] = array of chosen option objects for step i (multi-select; [] = skipped) */
     var lead = { email: '', news: false };   /* optional e-mail capture (final step) */
     var STEPS = QUIZ.length;                  /* questions only — e-mail capture now lives on the result */
 
@@ -512,10 +512,12 @@
     function applyPicks() {
       var priority = ['faecher', 'zusatz', 'montage', 'zeitung', 'color']; /* later = dropped first */
       var sel = [], prefs = [];
-      picks.forEach(function (o) {
-        if (!o || !o.group) return;
-        if (active[o.group]) sel.push(o);   /* real facet → filters the grid */
-        else prefs.push(o);                 /* 'pref' (Gravur / Öffnung) → noted, not filterable */
+      picks.forEach(function (arr) {
+        (arr || []).forEach(function (o) {       /* picks[i] is an array (multi-select) */
+          if (!o || !o.group) return;
+          if (active[o.group]) sel.push(o);   /* real facet → filters the grid */
+          else prefs.push(o);                 /* 'pref' (Gravur / Öffnung) → noted, not filterable */
+        });
       });
       function setActive(list) {
         Object.keys(active).forEach(function (g) { active[g] = []; });
@@ -599,11 +601,12 @@
       results.hidden = true; results.innerHTML = '';
       var s = QUIZ[step];
       var dots = dotsHTML();
+      var cur = Array.isArray(picks[step]) ? picks[step] : [];
       var opts = s.opts.map(function (o, i) {
-        var on = (picks[step] && picks[step].label === o.label) ? ' is-active' : '';
+        var on = cur.some(function (p) { return p.label === o.label; }) ? ' is-active' : '';
         var sw = (o.group === 'color' && COLORS[o.value])
           ? '<span class="advisor__opt-sw" style="background:' + COLORS[o.value].css + '" aria-hidden="true"></span>' : '';
-        return '<button type="button" class="advisor__opt' + on + '" data-opt="' + i + '">' +
+        return '<button type="button" class="advisor__opt' + on + '" data-opt="' + i + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
           sw +
           '<span class="advisor__opt-label">' + o.label + '</span>' +
           (o.sub ? '<span class="advisor__opt-sub">' + o.sub + '</span>' : '') +
@@ -616,10 +619,11 @@
             '<span class="advisor__progress-label">Schritt ' + (step + 1) + ' von ' + STEPS + '</span>' +
           '</div>' +
           '<h3 class="advisor__q">' + s.q + '</h3>' +
-          '<div class="advisor__opts">' + opts + '</div>' +
+          '<p class="advisor__q-hint">Mehrfachauswahl möglich</p>' +
+          '<div class="advisor__opts" role="group" aria-label="' + s.q + '">' + opts + '</div>' +
           '<div class="advisor__nav">' +
             (step > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>') +
-            '<button type="button" class="advisor__skip" data-skip>Überspringen<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+            '<button type="button" class="advisor__forward" data-next>Weiter<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
         '</div>';
       var stepEl = quizEl.querySelector('.advisor__step');
@@ -636,14 +640,19 @@
 
       quizEl.querySelectorAll('[data-opt]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          picks[step] = s.opts[+btn.getAttribute('data-opt')];
-          go(function () { step++; renderStep(); });   /* past the last question → capture screen */
+          var o = s.opts[+btn.getAttribute('data-opt')];
+          if (!Array.isArray(picks[step])) picks[step] = [];
+          var arr = picks[step], ix = -1;
+          for (var j = 0; j < arr.length; j++) { if (arr[j].label === o.label) { ix = j; break; } }
+          if (ix === -1) arr.push(o); else arr.splice(ix, 1);   /* toggle — multi-select, no auto-advance */
+          var onNow = btn.classList.toggle('is-active');
+          btn.setAttribute('aria-pressed', onNow ? 'true' : 'false');
         });
       });
       var back = quizEl.querySelector('[data-back]');
       if (back) back.addEventListener('click', function () { if (step > 0) go(function () { step--; renderStep(); }); });
-      var skip = quizEl.querySelector('[data-skip]');
-      if (skip) skip.addEventListener('click', function () { picks[step] = null; go(function () { step++; renderStep(); }); });
+      var next = quizEl.querySelector('[data-next]');   /* Weiter advances; empty selection = skip */
+      if (next) next.addEventListener('click', function () { if (!Array.isArray(picks[step])) picks[step] = []; go(function () { step++; renderStep(); }); });
     }
 
     /* Premium loader: pulsing geometric wave + shimmer skeleton cards. */

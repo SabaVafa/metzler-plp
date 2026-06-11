@@ -755,15 +755,29 @@
 .advisor__step { opacity: 0; transform: translateY(10px); transition: opacity .32s ease, transform .32s ease; will-change: opacity, transform; }
 .advisor__step.is-in  { opacity: 1; transform: none; }
 .advisor__step.is-out { opacity: 0; transform: translateY(-10px); }
-.advisor__q { margin: 0 0 var(--sp-4); font-size: 1.125rem; font-weight: 700; line-height: 1.375; color: var(--schwarz); }   /* H4 */
+.advisor__q { margin: 0 0 6px; font-size: 1.125rem; font-weight: 700; line-height: 1.375; color: var(--schwarz); }   /* H4 */
+.advisor__q-hint { margin: 0 0 var(--sp-4); font-size: var(--text-body-sm); color: var(--ink-60); }   /* multi-select cue */
 
 .advisor__opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--sp-3); }
 .advisor__opt {
+  position: relative;   /* anchor the multi-select checkbox indicator */
   display: flex; flex-flow: row wrap; align-items: baseline; gap: 2px 8px; text-align: left;   /* label + sub inline; wrap only when needed */
-  padding: 14px 16px; cursor: pointer; color: var(--schwarz);
+  padding: 14px 44px 14px 16px; cursor: pointer; color: var(--schwarz);   /* right pad reserves space for the checkbox */
   background: var(--white); border: 1px solid var(--graphite-300); border-radius: var(--r-l);   /* card outline Graphite 300 */
   transition: transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s ease, border-color .22s ease, background .22s ease;
   will-change: transform;
+}
+/* Checkbox affordance — empty circle, fills with a teal check when selected (multi-select) */
+.advisor__opt::after {
+  content: ""; position: absolute; top: 50%; right: 14px; transform: translateY(-50%);
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid var(--graphite-300); background: var(--white) center/0 no-repeat;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.advisor__opt.is-active::after {
+  border-color: var(--teal);
+  background-color: var(--teal); background-size: 12px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
 }
 .advisor__opt:hover {
   transform: translateY(-2px) scale(1.012);
@@ -786,6 +800,17 @@
 .advisor__back:hover, .advisor__skip:hover { color: var(--teal); }   /* Teal 500 */
 .advisor__back svg, .advisor__skip svg { width: 18px; height: 18px; stroke-width: 1.5; }
 .advisor__back svg { transform: rotate(180deg); }   /* chevron points left (back) */
+/* Weiter — compact .btn-primary advancing the multi-select step */
+.advisor__forward {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 2.625rem; padding: .6rem 1.15rem; border: 0; border-radius: var(--r-m); cursor: pointer;
+  background: var(--teal); color: var(--white);
+  font-size: var(--text-body-sm); font-weight: 700; line-height: 1.2;
+  transition: background .15s ease, transform .15s ease;
+}
+.advisor__forward:hover { background: var(--teal-600); transform: translateY(-1px); }
+.advisor__forward:active { background: var(--teal-700); transform: none; }
+.advisor__forward svg { width: 16px; height: 16px; stroke-width: 1.5; }
 
 /* ── Final step: e-mail capture — DS .form-control treatment ── */
 .advisor__capture { display: flex; flex-direction: column; gap: var(--sp-3); }
