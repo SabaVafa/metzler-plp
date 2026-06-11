@@ -488,8 +488,7 @@
         { label: 'Rau, exponiert oder in Küstennähe', sub: 'rostfreier Edelstahl V2A, salzluftbeständig', group: 'material', value: 'edelstahl', chip: 'Edelstahl V2A' }
       ]},
       { q: 'Welche Optik passt zu Ihrem Zuhause?', opts: [
-        { label: 'Modern und dunkel',    sub: 'Anthrazit RAL 7016, Tiefschwarz, Eisenglimmer', group: 'colorset', values: ['anthrazit','schwarz','eisenglimmer'], chip: 'Dunkle Optik', swatch: '#383E42' },
-        { label: 'Hell und klar',        sub: 'Verkehrsweiß, Graualuminium',                   group: 'colorset', values: ['weiss','grau'], chip: 'Helle Optik', swatch: 'linear-gradient(135deg,#ffffff 50%,#B9BCC0 50%)' },
+        { label: 'Klassische Farbe',     sub: 'z. B. Anthrazit, Schwarz, Weiß oder Grau',      group: 'colorset', values: ['anthrazit','braun','schwarz','eisenglimmer','weiss','grau'], chip: 'Klassische Farbe', swatch: 'linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)' },
         { label: 'Edelstahl',            sub: 'rostfrei und zeitlos',                          group: 'material', value: 'edelstahl', chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)' },
         { label: 'Natürliche Holzoptik', sub: 'Eiche oder Lärche',                             group: 'material', value: 'holz', chip: 'Holzoptik', swatch: 'linear-gradient(135deg,#b07b46,#7a5230)' },
         { label: 'Wunschfarbe',          sub: 'individuell nach RAL',                          group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)' }
