@@ -851,6 +851,8 @@
 /* E-mail capture on the result screen */
 .advisor__result .advisor__capture { padding-top: var(--sp-4); border-top: 1px solid var(--graphite-300); }
 .advisor__capture-q { margin: 0; font-size: var(--text-body-sm); font-weight: 700; color: var(--schwarz); }
+.advisor__legal { margin: 0; font-size: var(--text-body-sm); color: var(--ink-60); }   /* GDPR Datenschutzhinweis */
+.advisor__legal a { color: var(--teal); }
 /* Field + opt-in + shared send button on one line */
 .advisor__capture-row { display: flex; align-items: stretch; gap: var(--sp-3); }
 .advisor__capture-row .advisor__field,

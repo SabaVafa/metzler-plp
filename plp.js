@@ -721,6 +721,7 @@
             '</label>' +
             '<button type="button" class="advisor__send" data-email-send aria-label="Empfehlung senden"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
+          '<p class="advisor__legal">Hinweise zum Datenschutz finden Sie <a href="#">hier</a>.</p>' +
         '</div>';
       return '<div class="advisor__result">' +
         '<div class="advisor__result-head"><h3 class="advisor__result-title">' + headText + '</h3></div>' +
@@ -778,7 +779,7 @@
             cap.innerHTML =
               '<div class="advisor__sent" role="status">' +
                 '<svg class="advisor__sent-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.4 12.3l2.4 2.4 4.8-5.4"/></svg>' +
-                '<p class="advisor__sent-text">Ihre Empfehlung wird an <strong>' + v + '</strong> gesendet' + (lead.news ? ' – inkl. News &amp; Angebote' : '') + '.</p>' +
+                '<p class="advisor__sent-text">Ihre Empfehlung wird an <strong>' + v + '</strong> gesendet' + (lead.news ? ' – inkl. News &amp; Angebote' : '') + '.' + (lead.news ? ' Bitte bestätigen Sie die E-Mail in Ihrem Postfach.' : '') + '</p>' +
               '</div>';
           };
           emailEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); submitEmail(); } });
