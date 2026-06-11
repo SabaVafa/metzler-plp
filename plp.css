@@ -945,6 +945,7 @@
 
 /* Curated recommendation cards — DS product-card treatment (radius-lg, Graphite 300) */
 .advisor__recs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-4); align-items: stretch; }   /* horizontal, equal-height cards */
+.advisor__recs--single { grid-template-columns: minmax(260px, 530px); }   /* lone card: ~paired width, left-aligned (full width on mobile) */
 .advisor__rec {
   display: flex; align-items: center; gap: var(--sp-3);
   padding: var(--sp-3); border: 1px solid var(--graphite-300); border-radius: var(--r-l);

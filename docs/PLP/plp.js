@@ -724,7 +724,7 @@
         '</div>';
       return '<div class="advisor__result">' +
         '<div class="advisor__result-head"><h3 class="advisor__result-title">' + headText + '</h3></div>' +
-        '<div class="advisor__recs">' + cards + '</div>' +
+        '<div class="advisor__recs' + (top.length === 1 ? ' advisor__recs--single' : '') + '">' + cards + '</div>' +
         '<div class="advisor__aside">' +
           '<div class="advisor__summary">' +                  /* chips left · actions right, one horizontal row */
             (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '<span></span>') +
