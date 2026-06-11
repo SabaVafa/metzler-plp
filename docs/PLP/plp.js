@@ -701,7 +701,7 @@
       var cards = top.map(function (t) { return recCardHTML(t.p); }).join('');
       var chips = res.kept.map(function (o) { return '<span class="advisor__chip">' + (o.label || labelFor(o.group, o.value)) + '</span>'; });
       var note = res.dropped.length
-        ? '<p class="advisor__note">Kein exakter Treffer für <em>' + res.dropped.map(function (o) { return o.label || labelFor(o.group, o.value); }).join(', ') + '</em> – wir zeigen die besten Alternativen.</p>'
+        ? '<p class="advisor__note">Kein exakter Treffer – wir zeigen die besten Alternativen.</p>'
         : '';
       var prefs = res.prefs.length
         ? '<p class="advisor__note">Ihre Wünsche notiert: <em>' + res.prefs.map(function (o) { return o.value; }).join(', ') + '</em></p>'
