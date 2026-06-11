@@ -619,7 +619,6 @@
             '<span class="advisor__progress-label">Schritt ' + (step + 1) + ' von ' + STEPS + '</span>' +
           '</div>' +
           '<h3 class="advisor__q">' + s.q + '</h3>' +
-          '<p class="advisor__q-hint">Mehrfachauswahl möglich</p>' +
           '<div class="advisor__opts" role="group" aria-label="' + s.q + '">' + opts + '</div>' +
           '<div class="advisor__nav">' +
             (step > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>') +
