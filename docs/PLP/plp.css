@@ -720,14 +720,15 @@
 }
 
 /* ── Intro ── */
-.advisor__badge {                                  /* identical to .mega-feature__badge (3D Konfigurator):
-                                                      Digital Schwarz fill, Pure White label, radius-sm, Caption Bold */
+.advisor__badge {                                  /* KI label — Teal 500 pill drawn from the teal advisor
+                                                      panel (not the generic Schwarz mega-feature badge);
+                                                      Pure White label, Teal-Mint spark, pill, Caption Bold */
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 0.25rem 0.5rem; border-radius: var(--r-s);
-  background: var(--schwarz); color: var(--white);
-  font-size: var(--text-body-sm); font-weight: 700; line-height: 1.4;   /* KI flow floor: 14px min */
+  padding: 0.3125rem 0.75rem; border-radius: var(--r-pill);
+  background: var(--teal); color: var(--white);
+  font-size: var(--text-body-sm); font-weight: 700; line-height: 1.4; letter-spacing: .02em;   /* KI flow floor: 14px min */
 }
-.advisor__spark { width: 13px; height: 13px; fill: currentColor; flex: 0 0 auto; }
+.advisor__spark { width: 13px; height: 13px; fill: var(--teal-mint); flex: 0 0 auto; }
 .advisor__title {                                  /* H2 — 1.5rem / 700, Digital Schwarz */
   margin: var(--sp-4) 0 var(--sp-2);
   font-size: 1.5rem; font-weight: 700; line-height: 1.3; color: var(--schwarz);
