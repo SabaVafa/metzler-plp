@@ -48,11 +48,56 @@ button { font: inherit; color: inherit; }
 /* ── Card shell: dark live panel | quiz stage ── */
 .adv { max-width: 1160px; margin: 0 auto; }
 .adv__card {
-  display: grid; grid-template-columns: 300px minmax(0,1fr);
+  display: none; position: relative;
+  grid-template-columns: 300px minmax(0,1fr);
   border-radius: var(--r-l); overflow: hidden;
   background: var(--white);
   box-shadow: 0 1px 3px rgba(26,23,27,0.07), 0 12px 32px rgba(26,23,27,0.06);
 }
+.adv.is-open .adv__card { display: grid; animation: cardIn .3s cubic-bezier(.22,1,.36,1); }
+@keyframes cardIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+/* ── Collapsed teaser bar (default state — keeps the grid above the fold) ── */
+.teaser {
+  display: flex; align-items: center; gap: 18px;
+  padding: 14px 20px; border-radius: var(--r-l);
+  background: var(--white);
+  box-shadow: 0 1px 3px rgba(26,23,27,0.07), 0 6px 18px rgba(26,23,27,0.04);
+}
+.adv.is-open .teaser { display: none; }
+.teaser__badge {
+  display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto;
+  padding: 5px 12px; border-radius: var(--r-pill);
+  background: var(--teal); color: var(--white);
+  font-size: 14px; font-weight: 700; line-height: 1.4;
+}
+.teaser__badge svg { width: 14px; height: 14px; fill: currentColor; }
+.teaser__txt { flex: 1 1 auto; min-width: 0; }
+.teaser__title { font-size: 16px; font-weight: 700; line-height: 1.3; }
+.teaser__sub { font-size: 14px; color: var(--g700); margin-top: 2px; }
+.teaser__count { flex: 0 0 auto; font-size: 14px; color: var(--g700); white-space: nowrap; }
+.teaser__count strong { font-size: 16px; color: var(--teal); }
+.teaser .btn-primary { flex: 0 0 auto; }
+
+/* Minimize control (top-right of the expanded card) */
+.collapse-btn {
+  position: absolute; top: 14px; right: 14px; z-index: 5;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--g300); background: var(--white); color: var(--g700);
+  display: grid; place-items: center; cursor: pointer;
+  transition: border-color .15s ease, color .15s ease;
+}
+.collapse-btn:hover { border-color: var(--teal); color: var(--teal); }
+.collapse-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── Demo product grid (illustrates the fold) ── */
+.demo { max-width: 1160px; margin: 20px auto 0; }
+.demo h2 { font-size: 16px; font-weight: 600; color: var(--g700); margin-bottom: 12px; }
+.demo__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.demo__card { background: var(--white); border: 1px solid var(--g300); border-radius: var(--r-l); padding: 14px; }
+.demo__thumb { aspect-ratio: 1.25; background: var(--g100); border-radius: var(--r-m); margin-bottom: 12px; }
+.demo__l1 { height: 12px; width: 80%; background: var(--g100); border-radius: var(--r-pill); margin-bottom: 8px; }
+.demo__l2 { height: 12px; width: 45%; background: var(--g100); border-radius: var(--r-pill); }
 
 /* ── Left: live panel (Teal 500) ── */
 .panel {
@@ -321,6 +366,10 @@ button { font: inherit; color: inherit; }
   .swatch__count { display: none; }   /* live counter in the panel covers it */
   .capture__row { flex-wrap: wrap; }
   .capture__row .btn-primary { width: 100%; }
+  .teaser { flex-wrap: wrap; gap: 10px 12px; }
+  .teaser__count { margin-left: auto; }
+  .teaser__txt { flex: 1 1 100%; order: 3; }
+  .teaser .btn-primary { width: 100%; order: 4; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -336,7 +385,25 @@ button { font: inherit; color: inherit; }
 </div>
 
 <section class="adv" aria-label="KI-Kaufberater">
+
+  <!-- Collapsed teaser (default) -->
+  <div class="teaser" data-teaser>
+    <span class="teaser__badge">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.1 6.3L20 10l-5.9 1.7L12 18l-2.1-6.3L4 10l5.9-1.7z"/></svg>
+      KI-Kaufberater
+    </span>
+    <div class="teaser__txt">
+      <p class="teaser__title" data-teaser-title>Finden statt Suchen</p>
+      <p class="teaser__sub" data-teaser-sub>Beantworten Sie 7 kurze Fragen – wir kuratieren die passenden Briefkästen.</p>
+    </div>
+    <span class="teaser__count" data-teaser-count></span>
+    <button type="button" class="btn-primary" data-teaser-cta>Berater starten</button>
+  </div>
+
   <div class="adv__card">
+    <button type="button" class="collapse-btn" data-collapse aria-label="Berater minimieren">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14l6-6 6 6"/></svg>
+    </button>
 
     <!-- Live panel -->
     <aside class="panel">
@@ -366,6 +433,16 @@ button { font: inherit; color: inherit; }
       <div data-stage></div>
     </div>
 
+  </div>
+</section>
+
+<section class="demo" aria-hidden="true">
+  <h2>Produktliste (Demo – zeigt die Falz-Wirkung)</h2>
+  <div class="demo__grid">
+    <div class="demo__card"><div class="demo__thumb"></div><div class="demo__l1"></div><div class="demo__l2"></div></div>
+    <div class="demo__card"><div class="demo__thumb"></div><div class="demo__l1"></div><div class="demo__l2"></div></div>
+    <div class="demo__card"><div class="demo__thumb"></div><div class="demo__l1"></div><div class="demo__l2"></div></div>
+    <div class="demo__card"><div class="demo__thumb"></div><div class="demo__l1"></div><div class="demo__l2"></div></div>
   </div>
 </section>
 
@@ -483,6 +560,7 @@ button { font: inherit; color: inherit; }
 
   /* ---- State ---- */
   var step = 0, dir = 1, maxSeen = 0, finished = false;
+  var expanded = false, lastResCount = 0;
   var picks = new Array(N).fill(null);   /* color: {group:'color', values:[], labels:[]} · single: opt · neutral/skip: null */
   var lead = { email: '', news: false };
 
@@ -495,6 +573,11 @@ button { font: inherit; color: inherit; }
   var progLabel = document.querySelector('[data-prog-label]');
   var progWrap = document.querySelector('[data-prog]');
   var toastEl = document.querySelector('[data-toast]');
+  var advEl = document.querySelector('.adv');
+  var teaserTitle = document.querySelector('[data-teaser-title]');
+  var teaserSub = document.querySelector('[data-teaser-sub]');
+  var teaserCount = document.querySelector('[data-teaser-count]');
+  var teaserCta = document.querySelector('[data-teaser-cta]');
 
   /* ---- Matching ---- */
   function facetPicks() {
@@ -564,6 +647,39 @@ button { font: inherit; color: inherit; }
     animateCount(lc.n);
     meterEl.style.width = Math.max(4, Math.round(lc.n / TOTAL * 100)) + '%';
     zeroEl.classList.toggle('is-on', lc.n === 0);
+    renderTeaser();
+  }
+
+  /* ---- Collapsed teaser (default page state) ---- */
+  function renderTeaser() {
+    var started = maxSeen > 0 || picks.some(function (p) { return !!p; });
+    teaserCount.innerHTML = '<strong>' + shownCount + '</strong> Modelle';
+    if (finished) {
+      teaserTitle.textContent = 'Ihre Empfehlungen sind bereit';
+      teaserSub.textContent = lastResCount + ' kuratierte ' + (lastResCount === 1 ? 'Modell wartet' : 'Modelle warten') + ' auf Sie.';
+      teaserCta.textContent = 'Ergebnis anzeigen';
+    } else if (started) {
+      teaserTitle.textContent = 'Finden statt Suchen';
+      teaserSub.textContent = 'Schritt ' + Math.min(step + 1, N) + ' von ' + N + ' – setzen Sie dort fort, wo Sie aufgehört haben.';
+      teaserCta.textContent = 'Fortsetzen';
+    } else {
+      teaserTitle.textContent = 'Finden statt Suchen';
+      teaserSub.textContent = 'Beantworten Sie 7 kurze Fragen – wir kuratieren die passenden Briefkästen.';
+      teaserCta.textContent = 'Berater starten';
+    }
+  }
+  function expand() {
+    expanded = true;
+    advEl.classList.add('is-open');
+    if (!stage.innerHTML) renderAll();   /* first open; afterwards the hidden DOM is preserved as-is */
+    var f = stage.querySelector('.result__title') || stage.querySelector('.q');
+    if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 80);
+  }
+  function collapseCard() {
+    expanded = false;
+    advEl.classList.remove('is-open');
+    renderTeaser();
+    teaserCta.focus({ preventScroll: true });
   }
 
   /* ---- Rail ---- */
@@ -748,7 +864,12 @@ button { font: inherit; color: inherit; }
       .sort(function (a, b) { return b.ratio - a.ratio || b.p.rating - a.p.rating || b.p.reviews - a.p.reviews; });
     var top = ranked.slice(0, 2);
 
-    updateLive();
+    /* Panel shows the curated count (relaxed), not the raw AND-match */
+    lastResCount = res.count;
+    animateCount(res.count);
+    meterEl.style.width = Math.max(4, Math.round(res.count / TOTAL * 100)) + '%';
+    zeroEl.classList.remove('is-on');
+    renderTeaser();
 
     var title = res.kept.length
       ? '<strong>' + res.count + '</strong> passende ' + (res.count === 1 ? 'Empfehlung' : 'Empfehlungen') + ' für Sie kuratiert'
@@ -887,8 +1008,11 @@ button { font: inherit; color: inherit; }
 
   function renderAll() { renderRail(); renderProg(); renderStep(); }
 
+  teaserCta.addEventListener('click', expand);
+  document.querySelector('[data-collapse]').addEventListener('click', collapseCard);
+
   updateLive();
-  renderAll();
+  renderTeaser();
 })();
 </script>
 </body>
