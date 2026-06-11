@@ -848,16 +848,16 @@
 .advisor__optin.is-on .advisor__optin-box { background: var(--teal); border-color: var(--teal); }   /* checked-filter fill */
 .advisor__optin.is-on .advisor__optin-box::after { content: ""; width: 0.34rem; height: 0.6rem; border: solid var(--white); border-width: 0 2px 2px 0; transform: rotate(45deg) translate(-1px,-1px); }   /* white checkmark */
 .advisor__optin input:focus-visible + .advisor__optin-box { box-shadow: 0 0 0 3px var(--teal-10); }
-/* E-mail capture — right column of the result */
+/* E-mail capture on the result screen */
+.advisor__result .advisor__capture { padding-top: var(--sp-4); border-top: 1px solid var(--graphite-300); }
 .advisor__capture-q { margin: 0; font-size: var(--text-body-sm); font-weight: 700; color: var(--schwarz); }
-/* Field + send share the top line; the opt-in stacks below (fits the narrow column) */
-.advisor__capture-row { display: flex; align-items: stretch; flex-wrap: wrap; gap: var(--sp-3); }
+/* Field + opt-in + shared send button on one line */
+.advisor__capture-row { display: flex; align-items: stretch; gap: var(--sp-3); }
 .advisor__capture-row .advisor__field,
 .advisor__capture-row .advisor__optin,
 .advisor__capture-row .advisor__send { min-height: 3rem; }   /* consistent height across field, opt-in & CTA */
-.advisor__capture-row .advisor__field { flex: 1 1 auto; min-width: 0; }
-.advisor__capture-row .advisor__send { flex: 0 0 48px; }
-.advisor__capture-row .advisor__optin { flex: 1 1 100%; }   /* opt-in on its own line below */
+.advisor__capture-row .advisor__field { flex: 1 1 auto; }
+.advisor__capture-row .advisor__optin { flex: 0 1 auto; }
 .advisor__send {
   flex: 0 0 auto; align-self: stretch; display: grid; place-items: center;
   width: 48px; border: 0; border-radius: var(--r-m);
@@ -933,14 +933,13 @@
 }
 @keyframes advShimmer { 0% { background-position: 220% 0; } 100% { background-position: -220% 0; } }
 
-/* Result — two columns: suggestions (left) · e-mail capture (right). Animates in (GPU). */
+/* Result — two columns (cards left, summary aside right) to fill the width;
+   animates in (GPU). */
 .advisor__result {
-  display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(24px, 3vw, 40px);
-  align-items: start;
+  display: flex; flex-direction: column; gap: var(--sp-4);
   opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .4s ease; will-change: opacity, transform;
 }
 .advisor__result.is-in { opacity: 1; transform: none; }
-.advisor__result-main { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }   /* left column stack */
 .advisor__result-title { margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--schwarz); }   /* H3 */
 .advisor__result-title strong { color: var(--schwarz); }   /* count stays in the title ink, not teal */
 
@@ -987,9 +986,6 @@
 @media (max-width: 1023px) {
   .advisor__card { grid-template-columns: 1fr; gap: var(--sp-5); }
   .advisor__skeleton { grid-template-columns: 1fr; }
-  /* result collapses to one column → e-mail capture drops below, re-separated */
-  .advisor__result { grid-template-columns: 1fr; }
-  .advisor__result .advisor__capture { padding-top: var(--sp-4); border-top: 1px solid var(--graphite-300); }
 }
 @media (max-width: 600px) {
   .advisor__actions { flex-direction: column; }
