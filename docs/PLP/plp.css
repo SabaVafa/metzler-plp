@@ -774,31 +774,19 @@
 
 .advisor__opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--sp-3); }
 .advisor__opt {
-  position: relative;   /* anchor the multi-select checkbox indicator */
+  position: relative;
   display: flex; flex-flow: row wrap; align-items: baseline; gap: 2px 8px; text-align: left;   /* label + sub inline; wrap only when needed */
-  padding: 14px 44px 14px 16px; cursor: pointer; color: var(--schwarz);   /* right pad reserves space for the checkbox */
+  padding: 14px 16px; cursor: pointer; color: var(--schwarz);
   background: var(--white); border: 1px solid var(--graphite-300); border-radius: var(--r-l);   /* card outline Graphite 300 */
   transition: transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s ease, border-color .22s ease, background .22s ease;
   will-change: transform;
-}
-/* Checkbox affordance — empty circle, fills with a teal check when selected (multi-select) */
-.advisor__opt::after {
-  content: ""; position: absolute; top: 50%; right: 14px; transform: translateY(-50%);
-  width: 20px; height: 20px; border-radius: var(--r-m);   /* DS checkbox = square, radius-m (matches .fopt__box) */
-  border: 1px solid var(--graphite-300); background: var(--white) center/0 no-repeat;
-  transition: border-color .15s ease, background-color .15s ease;
-}
-.advisor__opt.is-active::after {
-  border-color: var(--teal);
-  background-color: var(--teal); background-size: 12px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
 }
 .advisor__opt:hover {                                /* exactly the product-card hover (.pcard:hover) */
   transform: translateY(-6px);
   box-shadow: var(--shadow-lg); border-color: rgba(1,82,83,0.25);
 }
 .advisor__opt:focus-visible { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-10); }   /* Teal 500 focus ring */
-.advisor__opt.is-active { border-color: var(--teal); background: var(--teal-5); }   /* selected row highlight = Teal 50 */
+.advisor__opt.is-active { border-color: var(--teal); box-shadow: inset 0 0 0 1px var(--teal); background: var(--teal-5); }   /* selected = whole tile (Teal 500 ring + Teal 50 fill) */
 .advisor__opt-sw { flex: 0 0 auto; align-self: center; width: 18px; height: 18px; border-radius: var(--r-m); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.14); }   /* color swatch matches facet list */
 .advisor__opt-label { font-size: var(--text-body-sm); font-weight: 500; color: var(--schwarz); }   /* Body SM Medium */
 .advisor__opt-sub { font-size: var(--text-body-sm); color: var(--ink-60); }   /* KI flow floor: 14px min */
@@ -808,7 +796,6 @@
 /* Optik step — full-width colour bar on top of the tile, label/sub below, checkbox in the corner */
 .advisor__opt.advisor__opt--sw { flex-flow: column nowrap; align-items: stretch; gap: 8px; padding: 14px; }
 .advisor__opt--sw .advisor__opt-sw { width: 100%; height: 36px; align-self: stretch; }
-.advisor__opt--sw::after { top: 12px; right: 12px; transform: none; }
 
 .advisor__nav { display: flex; align-items: center; justify-content: space-between; margin-top: var(--sp-5); }
 /* Zurück + Weiter — identical link treatment; only the colour differs */
