@@ -744,7 +744,11 @@
             var v = emailEl.value.trim();
             if (!v) { emailEl.focus(); return; }
             lead.email = v; lead.news = optinEl.checked;
-            cap.innerHTML = '<p class="advisor__note advisor__sent">📬 Ihre Empfehlung wird an <em>' + v + '</em> gesendet' + (lead.news ? ' – inkl. News &amp; Angebote' : '') + '.</p>';
+            cap.innerHTML =
+              '<div class="advisor__sent" role="status">' +
+                '<svg class="advisor__sent-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.4 12.3l2.4 2.4 4.8-5.4"/></svg>' +
+                '<p class="advisor__sent-text">Ihre Empfehlung wird an <strong>' + v + '</strong> gesendet' + (lead.news ? ' – inkl. News &amp; Angebote' : '') + '.</p>' +
+              '</div>';
           };
           emailEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); submitEmail(); } });
           cap.querySelector('[data-email-send]').addEventListener('click', submitEmail);

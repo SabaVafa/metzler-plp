@@ -827,7 +827,16 @@
 }
 .advisor__send:hover { background: var(--teal-600); }
 .advisor__send svg { width: 22px; height: 22px; stroke-width: 1.5; }
-.advisor__note.advisor__sent { margin: 0; color: var(--schwarz); }   /* confirmation = full-contrast body ink (AA); 2-class wins over .advisor__note */
+/* Success confirmation = DS success alert (Green / Select #009951) */
+.advisor__sent {
+  display: flex; align-items: center; gap: var(--sp-2);
+  margin: 0; padding: 12px 16px; border-radius: var(--r-m);
+  background: rgba(0,153,81,0.08);          /* light tint of --green */
+  border: 1px solid rgba(0,153,81,0.30);
+}
+.advisor__sent-ico { flex: 0 0 auto; width: 20px; height: 20px; color: var(--green); }   /* DS success accent */
+.advisor__sent-text { margin: 0; font-size: var(--text-body-sm); color: var(--schwarz); }   /* AA body ink, 14px floor */
+.advisor__sent-text strong { font-weight: 700; color: var(--schwarz); }
 @media (max-width: 760px) {
   .advisor__capture-row { flex-wrap: wrap; }
   .advisor__capture-row .advisor__field { flex: 1 1 100%; }
