@@ -745,7 +745,7 @@
 .advisor__card {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.6fr);
+  grid-template-columns: 1fr;                      /* quiz only — intro removed (branding lives in the collapsed bar) */
   gap: clamp(24px, 3vw, 40px);
   align-items: start;
   padding: clamp(20px, 2.4vw, 28px);
