@@ -703,9 +703,6 @@
       var note = res.dropped.length
         ? '<p class="advisor__note">Kein exakter Treffer – wir zeigen die besten Alternativen.</p>'
         : '';
-      var prefs = res.prefs.length
-        ? '<p class="advisor__note">Ihre Wünsche notiert: <em>' + res.prefs.map(function (o) { return o.value; }).join(', ') + '</em></p>'
-        : '';
       var capture =
         '<div class="advisor__capture" data-result-capture>' +
           '<p class="advisor__capture-q">Empfehlung per E-Mail erhalten?</p>' +
@@ -738,7 +735,7 @@
               '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>' +
             '</div>' +
           '</div>' +
-          note + prefs +
+          note +
         '</div>' +
         capture +
         '</div>';
