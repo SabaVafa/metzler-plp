@@ -464,15 +464,13 @@
       { q: 'Für welche Wohnsituation suchen Sie einen Briefkasten?', opts: [
         { label: 'Einfamilienhaus',  sub: 'für einen Haushalt',     group: 'faecher', value: '1', chip: 'Einfamilienhaus' },
         { label: 'Zweifamilienhaus', sub: 'für zwei Haushalte',     group: 'faecher', value: '2', chip: 'Zweifamilienhaus' },
-        { label: 'Mehrfamilienhaus', sub: 'für mehrere Parteien',   group: 'faecher', value: '3', chip: 'Mehrfamilienhaus' },
-        { label: 'Keine Präferenz',  sub: 'bitte alle anzeigen',    neutral: true }
+        { label: 'Mehrfamilienhaus', sub: 'für mehrere Parteien',   group: 'faecher', value: '3', chip: 'Mehrfamilienhaus' }
       ]},
       { q: 'Wo möchten Sie Ihren Briefkasten anbringen?', opts: [
         { label: 'An der Hauswand',          sub: 'klassische Wandmontage',         group: 'montage', value: 'wand',      chip: 'Wandmontage' },
         { label: 'Freistehend mit Standfuß', sub: 'z. B. am Weg oder in der Einfahrt', group: 'montage', value: 'stand',  chip: 'Standmontage' },
         { label: 'Am Zaun',                  sub: 'als Zaunbriefkasten',            group: 'montage', value: 'stand',      chip: 'Zaunmontage' },
-        { label: 'In die Mauer integriert',  sub: 'Mauerdurchwurf oder Unterputz',  group: 'montage', value: 'unterputz', chip: 'Unterputz' },
-        { label: 'Keine Präferenz',          sub: 'bitte alle anzeigen',            neutral: true }
+        { label: 'In die Mauer integriert',  sub: 'Mauerdurchwurf oder Unterputz',  group: 'montage', value: 'unterputz', chip: 'Unterputz' }
       ]},
       { q: 'Mit welchem Postaufkommen rechnen Sie?', opts: [
         { label: 'Auch Pakete',             sub: 'mit sicherem Paketfach',                  group: 'faecher', value: 'paketfach', chip: 'Paketfach' },
