@@ -865,6 +865,7 @@
       var bar = root.querySelector('.advisor__bar');
       if (bar) bar.setAttribute('aria-expanded', open ? 'true' : 'false');
       if (open) {
+        var st = quizEl.querySelector('.advisor__step'); if (st) st.classList.add('is-in');   /* settle entrance offset so the quiz aligns to the content top */
         lockQuizHeight();
         var f = root.querySelector('.advisor__result-title') || root.querySelector('.advisor__q');
         if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 80);
