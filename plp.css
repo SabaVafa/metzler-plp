@@ -732,15 +732,14 @@
 .advisor__bar-cta svg { width: 24px; height: 24px; stroke-width: 1.5; }   /* match the subcategory-rail arrow (.subnav__arrow svg) */
 .advisor:not(.is-open) .advisor__card { display: none; }   /* collapsed by default */
 .advisor.is-open .advisor__bar { display: none; }
-/* Collapse control — consistent with the subcategory rail arrow (.subnav__arrow) */
+/* Collapse control — bare teal chevron, consistent with the collapsed bar CTA (no container) */
 .advisor__collapse {
   position: absolute; top: clamp(24px, 3.2vw, 40px); right: clamp(24px, 3.2vw, 40px); z-index: 5; cursor: pointer;   /* top-right aligned with the card content (= badge / progress top) */
-  width: 40px; height: 40px; border-radius: var(--r-m);
-  border: 1px solid var(--line); background: #fff; color: var(--schwarz);
-  display: grid; place-items: center; transition: background .15s ease, color .15s ease, border-color .15s ease;
+  padding: 0; border: 0; background: none; color: var(--teal);
+  display: grid; place-items: center; transition: color .15s ease;
 }
-.advisor__collapse:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
-.advisor__collapse:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--teal-10); }
+.advisor__collapse:hover { color: var(--teal-700); }
+.advisor__collapse:focus-visible { outline: none; border-radius: var(--r-m); box-shadow: 0 0 0 3px var(--teal-10); }
 .advisor__collapse svg { width: 24px; height: 24px; stroke-width: 1.5; transform: rotate(180deg); }   /* chevron-up = collapse */
 
 .advisor__card {
