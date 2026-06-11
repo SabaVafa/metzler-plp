@@ -577,11 +577,10 @@
       if (o.group === 'montage') return p.montage === o.value;
       return false;
     }
-    function recCardHTML(p, percent) {
+    function recCardHTML(p) {
       return '<a class="advisor__rec" href="#grid" data-details>' +
         '<span class="advisor__rec-thumb"><img src="' + pickImg(p) + '" alt="" loading="lazy"></span>' +
         '<span class="advisor__rec-info">' +
-          '<span class="advisor__match">' + percent + ' % passend für Sie</span>' +
           '<span class="advisor__rec-name">' + p.name + '</span>' +
           '<span class="advisor__rec-price">' + fmtPrice(p.price) + (p.uvp ? '<s>' + fmtPrice(p.uvp) + '</s>' : '') + '</span>' +
         '</span>' +
@@ -674,10 +673,7 @@
       var headText = res.kept.length
         ? '<strong>' + res.count + '</strong> passende ' + (res.count === 1 ? 'Empfehlung' : 'Empfehlungen') + ' für Sie kuratiert'
         : 'Unsere Top-Empfehlungen für Sie';
-      var cards = top.map(function (t, i) {
-        var percent = Math.max(82, Math.round(87 + t.ratio * 12) - i);   /* premium, deterministic, strictly descending */
-        return recCardHTML(t.p, percent);
-      }).join('');
+      var cards = top.map(function (t) { return recCardHTML(t.p); }).join('');
       var chips = res.kept.map(function (o) { return '<span class="advisor__chip">' + (o.label || labelFor(o.group, o.value)) + '</span>'; });
       var note = res.dropped.length
         ? '<p class="advisor__note">Kein exakter Treffer für <em>' + res.dropped.map(function (o) { return o.label || labelFor(o.group, o.value); }).join(', ') + '</em> – wir zeigen die besten Alternativen.</p>'

@@ -726,10 +726,10 @@
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   PILL RULE — every pill (badge / chip / match) is a tinted chip whose
-   surface is derived from the container it sits on; brand teal appears
-   only as the label and a single accent glyph. Applies to .advisor__badge,
-   .advisor__chip, .advisor__match and .mega-feature__badge.
+   PILL RULE — every pill is a text-only tinted chip whose surface is
+   derived from the container it sits on, with a label that is a darker
+   shade of that fill. Applies to .advisor__badge, .advisor__chip and
+   .mega-feature__badge.
 
    1. FILL  = the light 100-tint of the CONTAINER's background hue
               · teal-tinted surface (advisor/promo panel) → Teal 100  #E6EEEE
@@ -960,13 +960,6 @@
 }
 .advisor__rec-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
 .advisor__rec-info { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
-.advisor__match {                                  /* text-only pill: Graphite 100 fill (shade of the WHITE rec
-                                                      card), Schwarz label (dark shade of the graphite fill) */
-  display: inline-flex; align-items: center; align-self: flex-start;
-  padding: 3px 10px; border-radius: var(--r-pill);
-  background: var(--graphite-100); color: var(--schwarz);
-  font-size: var(--text-body-sm); font-weight: 700; letter-spacing: .02em;   /* KI flow floor: 14px min */
-}
 .advisor__rec-name { font-size: var(--text-body-sm); font-weight: 700; line-height: 1.375; color: var(--schwarz); }   /* Body SM Bold */
 .advisor__rec-price { font-size: var(--text-body); font-weight: 700; color: var(--schwarz); }   /* Body Bold */
 .advisor__rec-price s { margin-left: 6px; font-size: var(--text-body-sm); font-weight: 400; color: var(--ink-60); }
