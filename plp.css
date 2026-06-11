@@ -778,9 +778,9 @@
   background-color: var(--teal); background-size: 12px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
 }
-.advisor__opt:hover {
-  transform: translateY(-2px) scale(1.012);
-  border-color: var(--teal); box-shadow: var(--shadow-md);   /* hover → Teal 500 border */
+.advisor__opt:hover {                                /* exactly the product-card hover (.pcard:hover) */
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg); border-color: rgba(1,82,83,0.25);
 }
 .advisor__opt:focus-visible { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-10); }   /* Teal 500 focus ring */
 .advisor__opt.is-active { border-color: var(--teal); background: var(--teal-5); }   /* selected row highlight = Teal 50 */
