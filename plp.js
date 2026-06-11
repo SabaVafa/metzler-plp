@@ -106,7 +106,7 @@
   var TOTAL = 80; // catalogue headline figure
 
   /* ---- State ---- */
-  var active = { color: [], zeitung: [], faecher: [], montage: [], zusatz: [] };
+  var active = { color: [], zeitung: [], faecher: [], montage: [], zusatz: [], material: [] };
   var page = 1;
   var advisorChips = false;   /* true while the active filters were set by the KI advisor → don't echo them as toolbar chips */
 
@@ -219,6 +219,7 @@
     }
     if (active.zeitung.length && active.zeitung.indexOf(p.zeitung) === -1) return false;
     if (active.montage.length && active.montage.indexOf(p.montage) === -1) return false;
+    if (active.material && active.material.length && active.material.indexOf(p.material) === -1) return false;   /* advisor-only facet (Witterung/Optik/Sichtfenster) */
     if (active.zusatz.length) {
       /* Extra functions — boolean attributes on the product (p.klingel / p.sprech).
          OR within the group; a "klingel+sprech" key requires BOTH (combined unit). */
@@ -454,48 +455,52 @@
     if (!quizEl) return;
     var thinkTimer;
 
-    /* Each option maps to a catalogue facet (group = color/faecher/zeitung/zusatz/montage)
-       that filters the grid, or group:'pref' for a noted preference the catalogue can't
-       filter on (Gravur, Öffnungsrichtung). Steps are skippable. */
+    /* Needs-based questions (not a mirror of the manual filters). Each option maps to a
+       catalogue attribute the recommendation engine reads:
+         group color/colorset/material/faecher/zeitung/montage/zusatz → filters + ranks
+         group 'pref' → noted preference (Beschriftung), not filtered
+         neutral:true → "no preference" (adds no filter). Steps are skippable. */
     var QUIZ = [
-      { q: 'Welche Farbe bevorzugen Sie?', opts: [
-        { label: 'Anthrazit',    group: 'color', value: 'anthrazit' },
-        { label: 'Braun',        group: 'color', value: 'braun' },
-        { label: 'Edelstahl',    group: 'color', value: 'edelstahl' },
-        { label: 'Eisenglimmer', group: 'color', value: 'eisenglimmer' },
-        { label: 'Grau',         group: 'color', value: 'grau' },
-        { label: 'Schwarz',      group: 'color', value: 'schwarz' },
-        { label: 'Weiß',         group: 'color', value: 'weiss' },
-        { label: 'Wunschfarbe',  group: 'color', value: 'wunschfarbe' }
+      { q: 'Für welche Wohnsituation suchen Sie einen Briefkasten?', opts: [
+        { label: 'Einfamilienhaus',  sub: 'für einen Haushalt',     group: 'faecher', value: '1', chip: 'Einfamilienhaus' },
+        { label: 'Zweifamilienhaus', sub: 'für zwei Haushalte',     group: 'faecher', value: '2', chip: 'Zweifamilienhaus' },
+        { label: 'Mehrfamilienhaus', sub: 'für mehrere Parteien',   group: 'faecher', value: '3', chip: 'Mehrfamilienhaus' },
+        { label: 'Keine Präferenz',  sub: 'bitte alle anzeigen',    neutral: true }
       ]},
-      { q: 'Wie viele Brieffächer benötigen Sie?', opts: [
-        { label: '1 Fach',          sub: 'Einfamilienhaus',  group: 'faecher', value: '1' },
-        { label: '2 Fächer',        sub: 'Zweifamilienhaus', group: 'faecher', value: '2' },
-        { label: '3+ Fächer',       sub: 'Mehrfamilienhaus', group: 'faecher', value: '3' },
-        { label: 'Inkl. Paketfach', sub: 'für Pakete',       group: 'faecher', value: 'paketfach' }
+      { q: 'Wo möchten Sie Ihren Briefkasten anbringen?', opts: [
+        { label: 'An der Hauswand',          sub: 'klassische Wandmontage',         group: 'montage', value: 'wand',      chip: 'Wandmontage' },
+        { label: 'Freistehend mit Standfuß', sub: 'z. B. am Weg oder in der Einfahrt', group: 'montage', value: 'stand',  chip: 'Standmontage' },
+        { label: 'Am Zaun',                  sub: 'als Zaunbriefkasten',            group: 'montage', value: 'stand',      chip: 'Zaunmontage' },
+        { label: 'In die Mauer integriert',  sub: 'Mauerdurchwurf oder Unterputz',  group: 'montage', value: 'unterputz', chip: 'Unterputz' },
+        { label: 'Keine Präferenz',          sub: 'bitte alle anzeigen',            neutral: true }
       ]},
-      { q: 'Wünschen Sie ein Zeitungsfach?', opts: [
-        { label: 'Mit Zeitungsfach',          group: 'zeitung', value: 'integriert' },
-        { label: 'Nur Briefkasten',           group: 'zeitung', value: 'ohne' },
-        { label: 'Optionales Fach verfügbar', group: 'zeitung', value: 'optional' }
+      { q: 'Mit welchem Postaufkommen rechnen Sie?', opts: [
+        { label: 'Auch Pakete',             sub: 'mit sicherem Paketfach',                  group: 'faecher', value: 'paketfach', chip: 'Paketfach' },
+        { label: 'Viel Post und Zeitungen', sub: 'großes Fassungsvermögen mit Zeitungsfach', group: 'zeitung', value: 'integriert', chip: 'Zeitungsfach' },
+        { label: 'Überwiegend Briefpost',   sub: 'kompakte Größe genügt',                   neutral: true }
       ]},
-      { q: 'Welche Montageart passt zu Ihnen?', opts: [
-        { label: 'Wandmontage',      sub: 'an der Hauswand', group: 'montage', value: 'wand' },
-        { label: 'Standmontage',     sub: 'frei am Weg',     group: 'montage', value: 'stand' },
-        { label: 'Unterputzmontage', sub: 'in der Mauer',    group: 'montage', value: 'unterputz' }
+      { q: 'Welche Zusatzfunktion wünschen Sie sich?', opts: [
+        { label: 'Funkklingel',              sub: 'kabellos und einfach nachrüstbar',          group: 'zusatz',   value: 'klingel',        chip: 'Funkklingel' },
+        { label: 'Klingel mit Sprechanlage', sub: 'sehen und sprechen, wer vor der Tür steht', group: 'zusatz',   value: 'klingel+sprech', chip: 'Klingel & Sprechanlage' },
+        { label: 'Sichtfenster',             sub: 'Ihren Posteingang auf einen Blick erkennen', group: 'material', value: 'acrylglas',     chip: 'Sichtfenster' },
+        { label: 'Keine Zusatzfunktion',     sub: 'ein reiner Briefkasten',                    neutral: true }
       ]},
-      { q: 'Welche Zusatzfunktion ist Ihnen wichtig?', opts: [
-        { label: 'Mit Funkklingel',            group: 'zusatz', value: 'klingel' },
-        { label: 'Mit Klingel & Sprechanlage', group: 'zusatz', value: 'klingel+sprech' }   /* combined: both */
+      { q: 'Wie stark ist der Standort der Witterung ausgesetzt?', opts: [
+        { label: 'Übliche, geschützte Lage',          sub: 'pulverbeschichteter Stahl',                neutral: true },
+        { label: 'Rau, exponiert oder in Küstennähe', sub: 'rostfreier Edelstahl V2A, salzluftbeständig', group: 'material', value: 'edelstahl', chip: 'Edelstahl V2A' }
       ]},
-      { q: 'Welche Gravuroption wünschen Sie?', opts: [
-        { label: 'Lasergravur',         group: 'pref', value: 'Lasergravur' },
-        { label: 'Namensschild',        group: 'pref', value: 'Namensschild' },
-        { label: 'Standard-Ausführung', group: 'pref', value: 'Standard-Ausführung' }
+      { q: 'Welche Optik passt zu Ihrem Zuhause?', opts: [
+        { label: 'Modern und dunkel',    sub: 'Anthrazit RAL 7016, Tiefschwarz, Eisenglimmer', group: 'colorset', values: ['anthrazit','schwarz','eisenglimmer'], chip: 'Dunkle Optik', swatch: '#383E42' },
+        { label: 'Hell und klar',        sub: 'Verkehrsweiß, Graualuminium',                   group: 'colorset', values: ['weiss','grau'], chip: 'Helle Optik', swatch: 'linear-gradient(135deg,#ffffff 50%,#B9BCC0 50%)' },
+        { label: 'Edelstahl',            sub: 'rostfrei und zeitlos',                          group: 'material', value: 'edelstahl', chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)' },
+        { label: 'Natürliche Holzoptik', sub: 'Eiche oder Lärche',                             group: 'material', value: 'holz', chip: 'Holzoptik', swatch: 'linear-gradient(135deg,#b07b46,#7a5230)' },
+        { label: 'Wunschfarbe',          sub: 'individuell nach RAL',                          group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)' }
       ]},
-      { q: 'Wie soll sich die Tür öffnen?', opts: [
-        { label: 'Klappbar nach unten', group: 'pref', value: 'Klappbar nach unten' },
-        { label: 'Seitlich öffnend', sub: 'Links / Rechts', group: 'pref', value: 'Seitlich öffnend' }
+      { q: 'Wie möchten Sie Ihren Briefkasten beschriften?', opts: [
+        { label: 'Dauerhafte Lasergravur',       sub: 'UV- und witterungsbeständig, freie Schriftwahl', group: 'pref', value: 'Lasergravur' },
+        { label: 'Austauschbares Namensschild',  sub: 'jederzeit wechselbar',                           group: 'pref', value: 'Namensschild' },
+        { label: 'Edelstahl-Namensschild',       sub: 'hochwertig graviert',                            group: 'pref', value: 'Edelstahl-Namensschild' },
+        { label: 'Ohne Beschriftung',            sub: 'neutral',                                        neutral: true }
       ]}
     ];
 
@@ -514,18 +519,21 @@
        relax the lowest-priority answer (colour first, household last) so the
        advisor always returns a recommendation. Returns {kept, dropped, count}. */
     function applyPicks() {
-      var priority = ['faecher', 'zusatz', 'montage', 'zeitung', 'color']; /* later = dropped first */
+      var priority = ['faecher', 'zusatz', 'montage', 'zeitung', 'material', 'colorset', 'color']; /* later = dropped first */
       var sel = [], prefs = [];
       picks.forEach(function (arr) {
         (arr || []).forEach(function (o) {       /* picks[i] is an array (multi-select) */
-          if (!o || !o.group) return;
-          if (active[o.group]) sel.push(o);   /* real facet → filters the grid */
-          else prefs.push(o);                 /* 'pref' (Gravur / Öffnung) → noted, not filterable */
+          if (!o || !o.group) return;            /* neutral option → no filter */
+          if (o.group === 'pref') prefs.push(o); /* Beschriftung → noted, not filterable */
+          else sel.push(o);                      /* real facet → filters + ranks */
         });
       });
       function setActive(list) {
         Object.keys(active).forEach(function (g) { active[g] = []; });
-        list.forEach(function (o) { if (active[o.group] && active[o.group].indexOf(o.value) === -1) active[o.group].push(o.value); });
+        list.forEach(function (o) {
+          if (o.group === 'colorset') { (o.values || []).forEach(function (v) { if (active.color.indexOf(v) === -1) active.color.push(v); }); }
+          else if (active[o.group] && active[o.group].indexOf(o.value) === -1) active[o.group].push(o.value);
+        });
         advisorChips = true;   /* filters came from the KI → keep them out of the toolbar */
         page = 1; syncControls(); render();
         return PRODUCTS.filter(matches).length;
@@ -575,11 +583,13 @@
     }
     /* Does product p satisfy a single facet pick? (mirrors matches()) */
     function sat(p, o) {
-      if (o.group === 'color')   return p.colors.indexOf(o.value) !== -1;
-      if (o.group === 'faecher') return o.value === 'paketfach' ? !!p.paket : p.faecher === o.value;
-      if (o.group === 'zusatz')  return o.value.indexOf('+') !== -1 ? o.value.split('+').every(function (x) { return !!p[x]; }) : !!p[o.value];
-      if (o.group === 'zeitung') return p.zeitung === o.value;
-      if (o.group === 'montage') return p.montage === o.value;
+      if (o.group === 'color')    return p.colors.indexOf(o.value) !== -1;
+      if (o.group === 'colorset') return (o.values || []).some(function (c) { return p.colors.indexOf(c) !== -1; });
+      if (o.group === 'material') return p.material === o.value;
+      if (o.group === 'faecher')  return o.value === 'paketfach' ? !!p.paket : p.faecher === o.value;
+      if (o.group === 'zusatz')   return o.value.indexOf('+') !== -1 ? o.value.split('+').every(function (x) { return !!p[x]; }) : !!p[o.value];
+      if (o.group === 'zeitung')  return p.zeitung === o.value;
+      if (o.group === 'montage')  return p.montage === o.value;
       return false;
     }
     function recCardHTML(p) {
@@ -600,8 +610,8 @@
       var cur = Array.isArray(picks[i]) ? picks[i] : [];
       var opts = s.opts.map(function (o, k) {
         var on = cur.some(function (p) { return p.label === o.label; }) ? ' is-active' : '';
-        var sw = (o.group === 'color' && COLORS[o.value])
-          ? '<span class="advisor__opt-sw" style="background:' + COLORS[o.value].css + '" aria-hidden="true"></span>' : '';
+        var swCss = o.swatch || (o.group === 'color' && COLORS[o.value] ? COLORS[o.value].css : null);
+        var sw = swCss ? '<span class="advisor__opt-sw" style="background:' + swCss + '" aria-hidden="true"></span>' : '';
         return '<button type="button" class="advisor__opt' + on + '" data-opt="' + k + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
           sw +
           '<span class="advisor__opt-label">' + o.label + '</span>' +
@@ -705,9 +715,9 @@
         : 'Unsere Top-Empfehlungen für Sie';
       var cards = top.map(function (t) { return recCardHTML(t.p); }).join('');
       var chips = res.kept.map(function (o) {
-        var lab = o.label || labelFor(o.group, o.value);
-        return '<span class="advisor__chip">' + lab +
-          '<button type="button" class="advisor__chip-x" data-ai-chip="' + o.group + '" data-ai-chip-val="' + o.value + '" aria-label="Filter ' + lab + ' entfernen">' +
+        var chipText = o.chip || o.label || labelFor(o.group, o.value);
+        return '<span class="advisor__chip">' + chipText +
+          '<button type="button" class="advisor__chip-x" data-ai-chip-label="' + o.label + '" aria-label="Filter ' + chipText + ' entfernen">' +
             '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg>' +
           '</button></span>';
       });
@@ -752,12 +762,12 @@
         '</div>';
     }
 
-    /* Remove every pick matching a group+value (used by the removable result chips). */
-    function removePick(group, value) {
+    /* Remove every pick with this label (used by the removable result chips). */
+    function removePick(label) {
       picks.forEach(function (arr) {
         if (!Array.isArray(arr)) return;
         for (var i = arr.length - 1; i >= 0; i--) {
-          if (arr[i].group === group && arr[i].value === value) arr.splice(i, 1);
+          if (arr[i].label === label) arr.splice(i, 1);
         }
       });
     }
@@ -791,9 +801,9 @@
       if (reset) reset.addEventListener('click', restart);
 
       /* Removable filter chips — drop the filter and re-curate instantly */
-      results.querySelectorAll('[data-ai-chip]').forEach(function (b) {
+      results.querySelectorAll('[data-ai-chip-label]').forEach(function (b) {
         b.addEventListener('click', function () {
-          removePick(b.getAttribute('data-ai-chip'), b.getAttribute('data-ai-chip-val'));
+          removePick(b.getAttribute('data-ai-chip-label'));
           renderResult();
         });
       });
