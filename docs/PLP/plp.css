@@ -895,24 +895,30 @@
 }
 
 /* ── Buttons — DS .btn-primary / .btn-secondary semantics ── */
-.advisor__next, .advisor__view {                   /* .btn-primary — Teal 500 fill, white */
-  display: inline-flex; align-items: center; justify-content: center;
-  min-height: 2.625rem; padding: .7rem 1.2rem; border: 0; border-radius: var(--r-m);
+.advisor__next {                                   /* (legacy) .btn-primary — Teal 500 fill, white */
+  display: flex; width: 100%; align-items: center; justify-content: center;
+  min-height: 2.625rem; padding: .7rem 1.2rem; border: 0; border-radius: var(--r-m); margin-top: var(--sp-4);
   background: var(--teal); color: var(--white); cursor: pointer;
   font-size: var(--text-body); font-weight: 500; line-height: 1.2;
   transition: background .15s ease;
 }
-.advisor__next { display: flex; width: 100%; margin-top: var(--sp-4); }
-.advisor__next:hover, .advisor__view:hover { background: var(--teal-600); }   /* Teal 600 */
-.advisor__next:active, .advisor__view:active { background: var(--teal-700); } /* Teal 700 */
-.advisor__reset {                                  /* .btn-secondary — transparent, 2px Teal 500 */
+.advisor__next:hover { background: var(--teal-600); }
+.advisor__next:active { background: var(--teal-700); }
+.advisor__view {                                   /* primary action — DS .btn-secondary outline (transparent, 2px Teal 500) */
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 2.625rem; padding: .7rem 1.2rem; border-radius: var(--r-m); cursor: pointer;
   background: transparent; color: var(--teal); border: 0.125rem solid var(--teal);
-  font-size: var(--text-body); font-weight: 500; line-height: 1.2;
+  font-size: var(--text-body); font-weight: 600; line-height: 1.2;
   transition: background .15s ease, color .15s ease;
 }
-.advisor__reset:hover { background: #E6EEEE; }     /* Teal 100 */
+.advisor__view:hover { background: #E6EEEE; }      /* Teal 100 */
+.advisor__reset {                                  /* secondary action — text link */
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 2.625rem; padding: .7rem 0; border: 0; background: none; cursor: pointer;
+  color: var(--teal); font-size: var(--text-body); font-weight: 600; line-height: 1.2;
+  transition: color .15s ease;
+}
+.advisor__reset:hover { color: var(--teal-700); }
 
 /* ── Results region (full width, below) ── */
 .advisor__results { grid-column: 1 / -1; margin-top: var(--sp-5); }
