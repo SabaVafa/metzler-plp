@@ -945,10 +945,11 @@
 }
 .advisor__rec-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
 .advisor__rec-info { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
-.advisor__match {                                  /* shared pill approach: Teal 100 fill · Teal 700 text · teal hairline */
+.advisor__match {                                  /* pill bg = shade of its container (the WHITE rec card) → Graphite 100;
+                                                      teal dot + Teal 700 text stay as the match accent */
   display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
   padding: 3px 10px; border-radius: var(--r-pill);
-  background: #E6EEEE; color: var(--teal-700); border: 1px solid var(--teal-10);
+  background: var(--graphite-100); color: var(--teal-700);
   font-size: var(--text-body-sm); font-weight: 700; letter-spacing: .02em;   /* KI flow floor: 14px min */
 }
 .advisor__match::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
