@@ -714,28 +714,30 @@
               '<svg class="advisor__field-ico advisor__field-ico--mail" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>' +
               '<input type="email" class="advisor__input" data-email autocomplete="email" placeholder="E-Mail-Adresse eingeben" aria-label="E-Mail-Adresse">' +
             '</div>' +
+            '<button type="button" class="advisor__send" data-email-send aria-label="Empfehlung senden"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
             '<label class="advisor__optin">' +
               '<input type="checkbox" data-optin>' +
               '<span class="advisor__optin-box" aria-hidden="true"></span>' +
               '<span>Schicken Sie mir Metzler News &amp; Angebote.</span>' +
             '</label>' +
-            '<button type="button" class="advisor__send" data-email-send aria-label="Empfehlung senden"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
         '</div>';
       return '<div class="advisor__result">' +
-        '<div class="advisor__result-head"><h3 class="advisor__result-title">' + headText + '</h3></div>' +
-        '<div class="advisor__recs' + (top.length === 1 ? ' advisor__recs--single' : '') + '">' + cards + '</div>' +
-        '<div class="advisor__aside">' +
-          '<div class="advisor__summary">' +                  /* chips left · actions right, one horizontal row */
-            (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '<span></span>') +
-            '<div class="advisor__actions">' +
-              '<button type="button" class="advisor__view" data-ai-view>' + (res.count === 1 ? 'Das Modell ansehen' : 'Alle ' + res.count + ' Modelle ansehen') + '</button>' +
-              '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>' +
+        '<div class="advisor__result-main">' +                 /* left column — everything about the suggestions */
+          '<div class="advisor__result-head"><h3 class="advisor__result-title">' + headText + '</h3></div>' +
+          '<div class="advisor__recs' + (top.length === 1 ? ' advisor__recs--single' : '') + '">' + cards + '</div>' +
+          '<div class="advisor__aside">' +
+            '<div class="advisor__summary">' +                  /* chips left · actions right, one horizontal row */
+              (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '<span></span>') +
+              '<div class="advisor__actions">' +
+                '<button type="button" class="advisor__view" data-ai-view>' + (res.count === 1 ? 'Das Modell ansehen' : 'Alle ' + res.count + ' Modelle ansehen') + '</button>' +
+                '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>' +
+              '</div>' +
             '</div>' +
+            note + prefs +
           '</div>' +
-          note + prefs +
         '</div>' +
-        capture +
+        capture +                                              /* right column — everything about the e-mail */
         '</div>';
     }
 
