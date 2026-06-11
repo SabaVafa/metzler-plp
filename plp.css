@@ -805,6 +805,11 @@
 /* Consistency: when any option in a question wraps, JS stacks ALL of them (label over sub). */
 .advisor__opts--stacked .advisor__opt { flex-flow: column nowrap; align-items: flex-start; gap: 3px; }
 
+/* Optik step — full-width colour bar on top of the tile, label/sub below, checkbox in the corner */
+.advisor__opt.advisor__opt--sw { flex-flow: column nowrap; align-items: stretch; gap: 8px; padding: 14px; }
+.advisor__opt--sw .advisor__opt-sw { width: 100%; height: 36px; align-self: stretch; }
+.advisor__opt--sw::after { top: 12px; right: 12px; transform: none; }
+
 .advisor__nav { display: flex; align-items: center; justify-content: space-between; margin-top: var(--sp-5); }
 /* Zurück + Weiter — identical link treatment; only the colour differs */
 .advisor__back, .advisor__skip, .advisor__forward {

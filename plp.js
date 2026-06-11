@@ -609,7 +609,7 @@
         var on = cur.some(function (p) { return p.label === o.label; }) ? ' is-active' : '';
         var swCss = o.swatch || (o.group === 'color' && COLORS[o.value] ? COLORS[o.value].css : null);
         var sw = swCss ? '<span class="advisor__opt-sw" style="background:' + swCss + '" aria-hidden="true"></span>' : '';
-        return '<button type="button" class="advisor__opt' + on + '" data-opt="' + k + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
+        return '<button type="button" class="advisor__opt' + on + (swCss ? ' advisor__opt--sw' : '') + '" data-opt="' + k + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
           sw +
           '<span class="advisor__opt-label">' + o.label + '</span>' +
           (o.sub ? '<span class="advisor__opt-sub">' + o.sub + '</span>' : '') +
