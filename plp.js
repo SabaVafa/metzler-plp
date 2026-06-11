@@ -454,7 +454,7 @@
        that filters the grid, or group:'pref' for a noted preference the catalogue can't
        filter on (Gravur, Öffnungsrichtung). Steps are skippable. */
     var QUIZ = [
-      { q: '1. Welche Farbe bevorzugen Sie?', opts: [
+      { q: 'Welche Farbe bevorzugen Sie?', opts: [
         { label: 'Anthrazit',    group: 'color', value: 'anthrazit' },
         { label: 'Braun',        group: 'color', value: 'braun' },
         { label: 'Edelstahl',    group: 'color', value: 'edelstahl' },
@@ -464,32 +464,32 @@
         { label: 'Weiß',         group: 'color', value: 'weiss' },
         { label: 'Wunschfarbe',  group: 'color', value: 'wunschfarbe' }
       ]},
-      { q: '2. Wie viele Brieffächer benötigen Sie?', opts: [
+      { q: 'Wie viele Brieffächer benötigen Sie?', opts: [
         { label: '1 Fach',          sub: 'Einfamilienhaus',  group: 'faecher', value: '1' },
         { label: '2 Fächer',        sub: 'Zweifamilienhaus', group: 'faecher', value: '2' },
         { label: '3+ Fächer',       sub: 'Mehrfamilienhaus', group: 'faecher', value: '3' },
         { label: 'Inkl. Paketfach', sub: 'für Pakete',       group: 'faecher', value: 'paketfach' }
       ]},
-      { q: '3. Wünschen Sie ein Zeitungsfach?', opts: [
+      { q: 'Wünschen Sie ein Zeitungsfach?', opts: [
         { label: 'Mit Zeitungsfach',          group: 'zeitung', value: 'integriert' },
         { label: 'Nur Briefkasten',           group: 'zeitung', value: 'ohne' },
         { label: 'Optionales Fach verfügbar', group: 'zeitung', value: 'optional' }
       ]},
-      { q: '4. Welche Montageart passt zu Ihnen?', opts: [
-        { label: 'Wandmontage',      sub: 'Wall-Mounted',  group: 'montage', value: 'wand' },
-        { label: 'Standmontage',     sub: 'Free-Standing', group: 'montage', value: 'stand' },
-        { label: 'Unterputzmontage', sub: 'Flush-Mounted', group: 'montage', value: 'unterputz' }
+      { q: 'Welche Montageart passt zu Ihnen?', opts: [
+        { label: 'Wandmontage',      sub: 'an der Hauswand', group: 'montage', value: 'wand' },
+        { label: 'Standmontage',     sub: 'frei am Weg',     group: 'montage', value: 'stand' },
+        { label: 'Unterputzmontage', sub: 'in der Mauer',    group: 'montage', value: 'unterputz' }
       ]},
-      { q: '5. Welche Zusatzfunktion ist Ihnen wichtig?', opts: [
+      { q: 'Welche Zusatzfunktion ist Ihnen wichtig?', opts: [
         { label: 'Mit Funkklingel',            group: 'zusatz', value: 'klingel' },
         { label: 'Mit Klingel & Sprechanlage', group: 'zusatz', value: 'klingel+sprech' }   /* combined: both */
       ]},
-      { q: '6. Welche Gravuroption wünschen Sie?', opts: [
+      { q: 'Welche Gravuroption wünschen Sie?', opts: [
         { label: 'Lasergravur',         group: 'pref', value: 'Lasergravur' },
         { label: 'Namensschild',        group: 'pref', value: 'Namensschild' },
         { label: 'Standard-Ausführung', group: 'pref', value: 'Standard-Ausführung' }
       ]},
-      { q: '7. Öffnungsrichtung der Tür?', opts: [
+      { q: 'Wie soll sich die Tür öffnen?', opts: [
         { label: 'Klappbar nach unten', group: 'pref', value: 'Klappbar nach unten' },
         { label: 'Seitlich öffnend', sub: 'Links / Rechts', group: 'pref', value: 'Seitlich öffnend' }
       ]}
@@ -579,7 +579,7 @@
       return '<a class="advisor__rec" href="#grid" data-details>' +
         '<span class="advisor__rec-thumb"><img src="' + pickImg(p) + '" alt="" loading="lazy"></span>' +
         '<span class="advisor__rec-info">' +
-          '<span class="advisor__match">' + percent + '% Passend für Sie</span>' +
+          '<span class="advisor__match">' + percent + ' % passend für Sie</span>' +
           '<span class="advisor__rec-name">' + p.name + '</span>' +
           '<span class="advisor__rec-price">' + fmtPrice(p.price) + (p.uvp ? '<s>' + fmtPrice(p.uvp) + '</s>' : '') + '</span>' +
         '</span>' +
@@ -700,7 +700,7 @@
           (chips.length ? '<div class="advisor__chips">' + chips.join('') + '</div>' : '') +
           note + prefs +
           '<div class="advisor__actions">' +
-            '<button type="button" class="advisor__view" data-ai-view>Alle ' + res.count + ' Modelle ansehen</button>' +
+            '<button type="button" class="advisor__view" data-ai-view>' + (res.count === 1 ? 'Das Modell ansehen' : 'Alle ' + res.count + ' Modelle ansehen') + '</button>' +
             '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>' +
           '</div>' +
         '</div>' +
