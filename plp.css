@@ -764,6 +764,7 @@
 }
 .advisor__opt:focus-visible { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-10); }   /* Teal 500 focus ring */
 .advisor__opt.is-active { border-color: var(--teal); background: var(--teal-5); }   /* selected row highlight = Teal 50 */
+.advisor__opt-sw { flex: 0 0 auto; align-self: center; width: 18px; height: 18px; border-radius: var(--r-m); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.14); }   /* color swatch matches facet list */
 .advisor__opt-label { font-size: var(--text-body-sm); font-weight: 500; color: var(--schwarz); }   /* Body SM Medium */
 .advisor__opt-sub { font-size: var(--text-caption); color: var(--ink-60); }
 /* Consistency: when any option in a question wraps, JS stacks ALL of them (label over sub). */

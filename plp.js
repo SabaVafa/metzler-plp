@@ -455,10 +455,14 @@
        filter on (Gravur, Öffnungsrichtung). Steps are skippable. */
     var QUIZ = [
       { q: '1. Welche Farbe bevorzugen Sie?', opts: [
-        { label: 'Anthrazit', group: 'color', value: 'anthrazit' },
-        { label: 'Edelstahl', group: 'color', value: 'edelstahl' },
-        { label: 'Weiß',      group: 'color', value: 'weiss' },
-        { label: 'Grau',      group: 'color', value: 'grau' }
+        { label: 'Anthrazit',    group: 'color', value: 'anthrazit' },
+        { label: 'Braun',        group: 'color', value: 'braun' },
+        { label: 'Edelstahl',    group: 'color', value: 'edelstahl' },
+        { label: 'Eisenglimmer', group: 'color', value: 'eisenglimmer' },
+        { label: 'Grau',         group: 'color', value: 'grau' },
+        { label: 'Schwarz',      group: 'color', value: 'schwarz' },
+        { label: 'Weiß',         group: 'color', value: 'weiss' },
+        { label: 'Wunschfarbe',  group: 'color', value: 'wunschfarbe' }
       ]},
       { q: '2. Wie viele Brieffächer benötigen Sie?', opts: [
         { label: '1 Fach',          sub: 'Einfamilienhaus',  group: 'faecher', value: '1' },
@@ -597,7 +601,10 @@
       var dots = dotsHTML();
       var opts = s.opts.map(function (o, i) {
         var on = (picks[step] && picks[step].label === o.label) ? ' is-active' : '';
+        var sw = (o.group === 'color' && COLORS[o.value])
+          ? '<span class="advisor__opt-sw" style="background:' + COLORS[o.value].css + '" aria-hidden="true"></span>' : '';
         return '<button type="button" class="advisor__opt' + on + '" data-opt="' + i + '">' +
+          sw +
           '<span class="advisor__opt-label">' + o.label + '</span>' +
           (o.sub ? '<span class="advisor__opt-sub">' + o.sub + '</span>' : '') +
         '</button>';
