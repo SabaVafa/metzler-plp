@@ -731,15 +731,16 @@
 .advisor__bar-cta svg { width: 18px; height: 18px; }
 .advisor:not(.is-open) .advisor__card { display: none; }   /* collapsed by default */
 .advisor.is-open .advisor__bar { display: none; }
-/* Collapse control inside the open card */
+/* Collapse control — consistent with the subcategory rail arrow (.subnav__arrow) */
 .advisor__collapse {
-  position: absolute; top: 16px; right: 16px; z-index: 5;
-  width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
-  border: 1px solid var(--graphite-300); background: var(--white); color: var(--ink-60);
-  display: grid; place-items: center; transition: border-color .18s ease, color .18s ease;
+  position: absolute; top: 16px; right: 16px; z-index: 5; cursor: pointer;
+  width: 40px; height: 40px; border-radius: var(--r-m);
+  border: 1px solid var(--line); background: #fff; color: var(--schwarz);
+  display: grid; place-items: center; transition: background .15s ease, color .15s ease, border-color .15s ease;
 }
-.advisor__collapse:hover { border-color: var(--teal); color: var(--teal); }
-.advisor__collapse svg { width: 18px; height: 18px; transform: rotate(180deg); }   /* chevron-up = collapse */
+.advisor__collapse:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
+.advisor__collapse:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--teal-10); }
+.advisor__collapse svg { width: 24px; height: 24px; stroke-width: 1.5; transform: rotate(180deg); }   /* chevron-up = collapse */
 
 .advisor__card {
   position: relative;
