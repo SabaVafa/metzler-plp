@@ -631,9 +631,15 @@
   background: linear-gradient(165deg, var(--teal-5) 0%, #EEF2F2 100%);
   box-shadow: inset 0 0 0 1px var(--teal-10);
 }
-.mega-feature__badge {
+.mega-feature__badge {                            /* 3D-Konfigurator label — light Teal 100 pill drawn from the
+                                                      promo's teal-tinted panel (same approach as .advisor__badge);
+                                                      overrides the shared Schwarz flag, which stays black on white tiles */
   align-self: flex-start;
   margin-bottom: var(--sp-3);
+  padding: 0.25rem 0.625rem;                      /* 4px 10px — pill proportions */
+  background: #E6EEEE; color: var(--teal-700); border: 1px solid var(--teal-10);
+  border-radius: var(--r-pill);
+  letter-spacing: .02em;
 }
 .mega-feature__media {
   display: block;
