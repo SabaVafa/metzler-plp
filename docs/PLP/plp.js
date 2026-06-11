@@ -721,6 +721,10 @@
             '</label>' +
             '<button type="button" class="advisor__send" data-email-send aria-label="Empfehlung senden"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
+          '<p class="advisor__optin-info" data-optin-info role="status">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11.5v4.5"/><path d="M12 7.7h.01"/></svg>' +
+            '<span>Wir senden Ihnen eine E-Mail mit einem Freischalt-Link für den Erhalt unseres Newsletters. Die Abmeldung ist jederzeit möglich.</span>' +
+          '</p>' +
           '<p class="advisor__legal">Hinweise zum Datenschutz finden Sie <a href="#">hier</a>.</p>' +
         '</div>';
       return '<div class="advisor__result">' +
@@ -771,7 +775,11 @@
           var emailEl = cap.querySelector('[data-email]');
           var optinEl = cap.querySelector('[data-optin]');
           var optinLabel = cap.querySelector('.advisor__optin');
-          optinEl.addEventListener('change', function () { optinLabel.classList.toggle('is-on', optinEl.checked); });
+          var optinInfo = cap.querySelector('[data-optin-info]');
+          optinEl.addEventListener('change', function () {
+            optinLabel.classList.toggle('is-on', optinEl.checked);
+            if (optinInfo) optinInfo.classList.toggle('is-shown', optinEl.checked);   /* newsletter → double-opt-in notice */
+          });
           var submitEmail = function () {
             var v = emailEl.value.trim();
             if (!v) { emailEl.focus(); return; }

@@ -853,6 +853,15 @@
 .advisor__capture-q { margin: 0; font-size: var(--text-body-sm); font-weight: 700; color: var(--schwarz); }
 .advisor__legal { margin: 0; font-size: var(--text-body-sm); color: var(--ink-60); }   /* GDPR Datenschutzhinweis */
 .advisor__legal a { color: var(--teal); }
+/* Newsletter double-opt-in notice — info banner, shown only when the opt-in is ticked */
+.advisor__optin-info {
+  display: none; align-items: flex-start; gap: 8px; margin: 0;
+  padding: 10px 14px; border-radius: var(--r-m);
+  background: #E6F1FB; color: #185FA5;   /* info blue (50 fill · 600 text) */
+  font-size: var(--text-body-sm); line-height: 1.5;
+}
+.advisor__optin-info.is-shown { display: flex; }
+.advisor__optin-info svg { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; }
 /* Field + opt-in + shared send button on one line */
 .advisor__capture-row { display: flex; align-items: stretch; gap: var(--sp-3); }
 .advisor__capture-row .advisor__field,
