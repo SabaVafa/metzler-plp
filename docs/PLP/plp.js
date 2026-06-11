@@ -724,7 +724,7 @@
           '</p>' +
           '<p class="advisor__legal">Hinweise zum Datenschutz finden Sie <a href="#">hier</a>.</p>' +
         '</div>';
-      return '<div class="advisor__result">' +
+      return '<div class="advisor__result' + (top.length === 1 ? ' advisor__result--single' : '') + '">' +
         '<div class="advisor__result-head"><h3 class="advisor__result-title">' + headText + '</h3></div>' +
         '<div class="advisor__recs' + (top.length === 1 ? ' advisor__recs--single' : '') + '">' + cards + '</div>' +
         '<div class="advisor__aside">' +
@@ -766,29 +766,38 @@
         var reset = results.querySelector('[data-ai-reset]');
         if (reset) reset.addEventListener('click', restart);
 
-        /* E-mail capture (now on the result): submit via Enter or the arrow → inline confirmation. */
+        /* E-mail capture (on the result): submit → inline confirmation that
+           auto-reverts to the pristine form after a few seconds. */
         var cap = results.querySelector('[data-result-capture]');
         if (cap) {
-          var emailEl = cap.querySelector('[data-email]');
-          var optinEl = cap.querySelector('[data-optin]');
-          var optinLabel = cap.querySelector('.advisor__optin');
-          var optinInfo = cap.querySelector('[data-optin-info]');
-          optinEl.addEventListener('change', function () {
-            optinLabel.classList.toggle('is-on', optinEl.checked);
-            if (optinInfo) optinInfo.classList.toggle('is-shown', optinEl.checked);   /* newsletter → double-opt-in notice */
-          });
-          var submitEmail = function () {
-            var v = emailEl.value.trim();
-            if (!v) { emailEl.focus(); return; }
-            lead.email = v; lead.news = optinEl.checked;
-            cap.innerHTML =
-              '<div class="advisor__sent" role="status">' +
-                '<svg class="advisor__sent-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.4 12.3l2.4 2.4 4.8-5.4"/></svg>' +
-                '<p class="advisor__sent-text">Ihre Empfehlung wird an <strong>' + v + '</strong> gesendet' + (lead.news ? ' – inkl. News &amp; Angebote' : '') + '.' + (lead.news ? ' Bitte bestätigen Sie die E-Mail in Ihrem Postfach.' : '') + '</p>' +
-              '</div>';
+          var captureInner = cap.innerHTML;   /* pristine form markup, restored after the confirmation */
+          var revertTimer;
+          var wireCapture = function () {
+            var emailEl = cap.querySelector('[data-email]');
+            if (!emailEl) return;
+            var optinEl = cap.querySelector('[data-optin]');
+            var optinLabel = cap.querySelector('.advisor__optin');
+            var optinInfo = cap.querySelector('[data-optin-info]');
+            optinEl.addEventListener('change', function () {
+              optinLabel.classList.toggle('is-on', optinEl.checked);
+              if (optinInfo) optinInfo.classList.toggle('is-shown', optinEl.checked);   /* newsletter → double-opt-in notice */
+            });
+            var submitEmail = function () {
+              var v = emailEl.value.trim();
+              if (!v) { emailEl.focus(); return; }
+              lead.email = v; lead.news = optinEl.checked;
+              cap.innerHTML =
+                '<div class="advisor__sent" role="status">' +
+                  '<svg class="advisor__sent-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.4 12.3l2.4 2.4 4.8-5.4"/></svg>' +
+                  '<p class="advisor__sent-text">Ihre Empfehlung wird an <strong>' + v + '</strong> gesendet' + (lead.news ? ' – inkl. News &amp; Angebote' : '') + '.' + (lead.news ? ' Bitte bestätigen Sie die E-Mail in Ihrem Postfach.' : '') + '</p>' +
+                '</div>';
+              clearTimeout(revertTimer);
+              revertTimer = setTimeout(function () { cap.innerHTML = captureInner; wireCapture(); }, 4000);   /* back to the default form */
+            };
+            emailEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); submitEmail(); } });
+            cap.querySelector('[data-email-send]').addEventListener('click', submitEmail);
           };
-          emailEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); submitEmail(); } });
-          cap.querySelector('[data-email-send]').addEventListener('click', submitEmail);
+          wireCapture();
         }
       }, 1500);
     }
