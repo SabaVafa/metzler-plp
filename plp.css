@@ -725,7 +725,7 @@
   display: inline-flex; align-items: center; gap: 6px;
   padding: 0.25rem 0.5rem; border-radius: var(--r-s);
   background: var(--schwarz); color: var(--white);
-  font-size: var(--text-caption); font-weight: 700; line-height: 1.4;
+  font-size: var(--text-body-sm); font-weight: 700; line-height: 1.4;   /* KI flow floor: 14px min */
 }
 .advisor__spark { width: 13px; height: 13px; fill: currentColor; flex: 0 0 auto; }
 .advisor__title {                                  /* H2 — 1.5rem / 700, Digital Schwarz */
@@ -742,7 +742,7 @@
 .advisor__progress-dots span.is-done,
 .advisor__progress-dots span.is-current { background: var(--teal); }   /* Teal 500 */
 .advisor__progress-dots span.is-current { opacity: .55; }
-.advisor__progress-label { font-size: var(--text-caption); font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--ink-60); }
+.advisor__progress-label { font-size: var(--text-body-sm); font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--ink-60); }   /* KI flow floor: 14px min */
 
 /* Step — fluid fade-and-slide between phases (GPU) */
 .advisor__step { opacity: 0; transform: translateY(10px); transition: opacity .32s ease, transform .32s ease; will-change: opacity, transform; }
@@ -766,7 +766,7 @@
 .advisor__opt.is-active { border-color: var(--teal); background: var(--teal-5); }   /* selected row highlight = Teal 50 */
 .advisor__opt-sw { flex: 0 0 auto; align-self: center; width: 18px; height: 18px; border-radius: var(--r-m); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.14); }   /* color swatch matches facet list */
 .advisor__opt-label { font-size: var(--text-body-sm); font-weight: 500; color: var(--schwarz); }   /* Body SM Medium */
-.advisor__opt-sub { font-size: var(--text-caption); color: var(--ink-60); }
+.advisor__opt-sub { font-size: var(--text-body-sm); color: var(--ink-60); }   /* KI flow floor: 14px min */
 /* Consistency: when any option in a question wraps, JS stacks ALL of them (label over sub). */
 .advisor__opts--stacked .advisor__opt { flex-flow: column nowrap; align-items: flex-start; gap: 3px; }
 
@@ -792,7 +792,7 @@
 .advisor__field-ico--mail { fill: none; stroke: var(--teal); stroke-width: 1.8; }
 .advisor__input { flex: 1 1 auto; min-width: 0; border: 0; outline: 0; background: transparent; padding: 0.7rem 0; font-size: var(--text-body); color: var(--schwarz); }
 .advisor__input::placeholder { color: var(--graphite-500); }   /* placeholder Graphite 500 */
-.advisor__capture-hint { margin: 0; font-size: var(--text-caption); color: var(--ink-60); }
+.advisor__capture-hint { margin: 0; font-size: var(--text-body-sm); color: var(--ink-60); }   /* KI flow floor: 14px min */
 /* Opt-in — DS filter checkbox (Teal 500), agreement row */
 .advisor__optin {
   display: flex; align-items: center; gap: 0.5625rem; padding: 12px 16px; border-radius: var(--r-m); cursor: pointer;
@@ -915,7 +915,7 @@
   display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
   padding: 3px 10px; border-radius: var(--r-pill);
   background: #E6EEEE; color: var(--teal-700);
-  font-size: var(--text-caption); font-weight: 700; letter-spacing: .02em;
+  font-size: var(--text-body-sm); font-weight: 700; letter-spacing: .02em;   /* KI flow floor: 14px min */
 }
 .advisor__match::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
 .advisor__rec-name { font-size: var(--text-body-sm); font-weight: 700; line-height: 1.375; color: var(--schwarz); }   /* Body SM Bold */
@@ -930,10 +930,10 @@
 .advisor__chip {                                   /* selected filter chip = Teal 100 · Teal 700 */
   display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: var(--r-pill);
   background: #E6EEEE; border: 1px solid var(--teal-10);
-  font-size: var(--text-caption); font-weight: 500; color: var(--teal-700);
+  font-size: var(--text-body-sm); font-weight: 500; color: var(--teal-700);   /* KI flow floor: 14px min */
 }
-.advisor__chip::before { content: "✓"; color: var(--teal); font-size: .85em; }
-.advisor__note { margin: 0; font-size: var(--text-caption); color: var(--ink-60); }
+.advisor__chip::before { content: "✓"; color: var(--teal); font-size: 1em; }   /* KI flow floor: keep glyph >= 14px */
+.advisor__note { margin: 0; font-size: var(--text-body-sm); color: var(--ink-60); }   /* KI flow floor: 14px min */
 .advisor__note em { font-style: normal; font-weight: 600; color: var(--schwarz); }
 .advisor__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--sp-2); margin-top: var(--sp-2); }
 
