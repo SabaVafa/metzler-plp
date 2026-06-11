@@ -108,6 +108,7 @@
   /* ---- State ---- */
   var active = { color: [], zeitung: [], faecher: [], montage: [], zusatz: [] };
   var page = 1;
+  var advisorChips = false;   /* true while the active filters were set by the KI advisor → don't echo them as toolbar chips */
 
   /* ---- Helpers ---- */
   function $(s, ctx) { return (ctx || document).querySelector(s); }
@@ -181,6 +182,7 @@
 
   /* ---- Toggle a filter value ---- */
   function toggle(group, key) {
+    advisorChips = false;   /* user is now filtering manually → toolbar chips return */
     var arr = active[group];
     var i = arr.indexOf(key);
     if (i === -1) arr.push(key); else arr.splice(i, 1);
@@ -190,6 +192,7 @@
   }
 
   function clearAll() {
+    advisorChips = false;
     Object.keys(active).forEach(function (g) { active[g] = []; });
     page = 1;
     syncControls();
@@ -273,6 +276,7 @@
   /* ---- Active filter chips ---- */
   function renderChips() {
     var wrap = $('#activeChips'); wrap.innerHTML = '';
+    if (advisorChips) { $('#clearAll').hidden = true; return; }   /* KI-applied filters live in the advisor card, not the toolbar */
     var n = activeCount();
     Object.keys(active).forEach(function (g) {
       active[g].forEach(function (key) {
@@ -522,6 +526,7 @@
       function setActive(list) {
         Object.keys(active).forEach(function (g) { active[g] = []; });
         list.forEach(function (o) { if (active[o.group] && active[o.group].indexOf(o.value) === -1) active[o.group].push(o.value); });
+        advisorChips = true;   /* filters came from the KI → keep them out of the toolbar */
         page = 1; syncControls(); render();
         return PRODUCTS.filter(matches).length;
       }
