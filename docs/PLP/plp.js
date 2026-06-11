@@ -857,10 +857,22 @@
       renderStep();
     }
 
-    renderStep();
-    lockQuizHeight();   /* freeze the quiz column to the tallest question step */
+    renderStep();   /* render step 0 into the (collapsed) card */
+
+    /* Collapsible dropdown — collapsed by default; measure the quiz on open (hidden = width 0) */
+    function toggleAdvisor() {
+      var open = root.classList.toggle('is-open');
+      var bar = root.querySelector('.advisor__bar');
+      if (bar) bar.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) {
+        lockQuizHeight();
+        var f = root.querySelector('.advisor__result-title') || root.querySelector('.advisor__q');
+        if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 80);
+      }
+    }
+    root.querySelectorAll('[data-ai-toggle]').forEach(function (b) { b.addEventListener('click', toggleAdvisor); });
     var rzT;
-    window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(lockQuizHeight, 200); });
+    window.addEventListener('resize', function () { clearTimeout(rzT); if (root.classList.contains('is-open')) rzT = setTimeout(lockQuizHeight, 200); });
   }
 
   /* ---- SEO "Mehr lesen" toggle ---- */
