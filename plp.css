@@ -976,7 +976,10 @@
 }
 .advisor__note { margin: 0; font-size: var(--text-body-sm); color: var(--ink-60); }   /* KI flow floor: 14px min */
 .advisor__note em { font-style: normal; font-weight: 600; color: var(--schwarz); }
-.advisor__actions { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: var(--sp-2); margin-top: var(--sp-2); }   /* left-aligned with the chips/pills */
+/* Summary row: chips on the left, action buttons on the right — one horizontal line */
+.advisor__summary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-3) var(--sp-4); }
+.advisor__summary .advisor__chips { flex: 1 1 auto; }   /* fill the row so the buttons sit at the right edge */
+.advisor__actions { flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: var(--sp-2); }
 
 /* Responsive: stack columns + single-column recs/skeleton */
 @media (max-width: 1023px) {
