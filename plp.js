@@ -588,53 +588,78 @@
       '</a>';
     }
 
-    /* Shared progress-dots strip (questions + the capture screen). */
-    function dotsHTML() {
-      var out = '';
-      for (var i = 0; i < STEPS; i++) out += '<span class="' + (i < step ? 'is-done' : (i === step ? 'is-current' : '')) + '"></span>';
-      return out;
+
+    /* Markup for one question step (i) — shared by renderStep and the height probe. */
+    function stepInnerHTML(i) {
+      var s = QUIZ[i];
+      var cur = Array.isArray(picks[i]) ? picks[i] : [];
+      var opts = s.opts.map(function (o, k) {
+        var on = cur.some(function (p) { return p.label === o.label; }) ? ' is-active' : '';
+        var sw = (o.group === 'color' && COLORS[o.value])
+          ? '<span class="advisor__opt-sw" style="background:' + COLORS[o.value].css + '" aria-hidden="true"></span>' : '';
+        return '<button type="button" class="advisor__opt' + on + '" data-opt="' + k + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
+          sw +
+          '<span class="advisor__opt-label">' + o.label + '</span>' +
+          (o.sub ? '<span class="advisor__opt-sub">' + o.sub + '</span>' : '') +
+        '</button>';
+      }).join('');
+      var dots = '';
+      for (var d = 0; d < STEPS; d++) dots += '<span class="' + (d < i ? 'is-done' : (d === i ? 'is-current' : '')) + '"></span>';
+      return '<div class="advisor__step">' +
+          '<div class="advisor__progress">' +
+            '<span class="advisor__progress-dots">' + dots + '</span>' +
+            '<span class="advisor__progress-label">Schritt ' + (i + 1) + ' von ' + STEPS + '</span>' +
+          '</div>' +
+          '<h3 class="advisor__q">' + s.q + '</h3>' +
+          '<div class="advisor__opts" role="group" aria-label="' + s.q + '">' + opts + '</div>' +
+          '<div class="advisor__nav">' +
+            (i > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>') +
+            '<button type="button" class="advisor__forward" data-next>Weiter<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+          '</div>' +
+        '</div>';
+    }
+
+    /* If any option's label+sub wraps to a 2nd line, stack ALL options in the step. */
+    function markStacked(scope) {
+      var optsEl = scope.querySelector('.advisor__opts');
+      if (!optsEl) return;
+      var anyWrapped = [].some.call(scope.querySelectorAll('.advisor__opt'), function (o) {
+        var lab = o.querySelector('.advisor__opt-label'), sub = o.querySelector('.advisor__opt-sub');
+        return sub && sub.getBoundingClientRect().top >= lab.getBoundingClientRect().bottom - 2;
+      });
+      if (anyWrapped) optsEl.classList.add('advisor__opts--stacked');
+    }
+
+    /* Fix the quiz column to the tallest QUESTION step (the result step is excluded)
+       so the container does not jump as the option count changes. Measured in an
+       offscreen probe so the live step (and its listeners) is never disturbed. */
+    function lockQuizHeight() {
+      var w = quizEl.clientWidth;
+      if (!w) return;
+      var probe = document.createElement('div');
+      probe.className = quizEl.className;
+      probe.style.cssText = 'position:absolute; left:-9999px; top:0; visibility:hidden; width:' + w + 'px;';
+      quizEl.parentNode.appendChild(probe);
+      var max = 0;
+      for (var i = 0; i < STEPS; i++) {
+        probe.innerHTML = stepInnerHTML(i);
+        markStacked(probe);
+        var el = probe.querySelector('.advisor__step');
+        var h = el ? el.offsetHeight : 0;
+        if (h > max) max = h;
+      }
+      probe.remove();
+      if (max) quizEl.style.minHeight = max + 'px';
     }
 
     function renderStep() {
       if (step >= QUIZ.length) { finish(); return; }   /* after the last question → result (with e-mail capture) */
       results.hidden = true; results.innerHTML = '';
       var s = QUIZ[step];
-      var dots = dotsHTML();
-      var cur = Array.isArray(picks[step]) ? picks[step] : [];
-      var opts = s.opts.map(function (o, i) {
-        var on = cur.some(function (p) { return p.label === o.label; }) ? ' is-active' : '';
-        var sw = (o.group === 'color' && COLORS[o.value])
-          ? '<span class="advisor__opt-sw" style="background:' + COLORS[o.value].css + '" aria-hidden="true"></span>' : '';
-        return '<button type="button" class="advisor__opt' + on + '" data-opt="' + i + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
-          sw +
-          '<span class="advisor__opt-label">' + o.label + '</span>' +
-          (o.sub ? '<span class="advisor__opt-sub">' + o.sub + '</span>' : '') +
-        '</button>';
-      }).join('');
-      quizEl.innerHTML =
-        '<div class="advisor__step">' +
-          '<div class="advisor__progress">' +
-            '<span class="advisor__progress-dots">' + dots + '</span>' +
-            '<span class="advisor__progress-label">Schritt ' + (step + 1) + ' von ' + STEPS + '</span>' +
-          '</div>' +
-          '<h3 class="advisor__q">' + s.q + '</h3>' +
-          '<div class="advisor__opts" role="group" aria-label="' + s.q + '">' + opts + '</div>' +
-          '<div class="advisor__nav">' +
-            (step > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>') +
-            '<button type="button" class="advisor__forward" data-next>Weiter<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
-          '</div>' +
-        '</div>';
+      quizEl.innerHTML = stepInnerHTML(step);
       var stepEl = quizEl.querySelector('.advisor__step');
       requestAnimationFrame(function () { stepEl.classList.add('is-in'); });
-
-      /* Keep the 1-line / 2-line format consistent within a question: if any
-         option's label+sub wraps to a second line, stack ALL options in this step. */
-      var optsEl = quizEl.querySelector('.advisor__opts');
-      var anyWrapped = [].some.call(quizEl.querySelectorAll('.advisor__opt'), function (o) {
-        var lab = o.querySelector('.advisor__opt-label'), sub = o.querySelector('.advisor__opt-sub');
-        return sub && sub.getBoundingClientRect().top >= lab.getBoundingClientRect().bottom - 2;
-      });
-      if (anyWrapped) optsEl.classList.add('advisor__opts--stacked');
+      markStacked(quizEl);
 
       quizEl.querySelectorAll('[data-opt]').forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -771,6 +796,9 @@
     }
 
     renderStep();
+    lockQuizHeight();   /* freeze the quiz column to the tallest question step */
+    var rzT;
+    window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(lockQuizHeight, 200); });
   }
 
   /* ---- SEO "Mehr lesen" toggle ---- */
