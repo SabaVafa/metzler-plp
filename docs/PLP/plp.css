@@ -976,7 +976,7 @@
 }
 .advisor__note { margin: 0; font-size: var(--text-body-sm); color: var(--ink-60); }   /* KI flow floor: 14px min */
 .advisor__note em { font-style: normal; font-weight: 600; color: var(--schwarz); }
-.advisor__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--sp-2); margin-top: var(--sp-2); }
+.advisor__actions { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: var(--sp-2); margin-top: var(--sp-2); }   /* left-aligned with the chips/pills */
 
 /* Responsive: stack columns + single-column recs/skeleton */
 @media (max-width: 1023px) {
