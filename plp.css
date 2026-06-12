@@ -725,7 +725,7 @@
 .advisor__bar:hover { border-color: rgba(1,82,83,0.25); box-shadow: var(--shadow-md); }
 .advisor__bar:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--teal-10); }
 .advisor__bar-txt { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; text-align: left; }
-.advisor__bar-head { display: flex; align-items: center; gap: var(--sp-3); }   /* pill in front of the title */
+.advisor__bar-head { display: flex; align-items: center; gap: var(--sp-3); }   /* title first, pill to its right */
 .advisor__bar-title { font-size: var(--text-body); font-weight: 700; color: var(--schwarz); line-height: 1.3; }
 .advisor__bar-sub { font-size: var(--text-body-sm); color: var(--ink-60); }
 .advisor__bar-cta { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; font-size: var(--text-body-sm); font-weight: 700; color: var(--teal); }
@@ -824,22 +824,23 @@
 /* Consistency: when any option in a question wraps, JS stacks ALL of them (label over sub). */
 .advisor__opts--stacked .advisor__opt { flex-flow: column nowrap; align-items: flex-start; gap: 3px; }
 
-/* Optik step — full-width colour bar on top of the tile, label/sub below, checkbox in the corner */
-.advisor__opt.advisor__opt--sw { flex-flow: column nowrap; align-items: stretch; gap: 6px; padding: 12px; }
-.advisor__opt--sw .advisor__opt-sw { width: 100%; height: 30px; align-self: stretch; }
+/* Optik step — small colour-palette swatch on the LEFT, caption (label over sub) to its RIGHT */
+.advisor__opt.advisor__opt--sw { flex-flow: row nowrap; align-items: flex-start; gap: 12px; padding: 12px; }
+.advisor__opt--sw .advisor__opt-sw { flex: 0 0 auto; width: 84px; height: 44px; align-self: flex-start; }
+.advisor__opt--sw .advisor__opt-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 
 .advisor__nav { display: flex; align-items: center; justify-content: space-between; margin-top: var(--sp-5); }
 /* Zurück + Weiter — identical link treatment; only the colour differs */
 .advisor__back, .advisor__skip, .advisor__forward {
   padding: 6px 0; border: 0; background: none; cursor: pointer;
-  font-size: var(--text-body-sm); font-weight: 500;
+  font-size: 0.9375rem; font-weight: 500;   /* 15px */
   display: inline-flex; align-items: center; gap: 2px; transition: color .15s ease;
 }
 .advisor__back, .advisor__skip { color: var(--ink-60); }
 .advisor__back:hover, .advisor__skip:hover { color: var(--teal); }
 .advisor__forward { color: var(--teal); }            /* same link, Teal 500 — the only difference */
 .advisor__forward:hover { color: var(--teal-700); }
-.advisor__back svg, .advisor__skip svg, .advisor__forward svg { width: 18px; height: 18px; stroke-width: 1.5; }
+.advisor__back svg, .advisor__skip svg, .advisor__forward svg { width: 1.3em; height: 1.3em; stroke-width: 1.5; flex: 0 0 auto; }   /* scales with the 15px label, stays inline-centered */
 .advisor__back svg { transform: rotate(180deg); }    /* chevron points left (back) */
 
 /* ── Final step: e-mail capture — DS .form-control treatment ── */

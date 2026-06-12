@@ -609,10 +609,12 @@
         var on = cur.some(function (p) { return p.label === o.label; }) ? ' is-active' : '';
         var swCss = o.swatch || (o.group === 'color' && COLORS[o.value] ? COLORS[o.value].css : null);
         var sw = swCss ? '<span class="advisor__opt-sw" style="background:' + swCss + '" aria-hidden="true"></span>' : '';
+        var text = '<span class="advisor__opt-label">' + o.label + '</span>' +
+          (o.sub ? '<span class="advisor__opt-sub">' + o.sub + '</span>' : '');
+        // Swatch tiles lay out as [palette] [caption column]; non-swatch keep label+sub inline.
+        var inner = swCss ? sw + '<span class="advisor__opt-text">' + text + '</span>' : text;
         return '<button type="button" class="advisor__opt' + on + (swCss ? ' advisor__opt--sw' : '') + '" data-opt="' + k + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
-          sw +
-          '<span class="advisor__opt-label">' + o.label + '</span>' +
-          (o.sub ? '<span class="advisor__opt-sub">' + o.sub + '</span>' : '') +
+          inner +
         '</button>';
       }).join('');
       var dots = '';
@@ -635,7 +637,7 @@
     function markStacked(scope) {
       var optsEl = scope.querySelector('.advisor__opts');
       if (!optsEl) return;
-      var anyWrapped = [].some.call(scope.querySelectorAll('.advisor__opt'), function (o) {
+      var anyWrapped = [].some.call(scope.querySelectorAll('.advisor__opt:not(.advisor__opt--sw)'), function (o) {
         var lab = o.querySelector('.advisor__opt-label'), sub = o.querySelector('.advisor__opt-sub');
         return sub && sub.getBoundingClientRect().top >= lab.getBoundingClientRect().bottom - 2;
       });
