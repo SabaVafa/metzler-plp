@@ -145,7 +145,7 @@
   font-weight: 700; line-height: 1.2; letter-spacing: -0.01em;
   color: var(--schwarz);
 }
-.catalog__count { font-size: var(--text-body); color: var(--ink-60); white-space: nowrap; }
+.catalog__count { font-size: var(--text-body-sm); font-weight: 500; color: var(--ink-60); white-space: nowrap; }   /* subtitle styling (weight/colour), slightly larger size */
 .catalog__count strong { color: var(--ink-60); font-weight: 400; }
 .catalog__count-sub { font-size: var(--text-body-sm); color: var(--teal); font-weight: 600; }
 
@@ -375,7 +375,7 @@
    ============================================================ */
 .faq .section-title { font-size: 27px; }
 .faq__inner {
-  display: grid; grid-template-columns: var(--sidebar-w) 1fr;
+  display: grid; grid-template-columns: 1fr;
   gap: clamp(var(--sp-8), 3vw, var(--sp-12));
   align-items: start;
 }
@@ -448,7 +448,7 @@
   .pcard__body { padding: var(--sp-3) var(--sp-3) var(--sp-4); }
   .pcard__title { font-size: var(--text-body-sm); }
   .catalog__title { font-size: 17px; }
-  .catalog__count { font-size: var(--text-body); }
+  .catalog__count { font-size: var(--text-body-sm); }
   .catalog__filter-btn { height: 34px; padding: 0 14px; }
   .subnav__arrow { display: none; }
 }
