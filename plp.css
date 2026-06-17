@@ -359,7 +359,7 @@
    it on wide screens. (Cap on .pgrid__banner itself collapses to 0 width when
    combined with container-type + auto margins, so it lives on the inner banner.) */
 .sprech .pgrid__banner { container-type: inline-size; }
-.hero-banner--inline { min-height: 320px; max-width: 1180px; margin-inline: auto; border-radius: var(--r-xl); }
+.hero-banner--inline { min-height: 320px; }
 /* Keep copy + device within a centered ~1040px band so the middle gap stays
    constant on wide screens (--container grows to 2040px at >=2560). */
 .hero-banner--inline .hero-banner__copy { margin-left: clamp(var(--sp-6), 3.5vw, 44px); margin-right: var(--sp-6); width: min(60%, 620px); padding-block: var(--sp-8); }
@@ -369,8 +369,8 @@
 .hero-banner--inline .hero-banner__ctas { margin-top: var(--sp-5); max-width: none; gap: var(--sp-4); }   /* CTAs fill the wider copy column */
 .hero-banner--inline .hero-banner__cta { padding-inline: var(--sp-10); }   /* wider buttons */
 .hero-banner--inline .hero-banner__stage { left: auto; right: 0; width: clamp(400px, 50%, 600px); }
-/* explicit poster height — the base 105% resolves to 0 inside the grid item */
-.hero-banner--inline .hero-banner__poster { height: 320px; }
+/* device fills the banner height (no top/bottom gaps), flush right */
+.hero-banner--inline .hero-banner__poster { height: 100%; }
 .hero-banner--inline .hero-banner__reddot { width: 15%; max-width: 110px; right: 8%; bottom: 10%; }
 @media (max-width: 767px) {
   .hero-banner--inline .hero-banner__copy { max-width: none; }
