@@ -354,7 +354,12 @@
 /* Compact in-grid version of the Home XDM10 hero (base styles come from styles-v2.css).
    Shrinks height, fixes the copy rail (the full-bleed container math doesn't apply
    inside the grid), and scales the device + Red-Dot badge. */
-.hero-banner--inline { min-height: 320px; }
+/* The full-width grid slot is the query container; the inner banner is capped
+   + centered so the (small) device isn't left floating with dark space beside
+   it on wide screens. (Cap on .pgrid__banner itself collapses to 0 width when
+   combined with container-type + auto margins, so it lives on the inner banner.) */
+.sprech .pgrid__banner { container-type: inline-size; }
+.hero-banner--inline { min-height: 320px; max-width: 1180px; margin-inline: auto; border-radius: var(--r-xl); }
 /* Keep copy + device within a centered ~1040px band so the middle gap stays
    constant on wide screens (--container grows to 2040px at >=2560). */
 .hero-banner--inline .hero-banner__copy { margin-left: clamp(var(--sp-6), 3.5vw, 44px); margin-right: var(--sp-6); width: min(60%, 620px); padding-block: var(--sp-8); }
@@ -363,13 +368,20 @@
 .hero-banner--inline .hero-banner__body { margin-top: var(--sp-4); font-size: 0.9375rem; max-width: 58ch; }   /* 15px */
 .hero-banner--inline .hero-banner__ctas { margin-top: var(--sp-5); max-width: none; gap: var(--sp-4); }   /* CTAs fill the wider copy column */
 .hero-banner--inline .hero-banner__cta { padding-inline: var(--sp-10); }   /* wider buttons */
-.hero-banner--inline .hero-banner__stage { left: auto; right: max(0px, calc(100% - 1040px)); width: clamp(380px, 44%, 560px); }
+.hero-banner--inline .hero-banner__stage { left: auto; right: 0; width: clamp(400px, 50%, 600px); }
 /* explicit poster height — the base 105% resolves to 0 inside the grid item */
 .hero-banner--inline .hero-banner__poster { height: 320px; }
-.hero-banner--inline .hero-banner__reddot { width: 15%; max-width: 110px; right: 30%; bottom: 10%; }
+.hero-banner--inline .hero-banner__reddot { width: 15%; max-width: 110px; right: 8%; bottom: 10%; }
 @media (max-width: 767px) {
   .hero-banner--inline .hero-banner__copy { max-width: none; }
   .hero-banner--inline .hero-banner__stage { display: none; }   /* text-only on phones */
+}
+/* When the banner itself is narrow (small screen, or wide screen with the
+   288px sidebar eating width), drop the device → clean text-only banner,
+   avoiding the cramped device + Red-Dot/CTA collision. */
+@container (max-width: 820px) {
+  .hero-banner--inline .hero-banner__stage { display: none; }
+  .hero-banner--inline .hero-banner__copy { width: auto; max-width: none; }
 }
 
 /* ============================================================
