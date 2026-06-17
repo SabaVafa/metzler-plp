@@ -358,9 +358,9 @@
 /* Keep copy + device within a centered ~1040px band so the middle gap stays
    constant on wide screens (--container grows to 2040px at >=2560). */
 .hero-banner--inline .hero-banner__copy { margin-left: max(clamp(var(--sp-6), 3.5vw, 44px), calc((100% - 1040px) / 2 + var(--sp-6))); margin-right: var(--sp-6); width: min(60%, 620px); padding-block: var(--sp-8); }
-.hero-banner--inline .hero-banner__title { font-size: clamp(1.125rem, 1.8vw, 1.5rem); line-height: 1.25; max-width: 32ch; }
+.hero-banner--inline .hero-banner__title { font-size: 1.875rem; line-height: 1.25; max-width: 32ch; }   /* 30px */
 .hero-banner--inline .hero-banner__chips { margin-top: var(--sp-4); }
-.hero-banner--inline .hero-banner__body { margin-top: var(--sp-4); font-size: var(--text-body-sm); max-width: 58ch; }
+.hero-banner--inline .hero-banner__body { margin-top: var(--sp-4); font-size: 0.9375rem; max-width: 58ch; }   /* 15px */
 .hero-banner--inline .hero-banner__ctas { margin-top: var(--sp-5); max-width: none; gap: var(--sp-4); }   /* CTAs fill the wider copy column */
 .hero-banner--inline .hero-banner__cta { padding-inline: var(--sp-10); }   /* wider buttons */
 .hero-banner--inline .hero-banner__stage { left: 50%; right: max(0px, calc((100% - 1040px) / 2)); }
