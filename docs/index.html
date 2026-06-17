@@ -1,1 +1,78 @@
-<!DOCTYPE html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=./PLP/briefkasten.html"><title>Metzler PLP</title><a href="./PLP/briefkasten.html">Zur Briefkästen-Seite</a>
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Metzler — Produktkategorien</title>
+<style>
+  :root{
+    --teal:#015253; --teal-700:#013e3f; --schwarz:#1A171B; --ink-60:rgba(0,0,0,.6);
+    --paper:#F5F6FA; --line:#DADADA; --white:#fff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    background:var(--paper); color:var(--schwarz);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:clamp(24px,5vw,64px) 24px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .lp{ width:100%; max-width:920px; }
+  .lp__logo{ height:40px; width:auto; display:block; margin-bottom:clamp(28px,5vw,48px); }
+  .lp__eyebrow{ font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--teal); margin:0 0 10px; }
+  .lp__title{ font-size:clamp(1.6rem,4vw,2.25rem); font-weight:700; line-height:1.2; letter-spacing:-.01em; margin:0 0 8px; }
+  .lp__sub{ font-size:1rem; color:var(--ink-60); margin:0 0 clamp(28px,4vw,40px); }
+  .lp__grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(16px,2.5vw,28px); }
+  @media (max-width:680px){ .lp__grid{ grid-template-columns:1fr; } }
+  .cat{
+    display:flex; flex-direction:column; background:var(--white);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden;
+    text-decoration:none; color:inherit;
+    transition:transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, border-color .25s ease;
+  }
+  .cat:hover{ transform:translateY(-4px); box-shadow:0 18px 40px -18px rgba(1,40,40,.4); border-color:rgba(1,82,83,.35); }
+  .cat__media{ aspect-ratio:16/10; background:#fff; display:grid; place-items:center; overflow:hidden; border-bottom:1px solid var(--line); }
+  .cat__media img{ width:62%; height:auto; transition:transform .4s cubic-bezier(.22,1,.36,1); }
+  .cat:hover .cat__media img{ transform:scale(1.05); }
+  .cat__body{ padding:20px 22px 22px; }
+  .cat__name{ display:block; font-size:1.125rem; font-weight:700; margin:0 0 4px; }
+  .cat__desc{ display:block; font-size:.875rem; color:var(--ink-60); margin:0 0 14px; line-height:1.5; }
+  .cat__go{ display:inline-flex; align-items:center; gap:6px; font-size:.875rem; font-weight:700; color:var(--teal); }
+  .cat:hover .cat__go{ color:var(--teal-700); }
+  .cat__go svg{ width:18px; height:18px; transition:transform .3s ease; }
+  .cat:hover .cat__go svg{ transform:translateX(3px); }
+  .lp__foot{ margin-top:auto; padding-top:40px; font-size:.75rem; color:var(--ink-60); }
+</style>
+</head>
+<body>
+  <main class="lp">
+    <a href="./PLP/briefkasten.html"><img class="lp__logo" src="./Home/Logo/Metzler_Logo-rot-schwarz.svg" alt="Metzler" /></a>
+    <p class="lp__eyebrow">Demo · Produktkategorien</p>
+    <h1 class="lp__title">Metzler — Kategorieseiten</h1>
+    <p class="lp__sub">Wählen Sie eine Kategorie, um die Redesign-Demo zu öffnen.</p>
+
+    <div class="lp__grid">
+      <a class="cat" href="./PLP/briefkasten.html">
+        <span class="cat__media"><img src="./PLP/Product Image/image 68.png" alt="Briefkasten"></span>
+        <span class="cat__body">
+          <span class="cat__name">Briefkästen</span>
+          <span class="cat__desc">Briefkästen mit Zeitungsfach, Standbriefkästen, Mehrfamilien-Anlagen & mehr.</span>
+          <span class="cat__go">Seite öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+        </span>
+      </a>
+
+      <a class="cat" href="./PLP/sprechanlage.html">
+        <span class="cat__media"><img src="./PLP/Product Image/Sprechanlage/image 82.png" alt="Türsprechanlage"></span>
+        <span class="cat__body">
+          <span class="cat__name">Türsprechanlagen</span>
+          <span class="cat__desc">Video- & Audio-Türsprechanlagen, IP- und 2-Draht-BUS, Ein- & Mehrfamilien.</span>
+          <span class="cat__go">Seite öffnen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+        </span>
+      </a>
+    </div>
+
+    <p class="lp__foot">Metzler GmbH — Redesign-Demo</p>
+  </main>
+</body>
+</html>

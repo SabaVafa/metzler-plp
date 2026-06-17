@@ -87,7 +87,7 @@
   var SALE = {type:'sale', text:'−15 %'};
   var PRODUCTS = [
     { id:'dominik1', name:'ADM10 Audio-Türsprechanlage | 1 Klingeltaster | RAL 7016 Anthrazit | Dominik', line:'IP-System', price:424.15, uvp:499.00, rating:5, reviews:2,
-      badge:SALE, showMeta:true, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'1', tuer:[], type:'audio', img:I83 },
+      badge:SALE, showMeta:true, award:'Badge/Component%207.svg', colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'1', tuer:[], type:'audio', img:I83 },
     { id:'sdm10x', name:'Türsprechanlage mit Kamera | Gesichtserkennung | Touch-Display | Live-HD-Video | Ein- & Mehrfamilien | SDM10X', line:'IP-System', price:1266.50, uvp:1490.00, rating:5, reviews:9,
       badge:SALE, showMeta:true, colors:['anthrazit','edelstahl','schwarz','weiss','grau'], system:'ip', klingel:'flex', tuer:['gesicht','rfid','pin'], material:'edelstahl', type:'video', img:I84 },
     { id:'colson1', name:'VDM10 2.0 Video-Türsprechanlage | 1 Klingeltaster | Colson', line:'IP-System', price:594.15, uvp:699.00, rating:5, reviews:63,
@@ -286,6 +286,7 @@
       '<div class="pcard__media">' +
         badge +
         '<img class="pcard__img" src="' + (p.img || IMG) + '" alt="' + p.name + '" loading="lazy">' +
+        (p.award ? '<img class="pcard__award" src="' + p.award + '" alt="Red Dot Award Winner 2026">' : '') +
       '</div>' +
       '<div class="pcard__body">' +
         sys +

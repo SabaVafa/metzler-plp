@@ -271,6 +271,8 @@
 .pcard__badge--best { background: var(--teal-dark); }
 .pcard__badge--new  { background: var(--teal); }
 .pcard__badge--sale { background: #B23A18; }
+/* Award badge (e.g. Red Dot) — sits in the lower-right of the product image, balancing the sale badge */
+.pcard__award { position: absolute; right: 12px; bottom: 12px; z-index: 2; width: 92px; height: auto; pointer-events: none; }
 
 .pcard__body { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5) var(--sp-5); flex: 1; }
 
@@ -353,11 +355,11 @@
    Shrinks height, fixes the copy rail (the full-bleed container math doesn't apply
    inside the grid), and scales the device + Red-Dot badge. */
 .hero-banner--inline { min-height: 320px; }
-.hero-banner--inline .hero-banner__copy { margin-left: clamp(var(--sp-6), 3.5vw, 44px); margin-right: var(--sp-6); max-width: 58%; padding-block: var(--sp-8); }
+.hero-banner--inline .hero-banner__copy { margin-left: clamp(var(--sp-6), 3.5vw, 44px); margin-right: var(--sp-6); max-width: 62%; padding-block: var(--sp-8); }
 .hero-banner--inline .hero-banner__title { font-size: clamp(1.125rem, 1.8vw, 1.5rem); line-height: 1.25; max-width: 22ch; }
 .hero-banner--inline .hero-banner__chips { margin-top: var(--sp-4); }
 .hero-banner--inline .hero-banner__body { margin-top: var(--sp-4); font-size: var(--text-body-sm); max-width: 46ch; }
-.hero-banner--inline .hero-banner__ctas { margin-top: var(--sp-5); }
+.hero-banner--inline .hero-banner__ctas { margin-top: var(--sp-5); max-width: none; }   /* let the CTAs fill the wider copy column */
 .hero-banner--inline .hero-banner__stage { left: 50%; }
 /* explicit poster height — the base 105% resolves to 0 inside the grid item */
 .hero-banner--inline .hero-banner__poster { height: 320px; }
@@ -398,7 +400,7 @@
 @keyframes m-rise { from { opacity: 0; transform: translateY(20px) scale(.97); } to { opacity: 1; transform: none; } }
 @keyframes m-slide-in-left { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
 @keyframes m-slide-in-right { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
-.overlay { position: fixed; inset: 0; z-index: 100; background: rgba(20,22,26,.42); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); display: none; place-items: center; padding: 24px; }
+.overlay { position: fixed; inset: 0; z-index: 100; background: rgba(20,22,26,.22); -webkit-backdrop-filter: blur(1px); backdrop-filter: blur(1px); display: none; place-items: center; padding: 24px; }
 .overlay.is-open { display: grid; animation: m-fade .3s ease; }
 .modal { position: relative; width: min(960px,100%); display: grid; grid-template-columns: 5fr 7fr; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 40px 80px -20px rgba(1,40,40,.45); animation: m-rise .45s cubic-bezier(.2,.8,.2,1); }
 .brand { position: relative; padding: 48px 44px; background: #014a4b; color: #fff; display: flex; flex-direction: column; min-height: 520px; overflow: hidden; }
