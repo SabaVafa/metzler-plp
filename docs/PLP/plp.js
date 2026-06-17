@@ -703,7 +703,7 @@
         '</span></div>';
       return '<div class="advisor__thinking">' +
         '<span class="advisor__thinking-head"><span class="advisor__wave"><i></i><i></i><i></i><i></i><i></i></span>' +
-        'KI analysiert Ihre Antworten und kuratiert passende Modelle…</span>' +
+        'Wir analysieren Ihre Antworten und kuratieren passende Modelle…</span>' +
         '<div class="advisor__skeleton">' + sk + sk + '</div>' +
       '</div>';
     }

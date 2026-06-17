@@ -1,46 +1,56 @@
 /* ============================================================
-   Metzler PLP — Briefkästen
-   Client-side rendering, live filtering, chips, load-more
+   Metzler PLP — Türsprechanlagen
+   Client-side rendering, live filtering, chips, pagination.
+   Data + filter facets mirror the live category page
+   (edelstahl-tuerklingel.de/tuersprechanlagen); styling reuses
+   the shared Briefkasten design system (plp.css).
    ============================================================ */
 (function () {
   'use strict';
 
-  var IMG = 'Product%20Image/image%2068.png';
-  var PAGE = 12; // products per page; page 1 = 2 rows + banner + 2 rows
+  var IMG = 'Product%20Image/Sprechanlage/image%2082.png';
+  var PAGE = 12; // products per page
 
-  /* ---- Color system (swatch rendering) — order matches the live website ---- */
+  /* ---- Color system (swatch rendering) — same palette as the live website ---- */
   var COLORS = {
-    anthrazit:   { label: 'Anthrazit',    css: '#383E42', count: 71 },
-    braun:       { label: 'Braun',        css: '#5A3B29', count: 6 },
-    edelstahl:   { label: 'Edelstahl',    css: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)', count: 11 },
-    eisenglimmer:{ label: 'Eisenglimmer', css: 'linear-gradient(135deg,#3a3d40,#23262a)', count: 46 },
-    grau:        { label: 'Grau',         css: '#B9BCC0', count: 44 },
-    schwarz:     { label: 'Schwarz',      css: '#1A171B', count: 40 },
-    weiss:       { label: 'Weiß',         css: '#FFFFFF', count: 32 },
-    wunschfarbe: { label: 'Wunschfarbe',  css: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)', count: 4 }
+    anthrazit:   { label: 'Anthrazit',    css: '#383E42', count: 31 },
+    braun:       { label: 'Braun',        css: '#5A3B29', count: 3 },
+    edelstahl:   { label: 'Edelstahl',    css: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)', count: 9 },
+    eisenglimmer:{ label: 'Eisenglimmer', css: 'linear-gradient(135deg,#3a3d40,#23262a)', count: 12 },
+    grau:        { label: 'Grau',         css: '#B9BCC0', count: 10 },
+    schwarz:     { label: 'Schwarz',      css: '#1A171B', count: 16 },
+    weiss:       { label: 'Weiß',         css: '#FFFFFF', count: 11 },
+    wunschfarbe: { label: 'Wunschfarbe',  css: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)', count: 6 }
   };
 
-  /* ---- Facet definitions (label + count). No price, no sort. ---- */
+  /* ---- Facet definitions — mirror the live Türsprechanlagen filters.
+         (label + count). No price, no sort. ---- */
   var FACETS = {
-    faecher: { title: 'faecher', items: [
-      { key: '1', label: '1 Fach', count: 64 },
-      { key: '2', label: '2 Fächer', count: 9 },
-      { key: '3', label: '3+ Fächer', count: 7 },
-      { key: 'paketfach', label: 'Inkl. Paketfach', count: 6 }
+    system: { title: 'system', items: [
+      { key: 'ip',  label: 'IP-System', count: 35 },
+      { key: 'bus', label: 'BUS-System (2-Draht)', count: 3 }
     ]},
-    zeitung: { title: 'zeitung', items: [
-      { key: 'integriert', label: 'Mit Zeitungsfach', count: 63 },
-      { key: 'ohne', label: 'Nur Briefkasten', count: 8 },
-      { key: 'optional', label: 'Optionales Fach verfügbar', count: 9 }
+    klingel: { title: 'klingel', items: [
+      { key: '1', label: '1 Taster', count: 9 },
+      { key: '2', label: '2 Taster', count: 7 },
+      { key: '3', label: '3 Taster', count: 7 },
+      { key: '4', label: '4 Taster', count: 4 },
+      { key: '5', label: '5 Taster', count: 3 },
+      { key: '6', label: '6 Taster', count: 2 },
+      { key: '7', label: '7 Taster', count: 2 },
+      { key: 'flex', label: 'Flexibel von 1–500', count: 4 }
     ]},
-    montage: { title: 'montage', items: [
-      { key: 'wand', label: 'Wandmontage', count: 49 },
-      { key: 'stand', label: 'Standmontage', count: 14 },
-      { key: 'unterputz', label: 'Unterputzmontage', count: 12 }
+    tuer: { title: 'tuer', items: [
+      { key: 'fingerprint', label: 'Fingerprint', count: 3 },
+      { key: 'gesicht',     label: 'Gesichtserkennung', count: 3 },
+      { key: 'pin',         label: 'PIN-Code', count: 4 },
+      { key: 'qr',          label: 'QR-Code', count: 3 },
+      { key: 'rfid',        label: 'RFID', count: 7 }
     ]},
-    zusatz: { title: 'zusatz', items: [
-      { key: 'klingel', label: 'Mit Klingel', count: 11 },
-      { key: 'sprech', label: 'Mit Sprechanlage', count: 7 }
+    material: { title: 'material', items: [
+      { key: 'edelstahl',   label: 'Edelstahl', count: 5 },
+      { key: 'galvanisiert',label: 'Galvanisierter Stahl', count: 1 },
+      { key: 'v2a',         label: 'V2A Edelstahl (1.4301)', count: 5 }
     ]}
   };
 
@@ -50,63 +60,84 @@
   Object.keys(FACETS).forEach(function (g) {
     FACETS[g].items.forEach(function (it) { LABELS[g + ':' + it.key] = it.label; });
   });
-  LABELS['zusatz:klingel+sprech'] = 'Mit Klingel & Sprechanlage';   /* advisor combined option */
 
   /* ---- Subcategory rail ---- */
+  var SP = 'Product%20Image/Sprechanlage/';
   var SUBCATS = [
-    { t: 'Einfamilien-Briefkasten', n: 80, img: 'Product%20Image/image%2068.png' },
-    { t: 'Briefkasten ohne Gravur', n: 22, img: 'Product%20Image/Briefkasten%20ohne%20Gravur.webp' },
-    { t: 'Standbriefkästen', n: 14, img: 'Product%20Image/Standbriefk%C3%A4sten.webp' },
-    { t: 'Mit Klingel & Sprechanlage', n: 11, img: 'Product%20Image/Briefkasten%20mit%20Klingel%20%26%20Sprechanlage.webp' },
-    { t: 'Mehrfamilien-Anlagen', n: 9, img: 'Product%20Image/Mehrfamilien%20Briefk%C3%A4sten.webp' },
-    { t: 'Unterputz-Briefkästen', n: 12, img: 'Product%20Image/Unterputz%20Briefk%C3%A4sten.webp' },
-    { t: 'Anlagen-Konfigurator', n: null, cta: true, img: 'Product%20Image/Briefkastenanlage/image%2080.png' }
+    { t: 'Mit Briefkasten/Paketbox', n: 4, img: SP + 'image%2085.png' },
+    { t: 'Video-Sprechanlagen', n: 32, img: SP + 'image%2082.png' },
+    { t: 'Audio-Sprechanlagen', n: 6, img: SP + 'image%2083.png' },
+    { t: 'Mehrfamilien-Anlagen', n: 12, img: SP + 'image%2084.png' },
+    { t: 'Mit Gesichtserkennung', n: 3, img: SP + 'image%2089.png' },
+    { t: 'Zubehör', n: 8, img: SP + 'image%2088.png' },
+    { t: '2-Draht-BUS (XDM10)', n: 3, img: SP + 'image%2087.png' },
+    { t: 'Innenstationen', n: 5, img: SP + 'image%2086.png' }
   ];
 
-  /* ---- Product catalogue (single placeholder image for all) ---- */
+  /* ---- Product catalogue — real models from the live category page (page 1,
+         24 of 38). img maps each model to a local Sprechanlage photo by type.
+         showMeta:true keeps the discount badge + price on a card; only a couple
+         carry it for now (prices to come from the backend). ---- */
+  /* Category grid uses only three product photos (per request): 82 / 89 / 90 */
+  var I82 = SP+'image%2082.png',   // single-party video station (anthracite, Vossberg)
+      I83 = SP+'image%2090.png',   // station with nameplate (Vossmann) — audio / named models
+      I84 = SP+'image%2089.png',   // touch-display station w/ face recognition — premium / multi
+      I86 = SP+'image%2089.png',
+      I87 = SP+'image%2089.png';   // BUS / stainless multi → premium touch-display
+  var SALE = {type:'sale', text:'−15 %'};
   var PRODUCTS = [
-    { id:'siebert', name:'Briefkasten aus hochwertigem Stahl | Siebert', line:'Bestseller', price:89.99, uvp:null, rating:5, reviews:657,
-      badge:null, colors:['anthrazit','weiss','grau','schwarz'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
-    { id:'ebenhard', name:'Briefkasten mit austauschbarem Namensschild | Ebenhard', line:'Beliebt', price:89.99, uvp:null, rating:5, reviews:219,
-      badge:null, colors:['anthrazit','weiss','grau'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
-    { id:'hermann', name:'Briefkasten mit Lasergravur | Hermann', line:null, price:99.99, uvp:117.99, rating:5, reviews:142,
-      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','weiss','grau','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
-    { id:'moris', name:'Briefkasten aus Edelstahl | personalisiert | Moris', line:'Edelstahl V4A', price:149.00, uvp:null, rating:4.5, reviews:25,
-      badge:null, colors:['edelstahl','anthrazit','weiss','wunschfarbe'], faecher:'1', material:'edelstahl', zeitung:'optional', montage:'wand', paket:true },
-    { id:'lessing', name:'Standbriefkasten mit Zeitungsfach | Lessing', line:null, price:199.00, uvp:null, rating:5, reviews:38,
-      badge:null, colors:['anthrazit','eisenglimmer','schwarz'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'stand', paket:true },
-    { id:'gienger', name:'Briefkasten Design | Modell G | Gienger', line:null, price:99.99, uvp:null, rating:5, reviews:31,
-      badge:null, colors:['anthrazit','weiss','grau'], faecher:'1', material:'stahl', zeitung:'ohne', montage:'wand' },
-    { id:'schneider', name:'Durchwurf-Briefkasten | Mauerdurchwurf | Schneider', line:null, price:120.00, uvp:null, rating:5, reviews:2,
-      badge:null, colors:['anthrazit','edelstahl'], faecher:'1', material:'edelstahl', zeitung:'ohne', montage:'unterputz' },
-    { id:'lepo', name:'Briefkasten Anthrazit RAL 7016 | Lepo 2', line:null, price:149.00, uvp:175.00, rating:4.5, reviews:64,
-      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','schwarz','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
-    { id:'zaun', name:'Zaunbriefkasten | personalisiert mit Gravur', line:null, price:149.00, uvp:null, rating:5, reviews:18,
-      badge:null, colors:['anthrazit','weiss','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'optional', montage:'wand' },
-    { id:'flora', name:'Briefkasten mit Blumenkasten | personalisiert | Flora', line:null, price:159.00, uvp:null, rating:4.5, reviews:12,
-      badge:null, colors:['anthrazit','weiss','braun','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
-    { id:'castor', name:'Unterputz-Briefkasten aus Edelstahl | Castor', line:'Edelstahl V2A', price:179.00, uvp:null, rating:5, reviews:21,
-      badge:null, colors:['edelstahl','anthrazit'], faecher:'1', material:'edelstahl', zeitung:'optional', montage:'unterputz' },
-    { id:'trias', name:'Mehrfamilien-Briefkastenanlage | 3 Parteien | Trias', line:null, price:349.00, uvp:399.00, rating:5, reviews:9,
-      badge:{type:'sale', text:'−12 %'}, colors:['anthrazit','grau','edelstahl'], faecher:'3', material:'stahl', zeitung:'ohne', montage:'stand', paket:true, klingel:true, sprech:true },
-    { id:'vossberg', name:'Briefkasten mit Klingel & Sprechanlage | Vossberg', line:'2-in-1', price:299.00, uvp:null, rating:4.5, reviews:27,
-      badge:null, colors:['anthrazit','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand', paket:true, klingel:true, sprech:true },
-    { id:'duo', name:'Doppel-Briefkasten | 2 Parteien | Duo', line:null, price:229.00, uvp:null, rating:5, reviews:15,
-      badge:null, colors:['anthrazit','weiss','grau'], faecher:'2', material:'stahl', zeitung:'integriert', montage:'wand' },
-    { id:'klar', name:'Briefkasten mit Acrylglas-Front | Klar', line:null, price:139.00, uvp:null, rating:4.5, reviews:8,
-      badge:null, colors:['schwarz','anthrazit'], faecher:'1', material:'acrylglas', zeitung:'ohne', montage:'wand' },
-    { id:'nordkap', name:'Edelstahl-Briefkasten V4A | Küste | Nordkap', line:'Salzwasserfest', price:219.00, uvp:null, rating:5, reviews:11,
-      badge:null, colors:['edelstahl'], faecher:'1', material:'edelstahl', zeitung:'integriert', montage:'stand', paket:true },
-    { id:'kompakt', name:'Kompakt-Briefkasten ohne Gravur | Basic', line:null, price:69.99, uvp:84.99, rating:4.5, reviews:96,
-      badge:{type:'sale', text:'−18 %'}, colors:['weiss','anthrazit','grau','schwarz','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'ohne', montage:'wand' },
-    { id:'quartett', name:'Briefkastenanlage | 4 Parteien | Quartett', line:null, price:459.00, uvp:null, rating:5, reviews:6,
-      badge:null, colors:['anthrazit','grau','edelstahl'], faecher:'3', material:'stahl', zeitung:'ohne', montage:'unterputz', paket:true, klingel:true }
+    { id:'dominik1', name:'ADM10 Audio-Türsprechanlage | 1 Klingeltaster | RAL 7016 Anthrazit | Dominik', line:'IP-System', price:424.15, uvp:499.00, rating:5, reviews:2,
+      badge:SALE, showMeta:true, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'1', tuer:[], type:'audio', img:I83 },
+    { id:'sdm10x', name:'Türsprechanlage mit Kamera | Gesichtserkennung | Touch-Display | Live-HD-Video | Ein- & Mehrfamilien | SDM10X', line:'IP-System', price:1266.50, uvp:1490.00, rating:5, reviews:9,
+      badge:SALE, showMeta:true, colors:['anthrazit','edelstahl','schwarz','weiss','grau'], system:'ip', klingel:'flex', tuer:['gesicht','rfid','pin'], material:'edelstahl', type:'video', img:I84 },
+    { id:'colson1', name:'VDM10 2.0 Video-Türsprechanlage | 1 Klingeltaster | Colson', line:'IP-System', price:594.15, uvp:699.00, rating:5, reviews:63,
+      badge:SALE, showMeta:true, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','wunschfarbe'], system:'ip', klingel:'1', tuer:['rfid'], type:'video', img:I82 },
+    { id:'horizon', name:'VDM10 2.0 modulare Video-Türsprechanlage | Ein- & Mehrfamilien | Horizon', line:'IP-System', price:849.15, uvp:999.00, rating:5, reviews:21,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'flex', tuer:['rfid','pin','qr'], type:'video', img:I84 },
+    { id:'sdm10h', name:'Türsprechanlage mit Kamera | Gesichtserkennung | Touch-Display | Hausnummer beleuchtet | SDM10H', line:'IP-System', price:1351.50, uvp:1590.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit','edelstahl','schwarz'], system:'ip', klingel:'flex', tuer:['gesicht','rfid'], material:'edelstahl', type:'video', img:I84 },
+    { id:'kian1', name:'VDM10 2.0 Video-Türsprechanlage | 1 Klingeltaster | Kian', line:'IP-System', price:577.15, uvp:679.00, rating:5, reviews:19,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','braun','wunschfarbe'], system:'ip', klingel:'1', tuer:['rfid','pin'], type:'video', img:I82 },
+    { id:'niko1', name:'VDM10 2.0 Video-Türsprechanlage | mit Fingerprint | 1 Klingeltaster | Niko', line:'IP-System', price:721.65, uvp:849.00, rating:5, reviews:12,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'1', tuer:['fingerprint','rfid'], type:'video', img:I82 },
+    { id:'neo1', name:'VDM10 2.0 Video-Türsprechanlage mit austauschbarem Namensschild | 1 Klingeltaster | Neo', line:'IP-System', price:551.65, uvp:649.00, rating:5, reviews:4,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'1', tuer:['rfid'], type:'video', img:I82 },
+    { id:'sdm10s', name:'Video-Türsprechsäule | Klingelstele mit Gesichtserkennung | Farbe wählbar | Ein- & Mehrfamilien | SDM10S', line:'IP-System', price:2209.15, uvp:2599.00, rating:5, reviews:null,
+      badge:SALE, colors:['anthrazit','edelstahl','schwarz','wunschfarbe'], system:'ip', klingel:'flex', tuer:['gesicht','rfid','pin'], material:'v2a', type:'video', img:I87 },
+    { id:'colson2', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 2 Klingeltaster | Colson', line:'IP-System', price:645.15, uvp:759.00, rating:5, reviews:26,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'2', tuer:['rfid'], type:'video', img:I84 },
+    { id:'kai1', name:'ADM10 Audio-Türsprechanlage | 1 Klingeltaster | Mit austauschbarem Namensschild | Kai', line:'IP-System', price:424.15, uvp:499.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit','weiss','grau'], system:'ip', klingel:'1', tuer:[], type:'audio', img:I83 },
+    { id:'kian2', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 2 Klingeltaster | Kian', line:'IP-System', price:628.15, uvp:739.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','braun','wunschfarbe'], system:'ip', klingel:'2', tuer:['rfid','pin'], type:'video', img:I84 },
+    { id:'niko2', name:'VDM10 2.0 Video-Türsprechanlage | mit Fingerprint | 2 Klingeltaster | Niko', line:'IP-System', price:849.15, uvp:999.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'2', tuer:['fingerprint','rfid'], type:'video', img:I84 },
+    { id:'neo2', name:'VDM10 2.0 Video-Türsprechanlage mit austauschbarem Namensschild | 2 Klingeltaster | Neo', line:'IP-System', price:577.15, uvp:679.00, rating:5, reviews:6,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'2', tuer:['rfid'], type:'video', img:I84 },
+    { id:'kai2', name:'ADM10 Audio-Türsprechanlage | 2 Klingeltaster | Mit austauschbarem Namensschild | Kai', line:'IP-System', price:466.65, uvp:549.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit','weiss','grau'], system:'ip', klingel:'2', tuer:[], type:'audio', img:I83 },
+    { id:'maxior2', name:'XDM10 Video-Türsprechanlage mit austauschbarem Namensschild | 2-Draht-BUS | 2 Klingeltaster | Maxior', line:'BUS-System', price:806.65, uvp:949.00, rating:5, reviews:null,
+      badge:SALE, colors:['anthrazit','edelstahl','schwarz'], system:'bus', klingel:'2', tuer:['rfid'], material:'edelstahl', type:'video', img:I87 },
+    { id:'colson3', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 3 Klingeltaster | Colson', line:'IP-System', price:696.15, uvp:819.00, rating:5, reviews:5,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'3', tuer:['rfid'], type:'video', img:I84 },
+    { id:'kian3', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 3 Klingeltaster | Kian', line:'IP-System', price:679.15, uvp:799.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','braun','wunschfarbe'], system:'ip', klingel:'3', tuer:['rfid','pin'], type:'video', img:I84 },
+    { id:'niko3', name:'VDM10 2.0 Video-Türsprechanlage | mit Fingerprint | 3 Klingeltaster | Niko', line:'IP-System', price:892.50, uvp:1050.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'3', tuer:['fingerprint','rfid'], type:'video', img:I84 },
+    { id:'neo3', name:'VDM10 2.0 Video-Türsprechanlage mit austauschbarem Namensschild | 3 Klingeltaster | Neo', line:'IP-System', price:602.65, uvp:709.00, rating:5, reviews:5,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'3', tuer:['rfid'], type:'video', img:I84 },
+    { id:'kai3', name:'ADM10 Audio-Türsprechanlage | 3 Klingeltaster | Mit austauschbarem Namensschild | Kai', line:'IP-System', price:509.15, uvp:599.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit','weiss','grau'], system:'ip', klingel:'3', tuer:[], type:'audio', img:I83 },
+    { id:'maxior3', name:'XDM10 Video-Türsprechanlage mit austauschbarem Namensschild | 2-Draht-BUS | 3 Klingeltaster | Maxior', line:'BUS-System', price:849.15, uvp:999.00, rating:5, reviews:null,
+      badge:SALE, colors:['anthrazit','edelstahl','schwarz'], system:'bus', klingel:'3', tuer:['rfid'], material:'v2a', type:'video', img:I87 },
+    { id:'colson4', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 4 Klingeltaster | Colson', line:'IP-System', price:798.15, uvp:939.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'4', tuer:['rfid'], type:'video', img:I87 }
   ];
 
-  var TOTAL = 80; // catalogue headline figure
+  var TOTAL = 38; // catalogue headline figure (live total)
 
   /* ---- State ---- */
-  var active = { color: [], zeitung: [], faecher: [], montage: [], zusatz: [], material: [] };
+  var active = { color: [], system: [], klingel: [], tuer: [], material: [], type: [], verwendung: [], namensschild: [], kombi: [] };
   var page = 1;
   var advisorChips = false;   /* true while the active filters were set by the KI advisor → don't echo them as toolbar chips */
 
@@ -206,29 +237,30 @@
     });
   }
 
-  /* ---- Filtering ---- */
+  /* ---- Filtering (mirrors the live Türsprechanlagen facets) ---- */
   function matches(p) {
     if (active.color.length && !active.color.some(function (c) { return p.colors.indexOf(c) !== -1; })) return false;
-    if (active.faecher.length) {
-      /* 'paketfach' is a separate attribute (parcel compartment), not a fach count —
-         match it against p.paket; the count keys ('1'/'2'/'3') match p.faecher. */
-      var fOk = active.faecher.some(function (k) {
-        return k === 'paketfach' ? !!p.paket : p.faecher === k;
-      });
-      if (!fOk) return false;
-    }
-    if (active.zeitung.length && active.zeitung.indexOf(p.zeitung) === -1) return false;
-    if (active.montage.length && active.montage.indexOf(p.montage) === -1) return false;
-    if (active.material && active.material.length && active.material.indexOf(p.material) === -1) return false;   /* advisor-only facet (Witterung/Optik/Sichtfenster) */
-    if (active.zusatz.length) {
-      /* Extra functions — boolean attributes on the product (p.klingel / p.sprech).
-         OR within the group; a "klingel+sprech" key requires BOTH (combined unit). */
-      var zOk = active.zusatz.some(function (k) {
-        return k.indexOf('+') !== -1 ? k.split('+').every(function (x) { return !!p[x]; }) : !!p[k];
-      });
-      if (!zOk) return false;
+    if (active.system.length && active.system.indexOf(p.system) === -1) return false;
+    if (active.klingel.length && active.klingel.indexOf(p.klingel) === -1) return false;   /* '1'..'7' or 'flex' */
+    if (active.type.length && active.type.indexOf(p.type) === -1) return false;            /* advisor-only: video / audio */
+    if (active.material.length && active.material.indexOf(p.material) === -1) return false;
+    if (active.verwendung.length && active.verwendung.indexOf(verwOf(p)) === -1) return false;     /* advisor-only: Verwendungszweck */
+    if (active.namensschild.length && active.namensschild.indexOf(nsOf(p)) === -1) return false;   /* advisor-only: Namensschildtyp */
+    if (active.kombi.length && !active.kombi.some(function (k) { return k === 'briefkasten' && !!p.briefkasten; })) return false;   /* advisor-only: Kombination */
+    if (active.tuer.length) {
+      /* Türöffner-Bedienung — array of access methods on the product. OR within the group. */
+      var tOk = active.tuer.some(function (k) { return (p.tuer || []).indexOf(k) !== -1; });
+      if (!tOk) return false;
     }
     return true;
+  }
+
+  /* Derived advisor attributes (computed from existing data — no per-product field needed) */
+  function verwOf(p) { return p.klingel === 'flex' ? 'flexibel' : (p.klingel === '1' ? 'einfamilien' : 'mehrfamilien'); }
+  function nsOf(p) {
+    if (/austauschbar/i.test(p.name)) return 'wechsel';
+    if (/SDM10|Touch-Display|Display/i.test(p.name)) return 'display';
+    return 'gravur';
   }
 
   function activeCount() {
@@ -238,39 +270,62 @@
   /* ---- Product card ---- */
   function card(p) {
     var c = el('article', 'pcard');
-    var badge = p.badge ? '<span class="pcard__badge pcard__badge--' + p.badge.type + '">' + p.badge.text + '</span>' : '';
-    var priceBlock =
-      (p.uvp ? '<span class="pcard__uvp">' + euro(p.uvp) + '</span>' : '') +
-      '<span class="pcard__ab">ab</span> ' +
-      '<span class="pcard__price' + (p.uvp ? ' pcard__price--sale' : '') + '">' + euro(p.price) + '</span>';
+    /* showMeta gates the discount badge + price block — kept on only a couple of cards for now */
+    var badge = (p.showMeta && p.badge) ? '<span class="pcard__badge pcard__badge--' + p.badge.type + '">' + p.badge.text + '</span>' : '';
+    var priceRow = p.showMeta
+      ? '<div class="pcard__pricerow">' +
+          (p.uvp ? '<span class="pcard__uvp">' + euro(p.uvp) + '</span>' : '') +
+          '<span class="pcard__ab">ab</span> ' +
+          '<span class="pcard__price' + (p.uvp ? ' pcard__price--sale' : '') + '">' + euro(p.price) + '</span>' +
+        '</div>'
+      : '';
+    var reviews = p.reviews ? '<span class="pcard__reviews">(' + p.reviews + ')</span>' : '';
+    var sys = p.line ? '<span class="pcard__sys">' + p.line + '</span>' : '';   /* IP-System / BUS-System tag */
 
     c.innerHTML =
       '<div class="pcard__media">' +
         badge +
-        '<img class="pcard__img" src="' + IMG + '" alt="' + p.name + '" loading="lazy">' +
+        '<img class="pcard__img" src="' + (p.img || IMG) + '" alt="' + p.name + '" loading="lazy">' +
       '</div>' +
       '<div class="pcard__body">' +
+        sys +
         '<div class="pcard__top">' +
           '<span class="pcard__brand">Metzler</span>' +
-          '<span class="pcard__rating">' + stars(p.rating) + '<span class="pcard__reviews">(' + p.reviews + ')</span></span>' +
+          '<span class="pcard__rating">' + stars(p.rating) + reviews + '</span>' +
         '</div>' +
         '<h3 class="pcard__title"><a href="#">' + p.name + '</a></h3>' +
-        '<div class="pcard__pricerow">' + priceBlock + '</div>' +
+        priceRow +
         colorRow(p.colors) +
       '</div>';
     return c;
   }
 
-  /* ---- In-grid promo banner (spans the full grid width) ---- */
+  /* ---- In-grid promo banner — compact version of the Home XDM10 hero
+         (reuses .hero-banner from ../Home/styles-v2.css; .hero-banner--inline
+         shrinks it). Spans the full grid width so it aligns with the cards. ---- */
   function bannerEl() {
-    var b = el('a', 'pgrid__banner');
-    b.href = '#grid';
-    b.setAttribute('aria-label', 'Original Metzler Briefkästen');
+    var b = el('div', 'pgrid__banner');
     b.innerHTML =
-      '<picture>' +
-        '<source media="(max-width: 767px)" srcset="Banner/image%2076.png">' +
-        '<img src="Banner/image%2074.png" alt="Original Metzler Briefkästen — Vergleichssieger bei Vergleich.org. Langlebig & wetterfest, minimalistisches Design, sicheres Schließsystem, individuelle Gravur, flexibel montierbar." loading="lazy">' +
-      '</picture>';
+      '<section class="hero-banner hero-banner--inline" aria-label="XDM10 Video-Türsprechanlage">' +
+        '<div class="hero-banner__copy">' +
+          '<h2 class="hero-banner__title">Video-Türsprechanlage zur Nachrüstung – ohne neue Kabel</h2>' +
+          '<div class="hero-banner__chips">' +
+            '<span class="hero-chip"><span class="hero-chip__pre">POWERED BY</span><span class="hero-chip__hikvision">HIK<span>VISION</span></span></span>' +
+            '<span class="hero-chip"><span class="hero-chip__pre">DESIGNED IN GERMANY</span>' +
+              '<svg class="hero-chip__flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" y="0" fill="#000"/><rect width="18" height="4" y="4" fill="#DD0000"/><rect width="18" height="4" y="8" fill="#FFCE00"/></svg>' +
+            '</span>' +
+          '</div>' +
+          '<p class="hero-banner__body">Die XDM10 nutzt die vorhandene Verkabelung und verwandelt alte Klingel- und Sprechanlagen ohne neue Kabel in ein modernes System mit App-Anbindung.</p>' +
+          '<div class="hero-banner__ctas">' +
+            '<a class="btn btn--primary hero-banner__cta" href="#">Jetzt konfigurieren</a>' +
+            '<a class="btn hero-banner__cta hero-banner__cta--secondary" href="#">Mehr erfahren</a>' +
+          '</div>' +
+        '</div>' +
+        '<div class="hero-banner__stage" aria-hidden="true">' +
+          '<img class="hero-banner__poster" src="../Home/XDM10%20Banner/Photo.png" alt="">' +
+          '<img class="hero-banner__reddot" src="../Home/XDM10%20Banner/Red%20dot.svg" alt="Red Dot Winner 2026">' +
+        '</div>' +
+      '</section>';
     return b;
   }
 
@@ -301,10 +356,9 @@
     grid.innerHTML = '';
     var start = (page - 1) * PAGE;
     var pageItems2 = filtered.slice(start, start + PAGE);
-    // On page 1 (unfiltered), drop the promo banner into the grid so that
-    // exactly 2 rows (6 products) of the page follow it.
-    var bannerAt = (page === 1 && activeCount() === 0 && pageItems2.length > 6)
-      ? pageItems2.length - 6 : -1;
+    // On page 1 (unfiltered), drop the XDM10 hero banner into the MIDDLE of the
+    // grid (after 6 products = 2 rows on the 3-col grid), spanning full width.
+    var bannerAt = (page === 1 && activeCount() === 0 && pageItems2.length > 6) ? 6 : -1;
     pageItems2.forEach(function (p, i) {
       if (i === bannerAt) grid.appendChild(bannerEl());
       grid.appendChild(card(p));
@@ -460,44 +514,47 @@
          group color/colorset/material/faecher/zeitung/montage/zusatz → filters + ranks
          group 'pref' → noted preference (Beschriftung), not filtered
          neutral:true → "no preference" (adds no filter). Steps are skippable. */
+    /* Needs-based quiz for Türsprechanlagen (7 steps). Each answer maps to a
+       catalogue attribute the engine reads: verwendung / type / system / tuer /
+       namensschild / kombi / color / colorset / material. neutral:true = "no
+       preference". Step 4 (Zutrittsmethoden) is multi-select. */
     var QUIZ = [
-      { q: 'Für welche Wohnsituation suchen Sie einen Briefkasten?', opts: [
-        { label: 'Einfamilienhaus',  sub: 'für einen Haushalt',     group: 'faecher', value: '1', chip: 'Einfamilienhaus' },
-        { label: 'Zweifamilienhaus', sub: 'für zwei Haushalte',     group: 'faecher', value: '2', chip: 'Zweifamilienhaus' },
-        { label: 'Mehrfamilienhaus', sub: 'für mehrere Parteien',   group: 'faecher', value: '3', chip: 'Mehrfamilienhaus' }
+      { q: 'Für welche Wohnsituation suchen Sie eine Sprechanlage?', opts: [
+        { label: 'Einfamilienhaus',     sub: 'ein Haushalt, eine Klingeltaste', group: 'verwendung', value: 'einfamilien',  chip: 'Einfamilienhaus' },
+        { label: 'Mehrfamilienhaus',    sub: 'mehrere Parteien & Klingeltasten', group: 'verwendung', value: 'mehrfamilien', chip: 'Mehrfamilienhaus' },
+        { label: 'Flexible Großanlage', sub: 'flexibel von 1–500 Tasten',        group: 'verwendung', value: 'flexibel',     chip: 'Großanlage' }
       ]},
-      { q: 'Wo möchten Sie Ihren Briefkasten anbringen?', opts: [
-        { label: 'An der Hauswand',          sub: 'klassische Wandmontage',         group: 'montage', value: 'wand',      chip: 'Wandmontage' },
-        { label: 'Freistehend mit Standfuß', sub: 'z. B. am Weg oder in der Einfahrt', group: 'montage', value: 'stand',  chip: 'Standmontage' },
-        { label: 'Am Zaun',                  sub: 'als Zaunbriefkasten',            group: 'montage', value: 'stand',      chip: 'Zaunmontage' },
-        { label: 'In die Mauer integriert',  sub: 'Mauerdurchwurf oder Unterputz',  group: 'montage', value: 'unterputz', chip: 'Unterputz' }
+      { q: 'Möchten Sie sehen, wer vor der Tür steht?', opts: [
+        { label: 'Mit Kamera (Video)', sub: 'Live-HD-Bild der Besucher', group: 'type', value: 'video', chip: 'Video' },
+        { label: 'Audio-only',         sub: 'nur sprechen, ohne Kamera',  group: 'type', value: 'audio', chip: 'Audio' }
       ]},
-      { q: 'Mit welchem Postaufkommen rechnen Sie?', opts: [
-        { label: 'Auch Pakete',             sub: 'mit sicherem Paketfach',                  group: 'faecher', value: 'paketfach', chip: 'Paketfach' },
-        { label: 'Viel Post und Zeitungen', sub: 'großes Fassungsvermögen mit Zeitungsfach', group: 'zeitung', value: 'integriert', chip: 'Zeitungsfach' },
-        { label: 'Überwiegend Briefpost',   sub: 'kompakte Größe genügt',                   neutral: true }
+      { q: 'Neubau oder Modernisierung Ihrer bestehenden Anlage?', opts: [
+        { label: 'IP-System',  sub: 'Ideal für Neubauten – nutzt LAN- oder 2-Draht-Sternverkabelung für maximale Flexibilität.', group: 'system', value: 'ip',  chip: 'IP-System' },
+        { label: 'BUS-System', sub: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung, kein Neuverlegen nötig.',  group: 'system', value: 'bus', chip: '2-Draht-BUS' },
+        { label: 'Weiß ich nicht', sub: 'Kein Problem – wir empfehlen passende Modelle für beide Systeme.',                       neutral: true }
       ]},
-      { q: 'Welche Zusatzfunktion wünschen Sie sich?', opts: [
-        { label: 'Funkklingel',              sub: 'kabellos und einfach nachrüstbar',          group: 'zusatz',   value: 'klingel',        chip: 'Funkklingel' },
-        { label: 'Klingel mit Sprechanlage', sub: 'sehen und sprechen, wer vor der Tür steht', group: 'zusatz',   value: 'klingel+sprech', chip: 'Klingel & Sprechanlage' },
-        { label: 'Sichtfenster',             sub: 'Ihren Posteingang auf einen Blick erkennen', group: 'material', value: 'acrylglas',     chip: 'Sichtfenster' },
-        { label: 'Keine Zusatzfunktion',     sub: 'ein reiner Briefkasten',                    neutral: true }
+      { q: 'Wie möchten Sie Zutritt gewähren?', sub: 'Mehrfachauswahl möglich', opts: [
+        { label: 'Fingerabdrucksensor', sub: 'schlüsselloser Zutritt',   group: 'tuer', value: 'fingerprint', chip: 'Fingerprint' },
+        { label: 'RFID-Chip',           sub: 'Transponder oder Karte',   group: 'tuer', value: 'rfid',        chip: 'RFID' },
+        { label: 'Gesichtserkennung',   sub: 'Tür öffnet beim Erkennen', group: 'tuer', value: 'gesicht',     chip: 'Gesichtserkennung' },
+        { label: 'PIN-Code',            sub: 'Zahlencode am Tastenfeld', group: 'tuer', value: 'pin',         chip: 'PIN-Code' },
+        { label: 'QR-Code',             sub: 'Zutritt per QR-Scan',      group: 'tuer', value: 'qr',          chip: 'QR-Code' },
+        { label: 'Keine Zutrittsfunktion', sub: 'nur klingeln und sprechen', neutral: true }
       ]},
-      { q: 'Wie stark ist der Standort der Witterung ausgesetzt?', opts: [
-        { label: 'Übliche, geschützte Lage',          sub: 'pulverbeschichteter Stahl',                neutral: true },
-        { label: 'Rau, exponiert oder in Küstennähe', sub: 'rostfreier Edelstahl V2A, salzluftbeständig', group: 'material', value: 'edelstahl', chip: 'Edelstahl V2A' }
+      { q: 'Welches Namensschild bevorzugen Sie?', opts: [
+        { label: 'Lasergravur',               sub: 'dauerhaft eingraviert',     group: 'namensschild', value: 'gravur',  chip: 'Gravur' },
+        { label: 'Austauschbares Namensschild', sub: 'jederzeit wechselbar',    group: 'namensschild', value: 'wechsel', chip: 'Austauschbar' },
+        { label: 'Display / digital',         sub: 'Namen am Touch-Display',    group: 'namensschild', value: 'display', chip: 'Display' },
+        { label: 'Egal',                      sub: 'keine Präferenz',           neutral: true }
       ]},
-      { q: 'Welche Optik passt zu Ihrem Zuhause?', opts: [
-        { label: 'Klassische Farbe',     sub: 'z. B. Anthrazit, Schwarz, Weiß oder Grau',      group: 'colorset', values: ['anthrazit','braun','schwarz','eisenglimmer','weiss','grau'], chip: 'Klassische Farbe', swatch: 'linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)' },
-        { label: 'Edelstahl',            sub: 'rostfrei und zeitlos',                          group: 'material', value: 'edelstahl', chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)' },
-        { label: 'Natürliche Holzoptik', sub: 'Eiche oder Lärche',                             group: 'material', value: 'holz', chip: 'Holzoptik', swatch: 'linear-gradient(135deg,#b07b46,#7a5230)' },
-        { label: 'Wunschfarbe',          sub: 'individuell nach RAL',                          group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)' }
+      { q: 'Soll die Anlage mit einem Briefkasten kombiniert sein?', opts: [
+        { label: 'Nur Türstation',            sub: 'klassische Außenstation',          neutral: true },
+        { label: 'Mit Briefkasten & Paketbox', sub: 'integrierte Brief-/Paketbox',     group: 'kombi', value: 'briefkasten', chip: 'Mit Briefkasten' }
       ]},
-      { q: 'Wie möchten Sie Ihren Briefkasten beschriften?', opts: [
-        { label: 'Dauerhafte Lasergravur',       sub: 'UV- und witterungsbeständig, freie Schriftwahl', group: 'pref', value: 'Lasergravur' },
-        { label: 'Austauschbares Namensschild',  sub: 'jederzeit wechselbar',                           group: 'pref', value: 'Namensschild' },
-        { label: 'Edelstahl-Namensschild',       sub: 'hochwertig graviert',                            group: 'pref', value: 'Edelstahl-Namensschild' },
-        { label: 'Ohne Beschriftung',            sub: 'neutral',                                        neutral: true }
+      { q: 'Welche Optik passt zu Ihrem Eingang?', opts: [
+        { label: 'Klassische Farbe', sub: 'z. B. Anthrazit, Schwarz, Weiß oder Grau', group: 'colorset', values: ['anthrazit','braun','schwarz','eisenglimmer','weiss','grau'], chip: 'Klassische Farbe', swatch: 'linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)' },
+        { label: 'Edelstahl',        sub: 'rostfrei und zeitlos',                     group: 'material', value: 'edelstahl', chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)' },
+        { label: 'Wunschfarbe',      sub: 'individuell nach RAL',                     group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)' }
       ]}
     ];
 
@@ -516,7 +573,7 @@
        relax the lowest-priority answer (colour first, household last) so the
        advisor always returns a recommendation. Returns {kept, dropped, count}. */
     function applyPicks() {
-      var priority = ['faecher', 'zusatz', 'montage', 'zeitung', 'material', 'colorset', 'color']; /* later = dropped first */
+      var priority = ['verwendung', 'klingel', 'type', 'system', 'tuer', 'namensschild', 'material', 'kombi', 'colorset', 'color']; /* later = dropped first */
       var sel = [], prefs = [];
       picks.forEach(function (arr) {
         (arr || []).forEach(function (o) {       /* picks[i] is an array (multi-select) */
@@ -564,29 +621,25 @@
 
     /* ── Recommendation-card helpers ── */
     function fmtPrice(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
-    var MAT = { edelstahl: 'Edelstahl V4A', stahl: 'Pulverbeschichteter Stahl', acrylglas: 'Acrylglas-Front' };
+    var SYS = { ip: 'IP-System', bus: '2-Draht-BUS' };
+    var TYP = { video: 'Video-Türsprechanlage', audio: 'Audio-Türsprechanlage' };
     function specsOf(p) {
-      return [
-        MAT[p.material] || p.material,
-        labelFor('faecher', p.faecher) + (p.paket ? ' · inkl. Paketfach' : ''),
-        labelFor('montage', p.montage) + ' · ' + labelFor('zeitung', p.zeitung)
-      ];
+      var taster = p.klingel === 'flex' ? 'Flexibel 1–500 Taster' : labelFor('klingel', p.klingel);
+      return [ TYP[p.type] || p.type, SYS[p.system] || p.system, taster ];
     }
-    function pickImg(p) {
-      if (p.montage === 'stand')      return 'Product%20Image/Standbriefk%C3%A4sten.webp';
-      if (p.faecher === '3')          return 'Product%20Image/Mehrfamilien%20Briefk%C3%A4sten.webp';
-      if (p.montage === 'unterputz')  return 'Product%20Image/Unterputz%20Briefk%C3%A4sten.webp';
-      return 'Product%20Image/image%2068.png';
-    }
+    function pickImg(p) { return p.img || IMG; }
     /* Does product p satisfy a single facet pick? (mirrors matches()) */
     function sat(p, o) {
       if (o.group === 'color')    return p.colors.indexOf(o.value) !== -1;
       if (o.group === 'colorset') return (o.values || []).some(function (c) { return p.colors.indexOf(c) !== -1; });
       if (o.group === 'material') return p.material === o.value;
-      if (o.group === 'faecher')  return o.value === 'paketfach' ? !!p.paket : p.faecher === o.value;
-      if (o.group === 'zusatz')   return o.value.indexOf('+') !== -1 ? o.value.split('+').every(function (x) { return !!p[x]; }) : !!p[o.value];
-      if (o.group === 'zeitung')  return p.zeitung === o.value;
-      if (o.group === 'montage')  return p.montage === o.value;
+      if (o.group === 'system')   return p.system === o.value;
+      if (o.group === 'klingel')  return p.klingel === o.value;
+      if (o.group === 'tuer')     return (p.tuer || []).indexOf(o.value) !== -1;
+      if (o.group === 'type')     return p.type === o.value;
+      if (o.group === 'verwendung')   return verwOf(p) === o.value;
+      if (o.group === 'namensschild') return nsOf(p) === o.value;
+      if (o.group === 'kombi')        return o.value === 'briefkasten' ? !!p.briefkasten : false;
       return false;
     }
     function recCardHTML(p) {
@@ -889,18 +942,30 @@
     });
   }
 
+  /* ---- Contact modal (Info- & Hilfecenter) ---- */
+  function wireContactModal() {
+    var modal = document.getElementById('contactModal');
+    if (!modal) return;
+    function open() { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
+    function close() { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
+    document.querySelectorAll('[data-open-modal]').forEach(function (el) { el.addEventListener('click', open); });
+    document.querySelectorAll('[data-close-modal]').forEach(function (el) { el.addEventListener('click', close); });
+    modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  }
+
   /* ---- Init ---- */
   buildSubnav();
+  buildFacetGroup('system');
+  buildFacetGroup('klingel');
+  buildFacetGroup('tuer');
   buildColorGroup();
-  buildFacetGroup('zeitung');
-  buildFacetGroup('faecher');
-  buildFacetGroup('montage');
-  buildFacetGroup('zusatz');
   wireDrawer();
   wireSubnav();
   wireFooterAccordions();
   wireAiAdvisor();
   wireSeo();
+  wireContactModal();
   $('#clearAll').addEventListener('click', clearAll);
   $('#emptyReset').addEventListener('click', clearAll);
   render();
