@@ -271,8 +271,12 @@
 .pcard__badge--best { background: var(--teal-dark); }
 .pcard__badge--new  { background: var(--teal); }
 .pcard__badge--sale { background: #B23A18; }
-/* Award badge (e.g. Red Dot) — sits in the lower-right of the product image, balancing the sale badge */
-.pcard__award { position: absolute; right: 12px; bottom: 12px; z-index: 2; width: 92px; height: auto; pointer-events: none; }
+/* Award rendered as a PILL beside the system tag (per PILL RULE: Graphite 100 fill,
+   Schwarz label) with the red-dot seal as a mini icon. */
+.pcard__tags { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-2); align-self: flex-start; }
+.pcard__award { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px 2px 6px; border-radius: 999px; background: var(--graphite-100); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08); color: var(--schwarz); font-size: var(--text-caption); font-weight: 500; letter-spacing: .02em; white-space: nowrap; }
+.pcard__award-ico { width: 15px; height: 15px; display: block; flex: none; }
+.pcard__award-txt b { color: #E30613; font-weight: 500; }
 
 .pcard__body { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5) var(--sp-5); flex: 1; }
 
@@ -298,6 +302,13 @@
 .pcard__price { font-size: var(--text-h4); font-weight: 800; color: var(--schwarz); }
 .pcard__price--sale { color: var(--red-default); }
 .pcard__uvp { font-size: var(--text-body-sm); color: var(--graphite-500); text-decoration: line-through; }
+
+/* Sprechanlage cards gate the price behind showMeta, so most have no price row to
+   bottom-anchor the swatches. Wrap price+colors in a footer pinned to the bottom so
+   the colour palette aligns across every card in a row (cards are equal-height grid
+   items). Scoped to .sprech so the shared Briefkasten cards are unaffected. */
+.sprech .pcard__footer { margin-top: auto; display: flex; flex-direction: column; gap: var(--sp-3); }
+.sprech .pcard__pricerow { margin-top: 0; }
 
 /* Colour swatches + "+N weitere" link */
 .pcard__colors { display: flex; align-items: center; gap: 8px; }
@@ -369,10 +380,16 @@
 .hero-banner--inline .hero-banner__ctas { margin-top: var(--sp-5); max-width: none; gap: var(--sp-4); }   /* CTAs fill the wider copy column */
 .hero-banner--inline .hero-banner__cta { padding-inline: var(--sp-10); }   /* wider buttons */
 .hero-banner--inline .hero-banner__stage { left: auto; right: 0; width: clamp(400px, 50%, 600px); }
-/* device fills the banner height (no top/bottom gaps), flush right */
-.hero-banner--inline .hero-banner__poster { height: 100%; }
-/* Red Dot award seal (baked-in drop shadows). Fallback: device-side on narrow banners. */
-.hero-banner--inline .hero-banner__award { position: absolute; right: 8%; bottom: 12%; width: 32%; max-width: 170px; height: auto; z-index: 2; pointer-events: none; }
+/* Device wrapper: matches the poster's rendered box (photo aspect ratio),
+   flush right + the same 6% shift the poster used. The Red-Dot seal lives
+   INSIDE it, so it tracks the device at every banner size. */
+.hero-banner--inline .hero-banner__device { position: relative; height: 100%; aspect-ratio: 613 / 553; margin-left: auto; transform: translateX(6%); }
+.hero-banner--inline .hero-banner__poster { height: 100%; width: 100%; transform: none; }
+/* Full "reddot winner 2026" lockup sits on the dark floor to the lower-LEFT
+   of the device (the photo's left edge is masked transparent there, so it
+   reads against the banner background). left/top/width are % of the device
+   box, so it tracks the device at every banner width. */
+.hero-banner--inline .hero-banner__award { position: absolute; left: 23%; top: 71%; width: 39%; max-width: none; height: auto; z-index: 2; pointer-events: none; }
 @media (max-width: 767px) {
   .hero-banner--inline .hero-banner__copy { max-width: none; }
   .hero-banner--inline .hero-banner__stage { display: none; }   /* text-only on phones */
@@ -383,11 +400,6 @@
 @container (max-width: 820px) {
   .hero-banner--inline .hero-banner__stage { display: none; }
   .hero-banner--inline .hero-banner__copy { width: auto; max-width: none; }
-}
-/* On wide banners there is room in the dark space to the LEFT of the device —
-   place the (enlarged) Red-Dot seal there, just clear of the CTAs. */
-@container (min-width: 1150px) {
-  .hero-banner--inline .hero-banner__award { right: 474px; left: auto; bottom: 14%; width: 40%; max-width: 220px; }
 }
 
 /* ============================================================
@@ -400,7 +412,7 @@
 .qa svg { width: 15px; height: 15px; stroke-width: 1.6; color: #7cc6b9; transition: color .25s; }
 .qa:hover { background: rgba(255,255,255,.1); color: #fff; }
 .qa:hover svg { color: #fff; }
-.qa strong { font-weight: 700; letter-spacing: -.005em; }
+.qa strong { font-weight: 400; letter-spacing: -.005em; }   /* match the topbar's regular weight */
 .qa-divider { width: 1px; height: 16px; background: rgba(255,255,255,.18); margin: 0 4px; }
 .qa-cta { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 4px; background: #fff; color: var(--teal); font-weight: 700; font-size: var(--text-caption); letter-spacing: -.005em; text-decoration: none; border: 0; cursor: pointer; font-family: inherit; transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s; line-height: 1; }
 .qa-cta svg { width: 14px; height: 14px; stroke-width: 2; }
@@ -481,16 +493,21 @@
 .seo__title { font-size: var(--text-h2); font-weight: 700; color: var(--schwarz); margin-bottom: var(--sp-5); }
 .seo__text {
   position: relative; overflow: hidden;
-  max-height: 5.4em; transition: max-height 0.35s ease;
+  max-height: 5.4em; transition: max-height 0.35s ease;   /* ~2 lines clear, the rest fades out below */
   color: var(--ink-72); font-size: var(--text-body); line-height: 1.8;
 }
 .seo__text.is-open { max-height: 200em; }
 .seo__text p + p { margin-top: var(--sp-4); }
 .seo__text strong { color: var(--schwarz); font-weight: 700; }
+/* Soft fade over the lower lines (the "blur the rest" look) — original Briefkasten style. */
 .seo__text:not(.is-open)::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2.4em;
   background: linear-gradient(rgba(255,255,255,0), #fff);
 }
+/* Sprechanlage's first paragraph is short, so at wide widths the collapsed box
+   catches the paragraph gap + a floating faded 2nd-paragraph line next to the
+   toggle. Collapse that gap so the faded text stays continuous (like Briefkasten). */
+.sprech .seo__text:not(.is-open) p + p { margin-top: 0; }
 .seo__toggle {
   margin-top: var(--sp-4);
   font-size: var(--text-body); font-weight: 600; color: var(--teal);
@@ -841,6 +858,71 @@
 .mega-panel .mega-feature__cta:hover,
 .mega-panel .mega-feature__cta:focus-visible { background: var(--teal-600); color: var(--white); border-bottom: 0; }   /* Teal 600 */
 .mega-panel .mega-feature__cta:active        { background: var(--teal-700); color: var(--white); border-bottom: 0; }   /* Teal 700 */
+
+/* Both dropdowns: cards fill their 5 columns with a fixed 20px gap (instead of
+   146px cards + space-between, whose gap grows past the 46px card→poster gap on wide
+   screens). Keeps the inter-card gap clearly SMALLER than the gap to the poster, and
+   the Sprechanlage cards the same size as the Briefkasten ones (its 8 tiles → 5+3). */
+#mm-panel-briefkasten .mega-grid,
+#mm-panel-sprechanlagen .mega-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: var(--sp-5); }
+#mm-panel-briefkasten .mega-card__media,
+#mm-panel-sprechanlagen .mega-card__media { max-width: none; }
+
+/* ── Right-zone variant: XDM10 product POSTER (Sprechanlage) ──
+   Premium split layout: scaled device photo in the UPPER section, copy on a solid
+   dark panel BELOW (fully legible — no text over the image). No pills/paragraph/seal. */
+.mega-panel .mega-poster {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  height: 100%; min-height: 360px;
+  border-radius: var(--r-l);
+  background: #0a0b0d; color: #fff;
+}
+/* Upper section: scaled-down device photo.
+   flex:1 1 0 + min-height:0 lets it grow to fill the space ABOVE the copy; the img is
+   absolutely positioned so its (very tall) intrinsic size can't drive the poster height. */
+.mega-panel .mega-poster__media {
+  position: relative; flex: 1 1 0; min-height: 0; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding: 18px 18px 6px;                       /* breathing room around the scaled-down shot */
+}
+.mega-panel .mega-poster__bg {
+  display: block;
+  max-width: 100%; max-height: 100%; width: auto; height: auto;   /* whole image fits — never clipped */
+  object-fit: contain;
+  transition: transform .5s cubic-bezier(.22,1,.36,1);
+}
+.mega-panel .mega-poster:hover .mega-poster__bg { transform: scale(1.04); }
+/* Lower section: copy on solid dark, vertically centred so it stays balanced
+   whatever height the poster stretches to (matching the tile grid). */
+.mega-panel .mega-poster__content {
+  flex: 0 0 auto;
+  display: flex; flex-direction: column;
+  padding: var(--sp-4) var(--sp-5) var(--sp-5);
+}
+.mega-panel .mega-poster__eyebrow {
+  margin-bottom: 8px;
+  font-size: 0.6875rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  color: #5FC7C3;                               /* refined teal accent on dark */
+}
+.mega-panel .mega-poster__title {
+  margin: 0; font-size: 1.25rem; font-weight: 500; line-height: 1.22; letter-spacing: -0.01em; color: #fff;
+}
+.mega-panel .mega-poster__meta {
+  margin-top: 10px; font-size: 0.6875rem; line-height: 1.4; letter-spacing: .01em; color: rgba(255,255,255,0.6);
+}
+/* Full-width outline button CTA */
+.mega-panel .mega-poster__cta {
+  margin-top: var(--sp-4); width: 100%;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid rgba(255,255,255,0.5); border-radius: var(--r-m);
+  background: transparent; color: #fff;
+  font-size: var(--text-body-sm); font-weight: 500; line-height: 1; white-space: nowrap;
+  transition: background .18s ease, border-color .18s ease;
+}
+.mega-panel .mega-poster__cta:hover,
+.mega-panel .mega-poster__cta:focus-visible { background: rgba(255,255,255,0.12); border-color: #fff; color: #fff; }
 
 /* ════════════════════════════════════════════════════════════════════
    KI-KAUFBERATER — guided quiz, built to the Metzler Design System.

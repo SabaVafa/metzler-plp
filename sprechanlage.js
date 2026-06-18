@@ -281,22 +281,25 @@
       : '';
     var reviews = p.reviews ? '<span class="pcard__reviews">(' + p.reviews + ')</span>' : '';
     var sys = p.line ? '<span class="pcard__sys">' + p.line + '</span>' : '';   /* IP-System / BUS-System tag */
+    var awardPill = p.award ? '<span class="pcard__award"><img class="pcard__award-ico" src="Badge/reddot-seal.svg" alt="Red Dot Award"><span class="pcard__award-txt">red<b>dot</b> winner 2026</span></span>' : '';
+    var tags = (sys || awardPill) ? '<div class="pcard__tags">' + sys + awardPill + '</div>' : '';
 
     c.innerHTML =
       '<div class="pcard__media">' +
         badge +
         '<img class="pcard__img" src="' + (p.img || IMG) + '" alt="' + p.name + '" loading="lazy">' +
-        (p.award ? '<img class="pcard__award" src="' + p.award + '" alt="Red Dot Award Winner 2026">' : '') +
       '</div>' +
       '<div class="pcard__body">' +
-        sys +
+        tags +
         '<div class="pcard__top">' +
           '<span class="pcard__brand">Metzler</span>' +
           '<span class="pcard__rating">' + stars(p.rating) + reviews + '</span>' +
         '</div>' +
         '<h3 class="pcard__title"><a href="#">' + p.name + '</a></h3>' +
-        priceRow +
-        colorRow(p.colors) +
+        '<div class="pcard__footer">' +
+          priceRow +
+          colorRow(p.colors) +
+        '</div>' +
       '</div>';
     return c;
   }
@@ -323,8 +326,10 @@
           '</div>' +
         '</div>' +
         '<div class="hero-banner__stage" aria-hidden="true">' +
-          '<img class="hero-banner__poster" src="../Home/XDM10%20Banner/Photo.png" alt="">' +
-          '<img class="hero-banner__award" src="Badge/Component%204.svg" alt="Red Dot Award Winner 2026">' +
+          '<div class="hero-banner__device">' +
+            '<img class="hero-banner__poster" src="../Home/XDM10%20Banner/Photo.png" alt="">' +
+            '<img class="hero-banner__award" src="Badge/Component%204.svg" alt="Red Dot Award Winner 2026">' +
+          '</div>' +
         '</div>' +
       '</section>';
     return b;

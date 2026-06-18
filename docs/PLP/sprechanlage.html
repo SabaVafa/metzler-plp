@@ -6,7 +6,7 @@
 <title>Türsprechanlagen online kaufen | Video & Audio — Metzler</title>
 <meta name="description" content="Moderne Türsprechanlagen von Metzler: Video- & Audio-Gegensprechanlagen, IP- und 2-Draht-BUS-Systeme, Ein- und Mehrfamilien, mit Fingerprint, Gesichtserkennung & App-Anbindung." />
 <link rel="stylesheet" href="../Home/styles-v2.css?v=9" />
-<link rel="stylesheet" href="plp.css?v=114" />
+<link rel="stylesheet" href="plp.css?v=144" />
 </head>
 <body class="plp sprech">
 
@@ -159,7 +159,66 @@
         </li>
         <li><a href="#">Paketboxen</a></li>
         <li><a href="#">Mülltonnenboxen</a></li>
-        <li><a href="#" class="is-featured" aria-current="page">Sprechanlagen</a></li>
+        <li class="hnav-item" data-mega-item>
+          <a href="#"
+             id="mm-trigger-sprechanlagen" class="is-featured" aria-current="page" data-mega-trigger
+             aria-haspopup="true" aria-expanded="false" aria-controls="mm-panel-sprechanlagen">Sprechanlagen</a>
+
+          <!-- Drop-panel: subcategory grid (left) + XDM10 poster (right) -->
+          <div class="mega-panel" id="mm-panel-sprechanlagen" data-mega-panel
+               role="region" aria-label="Türsprechanlagen – Unterkategorien" aria-hidden="true">
+            <div class="container mega-layout">
+
+              <!-- LEFT ZONE (~75%): subcategories as image tiles -->
+              <ul class="mega-grid">
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/image%2082.png" alt="Video-Sprechanlagen" loading="lazy"></span>
+                  <span class="mega-card__label">Video-Sprechanlagen</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/image%2083.png" alt="Audio-Sprechanlagen" loading="lazy"></span>
+                  <span class="mega-card__label">Audio-Sprechanlagen</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/image%2084.png" alt="Mehrfamilien-Anlagen" loading="lazy"></span>
+                  <span class="mega-card__label">Mehrfamilien-Anlagen</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/image%2089.png" alt="Mit Gesichtserkennung" loading="lazy"></span>
+                  <span class="mega-card__label">Mit Gesichtserkennung</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/image%2085.png" alt="Mit Briefkasten/Paketbox" loading="lazy"></span>
+                  <span class="mega-card__label">Mit Briefkasten/Paketbox</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/image%2086.png" alt="Innenstationen" loading="lazy"></span>
+                  <span class="mega-card__label">Innenstationen</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/image%2087.png" alt="2-Draht-BUS (XDM10)" loading="lazy"></span>
+                  <span class="mega-card__label">2-Draht-BUS (XDM10)</span></a></li>
+
+                <li><a class="mega-card" href="#grid">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/image%2088.png" alt="Zubehör" loading="lazy"></span>
+                  <span class="mega-card__label">Zubehör</span></a></li>
+              </ul>
+
+              <!-- RIGHT ZONE (~25%): XDM10 poster (replaces the Konfigurator) -->
+              <aside class="mega-poster" aria-label="XDM10 Video-Türsprechanlage">
+                <div class="mega-poster__media">
+                  <img class="mega-poster__bg" src="Poster/image%2098.png" alt="XDM10 Video-Türsprechanlage – Red Dot Award Winner 2026" loading="lazy">
+                </div>
+                <div class="mega-poster__content">
+                  <span class="mega-poster__eyebrow">Video-Türsprechanlage</span>
+                  <h3 class="mega-poster__title">XDM10 – nachrüsten ohne neue Kabel</h3>
+                  <a class="mega-poster__cta" href="#">Jetzt konfigurieren</a>
+                </div>
+              </aside>
+
+            </div>
+          </div>
+        </li>
         <li><a href="#">Sicherheitstechnik</a></li>
         <li><a href="#">Türklingeln</a></li>
         <li><a href="#">Hausnummern</a></li>
@@ -359,6 +418,12 @@
           <div class="facet__body" id="facet-system" data-group="system"></div>
         </div>
 
+        <!-- Farbe -->
+        <div class="facet">
+          <h3 class="facet__title">Farbe</h3>
+          <div class="facet__body" id="facet-color" data-group="color"></div>
+        </div>
+
         <!-- Anzahl der Klingeltaster -->
         <div class="facet">
           <h3 class="facet__title">Anzahl der Klingeltaster</h3>
@@ -369,12 +434,6 @@
         <div class="facet">
           <h3 class="facet__title">Türöffner Bedienung</h3>
           <div class="facet__body" id="facet-tuer" data-group="tuer"></div>
-        </div>
-
-        <!-- Farbe -->
-        <div class="facet">
-          <h3 class="facet__title">Farbe</h3>
-          <div class="facet__body" id="facet-color" data-group="color"></div>
         </div>
 
       </aside>
@@ -564,7 +623,7 @@
   </div>
 </footer>
 
-<script src="sprechanlage.js?v=24"></script>
+<script src="sprechanlage.js?v=28"></script>
 <script>
   /* ===== Header behaviour (ported from home design system) ===== */
   (function(){
