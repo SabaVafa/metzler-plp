@@ -296,6 +296,12 @@
 
 .pcard__title { font-size: var(--text-body); font-weight: 700; line-height: 1.35; color: var(--schwarz); }
 .pcard__title a:hover { color: var(--teal); }
+/* Sprechanlage titles can run long ("… | Gesichtserkennung | Touch-Display | …") —
+   clamp to 3 lines with an ellipsis so cards in a row stay aligned. */
+.sprech .pcard__title {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
+  overflow: hidden;
+}
 
 .pcard__pricerow { display: flex; align-items: baseline; gap: 8px; margin-top: auto; padding-top: 4px; }
 .pcard__ab { font-size: var(--text-body); font-weight: 400; color: var(--ink-60); }
@@ -796,7 +802,7 @@
 .mega-feature__media {
   display: block;
   aspect-ratio: 16 / 9;
-  max-height: 104px;                           /* keep the promo (and thus the menu) compact */
+  max-height: 160px;                           /* taller promo image */
   margin-bottom: var(--sp-3);
   border-radius: var(--r-m);
   background: var(--white);
