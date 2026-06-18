@@ -371,7 +371,8 @@
 .hero-banner--inline .hero-banner__stage { left: auto; right: 0; width: clamp(400px, 50%, 600px); }
 /* device fills the banner height (no top/bottom gaps), flush right */
 .hero-banner--inline .hero-banner__poster { height: 100%; }
-.hero-banner--inline .hero-banner__reddot { width: 15%; max-width: 110px; right: 8%; bottom: 10%; }
+/* Red Dot award seal (baked-in drop shadows). Fallback: device-side on narrow banners. */
+.hero-banner--inline .hero-banner__award { position: absolute; right: 8%; bottom: 12%; width: 32%; max-width: 170px; height: auto; z-index: 2; pointer-events: none; }
 @media (max-width: 767px) {
   .hero-banner--inline .hero-banner__copy { max-width: none; }
   .hero-banner--inline .hero-banner__stage { display: none; }   /* text-only on phones */
@@ -382,6 +383,11 @@
 @container (max-width: 820px) {
   .hero-banner--inline .hero-banner__stage { display: none; }
   .hero-banner--inline .hero-banner__copy { width: auto; max-width: none; }
+}
+/* On wide banners there is room in the dark space to the LEFT of the device —
+   place the (enlarged) Red-Dot seal there, just clear of the CTAs. */
+@container (min-width: 1150px) {
+  .hero-banner--inline .hero-banner__award { right: 474px; left: auto; bottom: 14%; width: 40%; max-width: 220px; }
 }
 
 /* ============================================================

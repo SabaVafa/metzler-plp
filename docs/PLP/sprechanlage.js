@@ -324,7 +324,7 @@
         '</div>' +
         '<div class="hero-banner__stage" aria-hidden="true">' +
           '<img class="hero-banner__poster" src="../Home/XDM10%20Banner/Photo.png" alt="">' +
-          '<img class="hero-banner__reddot" src="../Home/XDM10%20Banner/Red%20dot.svg" alt="Red Dot Winner 2026">' +
+          '<img class="hero-banner__award" src="Badge/Component%204.svg" alt="Red Dot Award Winner 2026">' +
         '</div>' +
       '</section>';
     return b;
