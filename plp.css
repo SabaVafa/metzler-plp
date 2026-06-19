@@ -426,12 +426,24 @@
 .qa.termin { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); padding: 7px 13px; }
 .qa.termin:hover { background: rgba(255,255,255,.16); }
 .qa.termin svg { color: #7cc6b9; }
+/* Mobile dropdown toggle: hidden on desktop; panel is transparent (display:contents) so
+   .qa-group + .qa-cta stay direct flex children of .quickbar-inner (unchanged desktop layout). */
+.qa-toggle { display: none; }
+.qa-panel { display: contents; }
 @media (max-width: 900px) {
-  .quickbar-inner { flex-direction: column; align-items: stretch; gap: 6px; padding: 10px 16px; }
-  .qa-group { justify-content: center; }
+  .quickbar-inner { flex-direction: column; align-items: stretch; gap: 0; padding-block: 6px; }
+  /* Toggle row */
+  .qa-toggle { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 0; background: none; border: 0; color: #fff; font-family: inherit; font-size: var(--text-caption); font-weight: 400; cursor: pointer; line-height: 1; }
+  .qa-toggle svg { width: 15px; height: 15px; stroke-width: 1.6; color: #7cc6b9; }
+  .qa-toggle .qa-chev { margin-left: auto; color: rgba(255,255,255,.85); transition: transform .25s ease; }
+  .quickbar.is-open .qa-toggle .qa-chev { transform: rotate(180deg); }
+  /* Collapsible panel */
+  .qa-panel { display: flex; flex-direction: column; gap: 4px; overflow: hidden; max-height: 0; transition: max-height .3s ease; }
+  .quickbar.is-open .qa-panel { max-height: 340px; padding-bottom: 8px; }
+  .qa-group { flex-direction: column; align-items: stretch; gap: 4px; margin-left: 0; }
   .qa-divider { display: none; }
-  .qa { padding: 6px 10px; }
-  .qa-cta { justify-content: center; }
+  .qa, .qa.termin { justify-content: flex-start; padding: 8px 10px; }
+  .qa-cta { justify-content: center; margin-top: 4px; }
 }
 
 /* Contact modal */

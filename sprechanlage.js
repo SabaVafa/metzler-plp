@@ -958,6 +958,14 @@
     document.querySelectorAll('[data-close-modal]').forEach(function (el) { el.addEventListener('click', close); });
     modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+    /* Mobile contact-bar dropdown toggle */
+    var qb = document.querySelector('.quickbar');
+    var qt = qb && qb.querySelector('.qa-toggle');
+    if (qt) { qt.addEventListener('click', function () {
+      var o = qb.classList.toggle('is-open');
+      qt.setAttribute('aria-expanded', o ? 'true' : 'false');
+    }); }
   }
 
   /* ---- Init ---- */
