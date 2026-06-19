@@ -389,8 +389,10 @@
 /* Device wrapper: matches the poster's rendered box (photo aspect ratio),
    flush right + the same 6% shift the poster used. The Red-Dot seal lives
    INSIDE it, so it tracks the device at every banner size. */
-.hero-banner--inline .hero-banner__device { position: relative; height: 100%; aspect-ratio: 613 / 553; margin-left: auto; transform: translateX(6%); }
-.hero-banner--inline .hero-banner__poster { height: 100%; width: 100%; transform: none; }
+.hero-banner--inline .hero-banner__device { position: relative; height: 100%; aspect-ratio: 1 / 1; margin-left: auto; transform: scale(1.12); transform-origin: bottom left; }
+/* image 105 is a finished light-background studio shot (badge baked in) — show it as-is,
+   NOT screen-blended like the old dark render, and contain-fit the square. */
+.hero-banner--inline .hero-banner__poster { height: 100%; width: 100%; object-fit: contain; object-position: center; transform: none; mix-blend-mode: normal; }
 /* Full "reddot winner 2026" lockup sits on the dark floor to the lower-LEFT
    of the device (the photo's left edge is masked transparent there, so it
    reads against the banner background). left/top/width are % of the device
@@ -426,24 +428,38 @@
 .qa.termin { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); padding: 7px 13px; }
 .qa.termin:hover { background: rgba(255,255,255,.16); }
 .qa.termin svg { color: #7cc6b9; }
-/* Mobile dropdown toggle: hidden on desktop; panel is transparent (display:contents) so
-   .qa-group + .qa-cta stay direct flex children of .quickbar-inner (unchanged desktop layout). */
-.qa-toggle { display: none; }
-.qa-panel { display: contents; }
-@media (max-width: 900px) {
-  .quickbar-inner { flex-direction: column; align-items: stretch; gap: 0; padding-block: 6px; }
-  /* Toggle row */
-  .qa-toggle { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 0; background: none; border: 0; color: #fff; font-family: inherit; font-size: var(--text-caption); font-weight: 400; cursor: pointer; line-height: 1; }
-  .qa-toggle svg { width: 15px; height: 15px; stroke-width: 1.6; color: #7cc6b9; }
-  .qa-toggle .qa-chev { margin-left: auto; color: rgba(255,255,255,.85); transition: transform .25s ease; }
-  .quickbar.is-open .qa-toggle .qa-chev { transform: rotate(180deg); }
-  /* Collapsible panel */
-  .qa-panel { display: flex; flex-direction: column; gap: 4px; overflow: hidden; max-height: 0; transition: max-height .3s ease; }
-  .quickbar.is-open .qa-panel { max-height: 340px; padding-bottom: 8px; }
-  .qa-group { flex-direction: column; align-items: stretch; gap: 4px; margin-left: 0; }
+/* Mobile dropdown toggle — hidden on desktop (per metzler-handoff contact-bar spec) */
+.qa-mobile-toggle {
+  display: none;
+  align-items: center; justify-content: space-between; width: 100%;
+  padding: 12px 0;
+  background: transparent; border: 0; cursor: pointer;
+  color: rgba(255,255,255,.85);
+  font-family: inherit; font-size: var(--text-caption); font-weight: 600; line-height: 1; letter-spacing: .01em;
+}
+.qa-mobile-toggle .chev { width: 18px; height: 18px; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.quickbar.is-open .qa-mobile-toggle .chev { transform: rotate(180deg); }
+/* Tablet — soft collapse of dividers (≤900px) */
+@media (max-width: 900px) and (min-width: 768px) {
   .qa-divider { display: none; }
-  .qa, .qa.termin { justify-content: flex-start; padding: 8px 10px; }
-  .qa-cta { justify-content: center; margin-top: 4px; }
+  .qa { padding: 6px 10px; }
+}
+/* Mobile — collapse to a single dropdown toggle (≤767px) */
+@media (max-width: 767px) {
+  .quickbar { overflow: visible; }
+  .quickbar-inner { flex-direction: column; align-items: stretch; gap: 0; padding-block: 0; }
+  .qa-mobile-toggle { display: flex; }
+  .qa-group, .qa-cta { display: none; }
+  /* Open state: reveal dropdown content stacked vertically */
+  .quickbar.is-open .qa-group {
+    display: flex; flex-direction: column; align-items: stretch; gap: 2px;
+    margin: 0; padding-bottom: 8px;
+    border-top: 1px solid rgba(255,255,255,.14); padding-top: 8px;
+  }
+  .quickbar.is-open .qa-divider { display: none; }
+  .quickbar.is-open .qa { padding: 10px 0; border-radius: 0; }
+  .quickbar.is-open .qa:hover { background: rgba(255,255,255,.06); }
+  .quickbar.is-open .qa-cta { display: inline-flex; align-self: stretch; justify-content: center; margin: 4px 0 12px; }
 }
 
 /* Contact modal */
