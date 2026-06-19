@@ -530,16 +530,26 @@
   gap: clamp(var(--sp-8), 3vw, var(--sp-12));
   align-items: start;
 }
+/* Briefkasten FAQ: two columns with the "Warum Metzler?" trust card on the left.
+   Scoped via :has() to the aside so the Sprechanlage FAQ (no aside) stays single-column. */
+.faq__inner:has(.faq__aside) {
+  grid-template-columns: 340px 1fr;
+  gap: clamp(var(--sp-8), 4vw, var(--sp-12));
+}
 
 /* Left trust card (replaces the old appointment-booking block) */
 .faq__aside {
   background: var(--paper-white); border: 1px solid var(--line);
-  border-radius: var(--card-radius); padding: var(--sp-8);
-  position: sticky; top: 96px;
+  border-radius: var(--card-radius); padding: var(--sp-8);   /* natural height, uniform padding (not stretched to the FAQ) */
+  position: sticky; top: 96px;                                /* sticks in view while the FAQ scrolls */
 }
 .faq__aside h3 { font-size: var(--text-h3); color: var(--schwarz); margin-bottom: var(--sp-6); }
-.faq__usps { display: flex; flex-direction: column; gap: var(--sp-5); }
-.faq__usp { display: flex; align-items: center; gap: var(--sp-3); }
+/* Scannable DIVIDED benefit list: an inset hairline under the title and between each USP.
+   Card sizes to its content; the last row drops its padding + border so the space below the last
+   benefit equals the card's top padding above the title — balanced top/bottom. */
+.faq__usps { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.faq__usp { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-5) 0; border-bottom: 1px solid var(--line); }
+.faq__usp:last-child { padding-bottom: 0; border-bottom: 0; }
 .faq__usp-ic {
   flex: 0 0 auto; width: 40px; height: 40px; border-radius: var(--r-l);
   background: var(--teal-5); color: var(--teal);
@@ -558,16 +568,13 @@
   font-size: var(--text-h4); font-weight: 700; color: var(--schwarz);
 }
 .faq__q::-webkit-details-marker { display: none; }
-.faq__q-icon { flex: 0 0 auto; width: 28px; height: 28px; border-radius: var(--r-pill); background: var(--teal-5); color: var(--teal); display: grid; place-items: center; transition: transform 0.2s ease, background 0.2s ease; }
-.faq__q-icon svg { width: 16px; height: 16px; }
-.faq__item[open] .faq__q-icon { transform: rotate(45deg); background: var(--teal); color: #fff; }
-/* Sprechanlagen FAQ: chevron instead of plus — no frame; flips top-down (vertical) when open.
-   The home design system rotates the icon svg 45deg (turns + into x) — override that on the
-   svg so our chevron stays a clean chevron and points UP when open. */
-.sprech .faq__q-icon { width: 24px; height: 24px; border: 0; border-radius: 0; background: none; transform: none; color: var(--ink-60); }
-.sprech .faq__q-icon svg { width: 22px; height: 22px; transform: none; transition: transform .2s ease; }
-.sprech .faq__item[open] .faq__q-icon { background: none; border: 0; transform: none; color: var(--teal); }
-.sprech .faq__item[open] .faq__q-icon svg { transform: scaleY(-1); }   /* down chevron flips to up */
+/* FAQ toggle icon: a clean, frameless chevron — points down when closed, flips up when open.
+   plp.css loads after the home design system, so these override its circular framed +-icon
+   (background/border/border-radius) AND its open-state svg rotate(45deg). Used by both PLPs. */
+.faq__q-icon { flex: 0 0 auto; width: 24px; height: 24px; display: grid; place-items: center; background: none; border: 0; border-radius: 0; color: var(--ink-60); }
+.faq__q-icon svg { width: 22px; height: 22px; transition: transform .2s ease; }
+.faq__item[open] .faq__q-icon { background: none; border: 0; color: var(--teal); }
+.faq__item[open] .faq__q-icon svg { transform: scaleY(-1); }   /* down chevron flips to up */
 .faq__a { padding: 0 40px var(--sp-5) var(--sp-5); color: var(--ink-72); line-height: 1.6; max-width: none; }
 
 /* ============================================================
@@ -576,7 +583,7 @@
 
 /* Filters become an off-canvas drawer below desktop */
 @media (max-width: 1023px) {
-  .faq__inner { grid-template-columns: 1fr; }
+  .faq__inner, .faq__inner:has(.faq__aside) { grid-template-columns: 1fr; }
   .faq__aside { position: static; }
   .catalog__filter-btn { display: inline-flex; }
   /* Title takes its own line; Filter button + count align on the next row */
@@ -882,7 +889,7 @@
   display: flex; flex-direction: column;
   height: 100%; min-height: 360px;
   border-radius: var(--r-l);
-  background: #0a0b0d; color: #fff;
+  background: linear-gradient(180deg, #0f3c3f 0%, #072426 100%); color: #fff;   /* teal gradient — matched to the Sprechanlage poster's backdrop */
 }
 /* Upper section: scaled-down device photo.
    flex:1 1 0 + min-height:0 lets it grow to fill the space ABOVE the copy; the img is
