@@ -420,7 +420,7 @@
 .qa svg { width: 15px; height: 15px; stroke-width: 1.6; color: #7cc6b9; transition: color .25s; }
 .qa:hover { background: rgba(255,255,255,.1); color: #fff; }
 .qa:hover svg { color: #fff; }
-.qa strong { font-weight: 400; letter-spacing: -.005em; }   /* match the topbar's regular weight */
+.qa strong { font-weight: 700; letter-spacing: -.005em; }   /* hotline number bold — per metzler-handoff spec */
 .qa-divider { width: 1px; height: 16px; background: rgba(255,255,255,.18); margin: 0 4px; }
 .qa-cta { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 4px; background: #fff; color: var(--teal); font-weight: 700; font-size: var(--text-caption); letter-spacing: -.005em; text-decoration: none; border: 0; cursor: pointer; font-family: inherit; transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s; line-height: 1; }
 .qa-cta svg { width: 14px; height: 14px; stroke-width: 2; }
