@@ -915,7 +915,7 @@
   display: flex; flex-direction: column;
   height: 100%; min-height: 360px;
   border-radius: var(--r-l);
-  background: linear-gradient(180deg, #0f3c3f 0%, #072426 100%); color: #fff;   /* teal gradient — matched to the Sprechanlage poster's backdrop */
+  background: #7e7d7b; color: var(--schwarz);   /* grey — bottom panel matches image 105's studio backdrop (unified) */
 }
 /* Upper section: scaled-down device photo.
    flex:1 1 0 + min-height:0 lets it grow to fill the space ABOVE the copy; the img is
@@ -943,10 +943,10 @@
 .mega-panel .mega-poster__eyebrow {
   margin-bottom: 8px;
   font-size: 0.6875rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
-  color: #5FC7C3;                               /* refined teal accent on dark */
+  color: var(--teal);                           /* brand teal accent on the grey panel */
 }
 .mega-panel .mega-poster__title {
-  margin: 0; font-size: 1.25rem; font-weight: 500; line-height: 1.22; letter-spacing: -0.01em; color: #fff;
+  margin: 0; font-size: 1.25rem; font-weight: 500; line-height: 1.22; letter-spacing: -0.01em; color: var(--schwarz);
 }
 .mega-panel .mega-poster__meta {
   margin-top: 10px; font-size: 0.6875rem; line-height: 1.4; letter-spacing: .01em; color: rgba(255,255,255,0.6);
@@ -956,13 +956,13 @@
   margin-top: var(--sp-4); width: 100%;
   display: inline-flex; align-items: center; justify-content: center;
   padding: 0.7rem 1.15rem;
-  border: 1px solid rgba(255,255,255,0.5); border-radius: var(--r-m);
-  background: transparent; color: #fff;
+  border: 1px solid rgba(0,0,0,0.4); border-radius: var(--r-m);
+  background: transparent; color: var(--schwarz);
   font-size: var(--text-body-sm); font-weight: 500; line-height: 1; white-space: nowrap;
   transition: background .18s ease, border-color .18s ease;
 }
 .mega-panel .mega-poster__cta:hover,
-.mega-panel .mega-poster__cta:focus-visible { background: rgba(255,255,255,0.12); border-color: #fff; color: #fff; }
+.mega-panel .mega-poster__cta:focus-visible { background: rgba(0,0,0,0.06); border-color: var(--schwarz); color: var(--schwarz); }
 
 /* ════════════════════════════════════════════════════════════════════
    KI-KAUFBERATER — guided quiz, built to the Metzler Design System.
