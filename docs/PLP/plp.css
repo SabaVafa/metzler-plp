@@ -456,6 +456,8 @@
   }
   .quickbar.is-open .qa-divider { display: none; }
   .quickbar.is-open .qa { padding: 10px 0; border-radius: 0; }
+  .quickbar.is-open .qa.termin { background: rgba(255,255,255,.08); border: 0; padding: 10px 12px; }
+  .quickbar.is-open .qa.termin:hover { background: rgba(255,255,255,.16); }
   .quickbar.is-open .qa:hover { background: rgba(255,255,255,.06); }
   .quickbar.is-open .qa-cta { display: inline-flex; align-self: stretch; justify-content: center; margin: 4px 0 12px; }
 }
