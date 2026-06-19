@@ -327,7 +327,8 @@
         '</div>' +
         '<div class="hero-banner__stage" aria-hidden="true">' +
           '<div class="hero-banner__device">' +
-            '<img class="hero-banner__poster" src="Poster/image%20105.png" alt="XDM10 Video-Türsprechanlage – Red Dot Award Winner 2026">' +
+            '<img class="hero-banner__poster" src="../Home/XDM10%20Banner/Photo.png" alt="">' +
+            '<img class="hero-banner__award" src="Badge/Component%204.svg" alt="Red Dot Award Winner 2026">' +
           '</div>' +
         '</div>' +
       '</section>';

@@ -389,10 +389,8 @@
 /* Device wrapper: matches the poster's rendered box (photo aspect ratio),
    flush right + the same 6% shift the poster used. The Red-Dot seal lives
    INSIDE it, so it tracks the device at every banner size. */
-.hero-banner--inline .hero-banner__device { position: relative; height: 100%; aspect-ratio: 1 / 1; margin-left: auto; transform: scale(1.12); transform-origin: bottom left; }
-/* image 105 is a finished light-background studio shot (badge baked in) — show it as-is,
-   NOT screen-blended like the old dark render, and contain-fit the square. */
-.hero-banner--inline .hero-banner__poster { height: 100%; width: 100%; object-fit: contain; object-position: center; transform: none; mix-blend-mode: normal; }
+.hero-banner--inline .hero-banner__device { position: relative; height: 100%; aspect-ratio: 613 / 553; margin-left: auto; transform: translateX(6%); }
+.hero-banner--inline .hero-banner__poster { height: 100%; width: 100%; transform: none; }
 /* Full "reddot winner 2026" lockup sits on the dark floor to the lower-LEFT
    of the device (the photo's left edge is masked transparent there, so it
    reads against the banner background). left/top/width are % of the device
@@ -926,6 +924,7 @@
   position: relative; flex: 1 1 0; min-height: 0; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
   padding: 18px 18px 6px;                       /* breathing room around the scaled-down shot */
+  background: #7e7d7b;                           /* matches image 105's grey studio backdrop so the photo blends */
 }
 .mega-panel .mega-poster__bg {
   display: block;
