@@ -952,7 +952,12 @@
   function wireContactModal() {
     var modal = document.getElementById('contactModal');
     if (!modal) return;
-    function open() { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
+    function open() {
+      // Close the mobile contact-bar dropdown so it isn't left open behind the modal
+      var qb = document.getElementById('quickbar');
+      if (qb) { qb.classList.remove('is-open'); var qbt = qb.querySelector('.qa-mobile-toggle'); if (qbt) qbt.setAttribute('aria-expanded', 'false'); }
+      modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+    }
     function close() { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
     document.querySelectorAll('[data-open-modal]').forEach(function (el) { el.addEventListener('click', open); });
     document.querySelectorAll('[data-close-modal]').forEach(function (el) { el.addEventListener('click', close); });
