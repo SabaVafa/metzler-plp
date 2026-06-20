@@ -412,54 +412,73 @@
    CONTACT / QUICK-ACTION BAR + CONTACT MODAL (from metzler-handoff spec)
    ============================================================ */
 .quickbar { background: var(--teal); color: rgba(255,255,255,.85); position: relative; overflow: hidden; }
+/* Mobile toggle — hidden on desktop */
+.qa-mobile-toggle {
+  display: none;
+  align-items: center; justify-content: space-between; width: 100%;
+  padding: 14px 0;
+  background: transparent; border: 0; cursor: pointer;
+  color: rgba(255,255,255,.85);
+  font-family: inherit; font-size: var(--text-body-sm); font-weight: 400; line-height: 1; letter-spacing: .005em;
+}
+.qa-mobile-toggle .chev { width: 20px; height: 20px; color: rgba(255,255,255,.85); stroke-width: 1.6; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.quickbar.is-open .qa-mobile-toggle .chev { transform: rotate(180deg); }
 .quickbar-inner { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 10px; font-size: var(--text-caption); font-weight: 400; }
 .qa-group { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-left: -14px; }
-.qa { display: inline-flex; align-items: center; gap: 9px; padding: 8px 14px; border-radius: 4px; color: rgba(255,255,255,.85); text-decoration: none; font-weight: 400; transition: background .25s ease, color .25s ease; line-height: 1; }
+.qa { display: inline-flex; align-items: center; gap: 9px; padding: 8px 14px; border-radius: 4px; color: rgba(255,255,255,.85); text-decoration: none; font-weight: 400; -webkit-tap-highlight-color: transparent; transition: background .25s ease, color .25s ease, transform .25s ease; line-height: 1; }
 .qa svg { width: 15px; height: 15px; stroke-width: 1.6; color: #7cc6b9; transition: color .25s; }
 .qa:hover { background: rgba(255,255,255,.1); color: #fff; }
 .qa:hover svg { color: #fff; }
-.qa strong { font-weight: 700; letter-spacing: -.005em; }   /* hotline number bold — per metzler-handoff spec */
+.qa strong { font-weight: 700; letter-spacing: -.005em; }
 .qa-divider { width: 1px; height: 16px; background: rgba(255,255,255,.18); margin: 0 4px; }
-.qa-cta { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 4px; background: #fff; color: var(--teal); font-weight: 700; font-size: var(--text-caption); letter-spacing: -.005em; text-decoration: none; border: 0; cursor: pointer; font-family: inherit; transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s; line-height: 1; }
+.qa-cta { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 4px; background: #fff; color: var(--teal); font-weight: 700; font-size: var(--text-caption); letter-spacing: -.005em; text-decoration: none; border: 0; cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: transparent; transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s; line-height: 1; }
 .qa-cta svg { width: 14px; height: 14px; stroke-width: 2; }
 .qa-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.18); }
 .qa.termin { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); padding: 7px 13px; }
 .qa.termin:hover { background: rgba(255,255,255,.16); }
 .qa.termin svg { color: #7cc6b9; }
-/* Mobile dropdown toggle — hidden on desktop (per metzler-handoff contact-bar spec) */
-.qa-mobile-toggle {
-  display: none;
-  align-items: center; justify-content: space-between; width: 100%;
-  padding: 12px 0;
-  background: transparent; border: 0; cursor: pointer;
-  color: rgba(255,255,255,.85);
-  font-family: inherit; font-size: var(--text-caption); font-weight: 600; line-height: 1; letter-spacing: .01em;
-}
-.qa-mobile-toggle .chev { width: 18px; height: 18px; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
-.quickbar.is-open .qa-mobile-toggle .chev { transform: rotate(180deg); }
+/* Modal-style card parts flattened inline on desktop; the mobile dropdown re-enables them as cards. */
+.qa-ico, .qa-body { display: contents; }
+.qa-meta, .qa-arrow { display: none; }
+.qa[href^="tel:"] .qa-meta { display: inline; }
+@keyframes qa-sheet { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 /* Tablet — soft collapse of dividers (≤900px) */
 @media (max-width: 900px) and (min-width: 768px) {
   .qa-divider { display: none; }
   .qa { padding: 6px 10px; }
 }
-/* Mobile — collapse to a single dropdown toggle (≤767px) */
+/* Mobile — collapse to a dropdown toggle (≤767px): white panel + modal-style cards */
 @media (max-width: 767px) {
   .quickbar { overflow: visible; }
   .quickbar-inner { flex-direction: column; align-items: stretch; gap: 0; padding-block: 0; }
   .qa-mobile-toggle { display: flex; }
   .qa-group, .qa-cta { display: none; }
-  /* Open state: reveal dropdown content stacked vertically */
-  .quickbar.is-open .qa-group {
-    display: flex; flex-direction: column; align-items: stretch; gap: 2px;
-    margin: 0; padding-bottom: 8px;
-    border-top: 1px solid rgba(255,255,255,.14); padding-top: 8px;
-  }
+  /* Open state — white panel with modal-style cards */
+  .quickbar.is-open .quickbar-inner { position: relative; z-index: 1; background: #fff; padding-bottom: 14px; box-shadow: 0 16px 28px -18px rgba(1,40,40,.30); animation: qa-sheet .28s cubic-bezier(.2,.8,.2,1); }
+  /* Toggle strip stays teal, full-bleed across the white panel */
+  .quickbar.is-open .qa-mobile-toggle { width: calc(100% + 2 * clamp(24px,4vw,56px)); margin: 0 calc(-1 * clamp(24px,4vw,56px)); padding: 14px clamp(24px,4vw,56px); background: var(--teal); }
   .quickbar.is-open .qa-divider { display: none; }
-  .quickbar.is-open .qa { padding: 10px 0; border-radius: 0; }
-  .quickbar.is-open .qa.termin { background: rgba(255,255,255,.08); border: 0; padding: 10px 12px; }
-  .quickbar.is-open .qa.termin:hover { background: rgba(255,255,255,.16); }
-  .quickbar.is-open .qa:hover { background: rgba(255,255,255,.06); }
-  .quickbar.is-open .qa-cta { display: inline-flex; align-self: stretch; justify-content: center; margin: 4px 0 12px; }
+  .quickbar.is-open .qa-group { display: flex; flex-direction: column; align-items: stretch; gap: 0; margin: 0; padding-top: 0; }
+  /* Card — mirrors the contact modal .row */
+  .quickbar.is-open .qa,
+  .quickbar.is-open .qa-cta { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 14px; margin: 0; padding: 13px 0; border-radius: 0; text-align: left; background: #fff; border: 0; border-bottom: 1px solid rgba(1,82,83,.1); color: var(--schwarz); font-weight: 400; letter-spacing: 0; box-shadow: none; transform: none; transition: border-color .25s ease, background .25s ease, transform .25s ease; }
+  .quickbar.is-open .qa-cta { margin: 0; border-bottom: 0; }
+  .quickbar.is-open .qa-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 4px; background: linear-gradient(135deg,#f0f6f6 0%,#e2edec 100%); box-shadow: inset 0 0 0 1px rgba(1,82,83,.08), inset 0 1px 0 rgba(255,255,255,.8); color: var(--teal); }
+  .quickbar.is-open .qa-ico svg { width: 16px; height: 16px; stroke-width: 1.5; color: var(--teal); }
+  .quickbar.is-open .qa-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .quickbar.is-open .qa-label { font-size: 14px; font-weight: 700; line-height: 1.375; letter-spacing: -.008em; color: var(--schwarz); }
+  .quickbar.is-open .qa-meta { display: block; font-size: 13px; font-weight: 400; line-height: 1.4; color: #5a6565; letter-spacing: .005em; }
+  .quickbar.is-open .qa-arrow { display: grid; place-items: center; color: var(--teal); }
+  .quickbar.is-open .qa-arrow svg { width: 22px; height: 22px; stroke-width: 1.5; color: var(--teal); }
+  .quickbar.is-open .qa[href^="tel:"] .qa-meta { color: var(--teal); }
+  .quickbar.is-open .qa[href^="tel:"] .qa-meta strong { font-weight: 700; }
+  .quickbar.is-open .qa:hover,
+  .quickbar.is-open .qa-cta:hover { background: #fff; border-color: rgba(1,82,83,.1); }
+  .quickbar.is-open .qa:active,
+  .quickbar.is-open .qa-cta:active { border-color: rgba(1,82,83,.35); background: linear-gradient(120deg, rgba(1,82,83,0) 0%, rgba(1,82,83,.04) 45%, rgba(124,198,185,.08) 100%); }
+  .quickbar.is-open .qa:active .qa-label,
+  .quickbar.is-open .qa-cta:active .qa-label { color: var(--teal); }
+  .quickbar.is-open .qa:active .qa-arrow { transform: translateX(2px); }
 }
 
 /* Contact modal */
