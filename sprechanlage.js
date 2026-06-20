@@ -952,17 +952,45 @@
   function wireContactModal() {
     var modal = document.getElementById('contactModal');
     if (!modal) return;
+    var dialog = modal.querySelector('.modal');
+    var lastFocused = null;
+    function focusables() {
+      return dialog.querySelectorAll('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])');
+    }
     function open() {
+      lastFocused = document.activeElement;
       // Close the mobile contact-bar dropdown so it isn't left open behind the modal
       var qb = document.getElementById('quickbar');
       if (qb) { qb.classList.remove('is-open'); var qbt = qb.querySelector('.qa-mobile-toggle'); if (qbt) qbt.setAttribute('aria-expanded', 'false'); }
-      modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+      modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      // On mobile, size the sheet so its top reaches the bottom of the contact bar
+      if (qb && window.matchMedia('(max-width:767px)').matches) {
+        var topY = Math.max(0, qb.getBoundingClientRect().bottom) + 3;
+        var h = Math.max(0, window.innerHeight - topY);
+        dialog.style.height = h + 'px'; dialog.style.maxHeight = h + 'px';
+      } else { dialog.style.height = ''; dialog.style.maxHeight = ''; }
+      var f = focusables(); if (f.length) f[0].focus();
     }
-    function close() { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
+    function close() {
+      modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      dialog.style.height = ''; dialog.style.maxHeight = '';
+      if (lastFocused && lastFocused.focus) lastFocused.focus();
+    }
     document.querySelectorAll('[data-open-modal]').forEach(function (el) { el.addEventListener('click', open); });
     document.querySelectorAll('[data-close-modal]').forEach(function (el) { el.addEventListener('click', close); });
     modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    document.addEventListener('keydown', function (e) {
+      if (!modal.classList.contains('is-open')) return;
+      if (e.key === 'Escape') { close(); return; }
+      if (e.key === 'Tab') {
+        var f = focusables(); if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
 
     /* Mobile contact-bar dropdown toggle */
     var bar = document.getElementById('quickbar');
