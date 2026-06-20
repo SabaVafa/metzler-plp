@@ -425,6 +425,8 @@
 .quickbar.is-open .qa-mobile-toggle .chev { transform: rotate(180deg); }
 .quickbar-inner { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 10px; font-size: var(--text-caption); font-weight: 400; }
 .qa-group { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-left: -14px; }
+/* Wrapper collapses on desktop so group + CTA stay direct flex children of the bar */
+.qa-panel { display: contents; }
 .qa { display: inline-flex; align-items: center; gap: 9px; padding: 8px 14px; border-radius: 4px; color: rgba(255,255,255,.85); text-decoration: none; font-weight: 400; -webkit-tap-highlight-color: transparent; transition: background .25s ease, color .25s ease, transform .25s ease; line-height: 1; }
 .qa svg { width: 15px; height: 15px; stroke-width: 1.6; color: #7cc6b9; transition: color .25s; }
 .qa:hover { background: rgba(255,255,255,.1); color: #fff; }
@@ -452,9 +454,11 @@
   .quickbar { overflow: visible; }
   .quickbar-inner { flex-direction: column; align-items: stretch; gap: 0; padding-block: 0; }
   .qa-mobile-toggle { display: flex; }
-  .qa-group, .qa-cta { display: none; }
-  /* Open state — white panel with modal-style cards */
-  .quickbar.is-open .quickbar-inner { position: relative; z-index: 1; background: #fff; padding-bottom: 14px; box-shadow: 0 16px 28px -18px rgba(1,40,40,.30); animation: qa-sheet .28s cubic-bezier(.2,.8,.2,1); }
+  .qa-panel { display: none; }
+  /* Open state — floating white panel that OVERLAYS the page (doesn't push it down) */
+  .quickbar.is-open { z-index: 40; }
+  .quickbar.is-open .quickbar-inner { position: relative; z-index: 1; }
+  .quickbar.is-open .qa-panel { display: block; position: absolute; left: 0; right: 0; top: 100%; background: #fff; padding: 4px clamp(24px,4vw,56px) 14px; box-shadow: 0 16px 28px -18px rgba(1,40,40,.30); animation: qa-sheet .28s cubic-bezier(.2,.8,.2,1); }
   /* Toggle strip stays teal, full-bleed across the white panel */
   .quickbar.is-open .qa-mobile-toggle { width: calc(100% + 2 * clamp(24px,4vw,56px)); margin: 0 calc(-1 * clamp(24px,4vw,56px)); padding: 14px clamp(24px,4vw,56px); background: var(--teal); }
   .quickbar.is-open .qa-divider { display: none; }
