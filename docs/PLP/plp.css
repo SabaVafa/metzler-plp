@@ -621,13 +621,14 @@
   .overlay.is-open{padding:0;align-items:flex-end}
   /* height is set by JS on open so the sheet top reaches the contact bar's bottom;
      the dvh value is a fallback if JS doesn't run. */
-  .modal{display:block;border-radius:20px 20px 0 0;height:85vh;height:85dvh;max-height:85vh;max-height:85dvh;overflow-y:auto}
-  .brand{padding:28px 24px 24px;min-height:auto}
+  /* Sheet is a flex column: green brand fixed on top, actions scroll beneath it */
+  .modal{display:flex;flex-direction:column;border-radius:20px 20px 0 0;height:85vh;height:85dvh;max-height:85vh;max-height:85dvh;overflow:hidden}
+  .brand{padding:28px 24px 24px;min-height:auto;flex:0 0 auto}
   .brand h1{font-size:26px;margin-top:0}
   .brand .lede{display:none}
   .brand-foot{padding-top:18px;margin-top:18px;gap:6px}
   .brand-foot .phone{font-size:20px}
-  .actions{padding:24px 20px 28px}
+  .actions{padding:24px 20px 28px;flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .m-close{top:14px;right:14px;width:40px;height:40px;color:var(--teal-glow)}
 }
 /* ============================================================
