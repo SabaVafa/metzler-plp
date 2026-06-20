@@ -13,6 +13,11 @@
   --line: var(--graphite-300);
   --ink-60: rgba(0,0,0,0.6);
   --ink-72: rgba(0,0,0,0.72);
+  /* Contact-bar tokens (verbatim from metzler-handoff :root) */
+  --teal-glow: #7cc6b9;
+  --ink: #0e1414;
+  --ink-2: #5a6565;
+  --border: rgba(1,82,83,.1);
   --sidebar-w: 288px;
   /* Metzler Design System teal interactive states (§2) — used by DS buttons */
   --teal-600: #014A4B;   /* hover / pressed */
@@ -465,12 +470,12 @@
   .quickbar.is-open .qa-group { display: flex; flex-direction: column; align-items: stretch; gap: 0; margin: 0; padding-top: 0; }
   /* Card — mirrors the contact modal .row */
   .quickbar.is-open .qa,
-  .quickbar.is-open .qa-cta { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 14px; margin: 0; padding: 13px 0; border-radius: 0; text-align: left; background: #fff; border: 0; border-bottom: 1px solid rgba(1,82,83,.1); color: var(--schwarz); font-weight: 400; letter-spacing: 0; box-shadow: none; transform: none; transition: border-color .25s ease, background .25s ease, transform .25s ease; }
+  .quickbar.is-open .qa-cta { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 14px; margin: 0; padding: 13px 0; border-radius: 0; text-align: left; background: #fff; border: 0; border-bottom: 1px solid var(--border); color: var(--ink); font-weight: 400; letter-spacing: 0; box-shadow: none; transform: none; transition: border-color .25s ease, background .25s ease, transform .25s ease; }
   .quickbar.is-open .qa-cta { margin: 0; border-bottom: 0; }
   .quickbar.is-open .qa-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 4px; background: linear-gradient(135deg,#f0f6f6 0%,#e2edec 100%); box-shadow: inset 0 0 0 1px rgba(1,82,83,.08), inset 0 1px 0 rgba(255,255,255,.8); color: var(--teal); }
   .quickbar.is-open .qa-ico svg { width: 16px; height: 16px; stroke-width: 1.5; color: var(--teal); }
   .quickbar.is-open .qa-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-  .quickbar.is-open .qa-label { font-size: 14px; font-weight: 700; line-height: 1.375; letter-spacing: -.008em; color: var(--schwarz); }
+  .quickbar.is-open .qa-label { font-size: 14px; font-weight: 700; line-height: 1.375; letter-spacing: -.008em; color: var(--ink); }
   .quickbar.is-open .qa-meta { display: block; font-size: 13px; font-weight: 400; line-height: 1.4; color: #5a6565; letter-spacing: .005em; }
   .quickbar.is-open .qa-arrow { display: grid; place-items: center; color: var(--teal); }
   .quickbar.is-open .qa-arrow svg { width: 22px; height: 22px; stroke-width: 1.5; color: var(--teal); }
