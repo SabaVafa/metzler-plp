@@ -1134,7 +1134,7 @@
   display: block;
   max-width: 100%; max-height: 100%; width: auto; height: auto;   /* whole image fits — never clipped */
   object-fit: contain;
-  border-radius: var(--r-xl);                   /* rounded photo corners (12px) */
+  border-radius: var(--r-m);                    /* subtly rounded photo corners (4px) */
   transition: transform .5s cubic-bezier(.22,1,.36,1);
 }
 .mega-panel .mega-poster:hover .mega-poster__bg { transform: scale(1.04); }
