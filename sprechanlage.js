@@ -638,10 +638,40 @@
 
     /* Fluid phase change: fade-and-slide the current step out, THEN run fn
        (which renders the next phase and fades it in). No instant swap. */
+    /* Step transition: fade the outgoing step, swap, then TWEEN the container from the
+       old height to the new step's natural height while the new step fades in. This
+       removes the height "jump" between differently-sized steps without locking every
+       step to the tallest (which left dead space on the short ones). On desktop the
+       inline min-height (lockQuizHeight) keeps the box fixed, so the tween is a no-op
+       there; on phones (min-height:0) it animates. */
     function go(fn) {
       var cur = quizEl.querySelector('.advisor__step');
-      if (cur) { cur.classList.remove('is-in'); cur.classList.add('is-out'); setTimeout(fn, 190); }
-      else fn();
+      if (!cur) { fn(); return; }
+      var h0 = quizEl.getBoundingClientRect().height;
+      cur.classList.remove('is-in'); cur.classList.add('is-out');
+      setTimeout(function () {
+        fn();                                            /* render next step (or finish) */
+        var next = quizEl.querySelector('.advisor__step');
+        if (!next) return;                                /* finish() → no height tween */
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce || typeof quizEl.animate !== 'function') return;   /* graceful: instant change */
+        /* cancel any in-flight height tween so we read the TRUE natural height */
+        if (quizEl.getAnimations) quizEl.getAnimations().forEach(function (a) { a.cancel(); });
+        var h1 = quizEl.getBoundingClientRect().height;   /* natural height of the new step */
+        if (Math.abs(h1 - h0) < 2) return;
+        /* Web Animations API: deterministic height tween (no transitionend-bubbling
+           quirks from the step's own fade). overflow:hidden so growing/shrinking
+           content doesn't spill mid-tween. */
+        quizEl.style.overflow = 'hidden';
+        var anim = quizEl.animate(
+          [{ height: h0 + 'px' }, { height: h1 + 'px' }],
+          { duration: 300, easing: 'cubic-bezier(.22,1,.36,1)' }
+        );
+        var clear = function () { quizEl.style.overflow = ''; };
+        anim.onfinish = clear; anim.oncancel = clear;
+        /* fallback: if onfinish never fires (e.g. backgrounded tab), release the box */
+        setTimeout(function () { if (anim.playState !== 'finished') { try { anim.cancel(); } catch (e) {} } clear(); }, 380);
+      }, 190);
     }
 
     /* ── Recommendation-card helpers ── */
