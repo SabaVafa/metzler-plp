@@ -283,9 +283,9 @@
 .pcard__badge--sale { background: #B23A18; }
 .pcard__tags { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-2); align-self: flex-start; }
 /* Red Dot award — the full "reddot winner 2026" lockup integrated onto the product
-   image, lower-left (opposite the discount badge top-left), as a clean corner mark. */
+   image, right side (the seal overlaps the product's right edge). */
 .pcard__award-badge {
-  position: absolute; left: 12px; bottom: 12px; z-index: 2;
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%); z-index: 2;
   width: 44%; max-width: 132px; height: auto; pointer-events: none;
 }
 
@@ -763,7 +763,8 @@
      wrapping mid-token. Stars shrink so all 5 fit; brand/reviews go caption-size. */
   .pcard__top { gap: 6px; }
   .pcard__stars { font-size: 14px; letter-spacing: 0; }
-  .pcard__brand, .pcard__reviews { font-size: var(--text-caption); }
+  .pcard__brand { font-size: var(--text-caption); }
+  .pcard__reviews { display: none; }   /* hide the rating count "(N)" on phones */
 
   /* Price: the whole row — struck UVP + "ab" + sale price — stays on ONE line.
      Sale price 15px, secondary (UVP + "ab") 13px. Capped at those sizes but allowed to
@@ -785,7 +786,7 @@
   .pcard__sys { font-size: 11px; padding: 2px 8px; }
   .pcard__tags { gap: 6px; }
   /* Award badge a touch larger relative to the small mobile media so it stays legible. */
-  .pcard__award-badge { width: 52%; left: 8px; bottom: 8px; }
+  .pcard__award-badge { width: 52%; right: 6px; }
 
   .catalog__title { font-size: 17px; }
   .catalog__count { font-size: var(--text-body-sm); }
