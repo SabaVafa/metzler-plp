@@ -1162,10 +1162,10 @@
 .mega-panel .mega-poster__meta {
   margin-top: 10px; font-size: 0.6875rem; line-height: 1.4; letter-spacing: .01em; color: rgba(255,255,255,0.6);
 }
-/* Full-width filled teal CTA with an arrow that nudges on hover */
+/* Full-width filled teal CTA */
 .mega-panel .mega-poster__cta {
   margin-top: var(--sp-4); width: 100%;
-  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  display: inline-flex; align-items: center; justify-content: center;
   padding: 0.72rem 1.15rem;
   border: 0; border-radius: var(--r-m);
   background: var(--teal); color: #fff;
@@ -1173,11 +1173,8 @@
   box-shadow: 0 1px 2px rgba(1,82,83,0.25);
   transition: background .18s ease, box-shadow .18s ease;
 }
-.mega-panel .mega-poster__cta svg { width: 16px; height: 16px; transition: transform .18s ease; }
 .mega-panel .mega-poster__cta:hover,
 .mega-panel .mega-poster__cta:focus-visible { background: var(--teal-600); box-shadow: 0 4px 12px rgba(1,82,83,0.30); }
-.mega-panel .mega-poster:hover .mega-poster__cta svg,
-.mega-panel .mega-poster__cta:hover svg { transform: translateX(3px); }
 
 /* ════════════════════════════════════════════════════════════════════
    KI-KAUFBERATER — guided quiz, built to the Metzler Design System.
