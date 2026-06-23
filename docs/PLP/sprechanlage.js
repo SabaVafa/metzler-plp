@@ -270,9 +270,9 @@
   /* ---- Product card ---- */
   function card(p) {
     var c = el('article', 'pcard');
-    /* showMeta gates the discount badge + price block — kept on only a couple of cards for now */
-    var badge = (p.showMeta && p.badge) ? '<span class="pcard__badge pcard__badge--' + p.badge.type + '">' + p.badge.text + '</span>' : '';
-    var priceRow = p.showMeta
+    /* Show the discount badge + price on every card that has the data. */
+    var badge = p.badge ? '<span class="pcard__badge pcard__badge--' + p.badge.type + '">' + p.badge.text + '</span>' : '';
+    var priceRow = (p.price != null)
       ? '<div class="pcard__pricerow">' +
           (p.uvp ? '<span class="pcard__uvp">' + euro(p.uvp) + '</span>' : '') +
           '<span class="pcard__ab">ab</span> ' +
