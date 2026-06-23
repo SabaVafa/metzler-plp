@@ -1490,7 +1490,9 @@
   .advisor__skeleton { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
-  .advisor__actions { flex-direction: column; }
+  /* Proximity: the two actions are one group → tight gap between them (8px), clearly
+     smaller than the separation from the cards above / e-mail section below (16px+). */
+  .advisor__actions { flex-direction: column; gap: var(--sp-2); }
   .advisor__view, .advisor__reset { width: 100%; }
 }
 
