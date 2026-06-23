@@ -413,13 +413,13 @@
    reads against the banner background). left/top/width are % of the device
    box, so it tracks the device at every banner width. */
 .hero-banner--inline .hero-banner__award { position: absolute; left: 23%; top: 71%; width: 39%; max-width: none; height: auto; z-index: 2; pointer-events: none; }
-/* When the banner is narrower than its side-by-side layout needs — phones, OR a
-   desktop width where the 288px filter sidebar squeezes the grid below ~820px —
-   STACK it (device on top, copy below) instead of hiding the device, which left
-   ugly empty dark space. Keyed on the banner's own width so it covers both cases.
-   Symmetric padding-block + copy padding-block:0 keeps the top and bottom gaps
-   equal (the inline copy's sp-8 padding had been doubling the bottom space). */
-@container (max-width: 820px) {
+/* When the banner is genuinely too narrow for the side-by-side layout — phones, OR
+   a desktop width where the 288px filter sidebar squeezes the grid — STACK it
+   (device on top, copy below) instead of hiding the device. Threshold 680px keeps
+   the side-by-side layout on tablets/iPad (banner ≈740px) while stacking the narrow
+   desktop-with-sidebar case (≈610px) and phones. Keyed on the banner's own width.
+   Symmetric padding-block + copy padding-block:0 keeps the top and bottom gaps equal. */
+@container (max-width: 680px) {
   .hero-banner--inline { flex-direction: column; padding-block: var(--sp-8); }
   .hero-banner--inline::before, .hero-banner--inline::after { display: none; }
   /* Equal left/right margins in the stacked state (the side-by-side layout uses an
@@ -1501,6 +1501,10 @@
      under the absolute collapse chevron (inline, they overflowed past it). */
   .advisor__progress { flex-direction: column; align-items: flex-start; gap: var(--sp-2); }
   .advisor__progress-dots span { width: 16px; }
+  /* Result step: keep the title clear of the collapse chevron, and right-align the
+     "Quiz neu starten" link (it's full-width on phones → was centered). */
+  .advisor__result-title { padding-right: 44px; }
+  .advisor__reset { justify-content: flex-end; }
 }
 
 /* Respect reduced-motion */
