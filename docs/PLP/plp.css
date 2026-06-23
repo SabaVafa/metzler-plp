@@ -1190,7 +1190,7 @@
 }
 .advisor__collapse:hover { color: var(--teal-700); }
 .advisor__collapse:focus-visible { outline: none; border-radius: var(--r-m); box-shadow: 0 0 0 3px var(--teal-10); }
-.advisor__collapse svg { width: 24px; height: 24px; stroke-width: 1.5; transform: rotate(180deg); }   /* chevron-up = collapse */
+.advisor__collapse svg { width: 24px; height: 24px; transform: rotate(-90deg); }   /* chevron-right rotated → up = collapse; uses the thin (1.5) chevron so it matches the rec-card chevrons */
 
 .advisor__card {
   position: relative;
