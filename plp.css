@@ -286,13 +286,14 @@
    wordmark along the bottom) sits low on the image: the seal overlaps the device while
    the wordmark line rests on the white card background just beneath the device. */
 .pcard__award-badge {
-  position: absolute; z-index: 2; width: 44%; max-width: 150px; height: auto; pointer-events: none;
+  position: absolute; z-index: 2; width: 40%; max-width: 140px; height: auto; pointer-events: none;
   /* Positioned so BOTH the seal→device and wordmark→device gaps are 4px, derived from
      the lockup geometry (seal right edge = 31.9% of width, wordmark top = 79.3% of
      height) and image 90's device bounds (left 32.5%, bottom 89.1% of the media). The
-     calc(%-4px) form keeps the 4px constant at any card width. Only the ADM10 card
+     calc(%-4px) form keeps the 4px constant at any card width; left/bottom are
+     re-derived whenever the width changes (here width:40%). Only the ADM10 card
      (image 90) carries the badge, so this is tuned to that image. */
-  left: calc(18.5% - 4px); bottom: calc(6.81% - 4px);
+  left: calc(19.78% - 4px); bottom: calc(7.18% - 4px);
 }
 
 .pcard__body { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5) var(--sp-5); flex: 1; }
@@ -1450,7 +1451,7 @@
   opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .4s ease; will-change: opacity, transform;
 }
 .advisor__result.is-in { opacity: 1; transform: none; }
-.advisor__result-title { margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--schwarz); }   /* H3 */
+.advisor__result-title { margin: 0; font-size: 1.125rem; font-weight: 700; color: var(--schwarz); }   /* 18px */
 .advisor__result-title strong { color: var(--schwarz); }   /* count stays in the title ink, not teal */
 
 /* Curated recommendation cards — DS product-card treatment (radius-lg, Graphite 300) */
