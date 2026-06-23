@@ -8,7 +8,7 @@
 (function () {
   'use strict';
 
-  var IMG = 'Product%20Image/Sprechanlage/image%2082.png';
+  var IMG = 'Product%20Image/Sprechanlage/video-station.png';
   var PAGE = 12; // products per page
 
   /* ---- Color system (swatch rendering) — same palette as the live website ---- */
@@ -64,14 +64,14 @@
   /* ---- Subcategory rail ---- */
   var SP = 'Product%20Image/Sprechanlage/';
   var SUBCATS = [
-    { t: 'Mit Briefkasten/Paketbox', n: 4, img: SP + 'image%2085.png' },
-    { t: 'Video-Sprechanlagen', n: 32, img: SP + 'image%2082.png' },
-    { t: 'Audio-Sprechanlagen', n: 6, img: SP + 'image%2083.png' },
-    { t: 'Mehrfamilien-Anlagen', n: 12, img: SP + 'image%2084.png' },
-    { t: 'Mit Gesichtserkennung', n: 3, img: SP + 'image%2089.png' },
-    { t: 'Zubehör', n: 8, img: SP + 'image%2088.png' },
-    { t: '2-Draht-BUS (XDM10)', n: 3, img: SP + 'image%2087.png' },
-    { t: 'Innenstationen', n: 5, img: SP + 'image%2086.png' }
+    { t: 'Mit Briefkasten/Paketbox', n: 4, img: SP + 'briefkasten-paketbox.png' },
+    { t: 'Video-Sprechanlagen', n: 32, img: SP + 'video-station.png' },
+    { t: 'Audio-Sprechanlagen', n: 6, img: SP + 'audio-station.png' },
+    { t: 'Mehrfamilien-Anlagen', n: 12, img: SP + 'mehrfamilien-anlage.png' },
+    { t: 'Mit Gesichtserkennung', n: 3, img: SP + 'touch-display-station.png' },
+    { t: 'Zubehör', n: 8, img: SP + 'zubehoer.png' },
+    { t: '2-Draht-BUS (XDM10)', n: 3, img: SP + 'bus-xdm10.png' },
+    { t: 'Innenstationen', n: 5, img: SP + 'innenstation.png' }
   ];
 
   /* ---- Product catalogue — real models from the live category page (page 1,
@@ -79,15 +79,15 @@
          showMeta:true keeps the discount badge + price on a card; only a couple
          carry it for now (prices to come from the backend). ---- */
   /* Category grid uses only three product photos (per request): 82 / 89 / 90 */
-  var I82 = SP+'image%2082.png',   // single-party video station (anthracite, Vossberg)
-      I83 = SP+'image%2090.png',   // station with nameplate (Vossmann) — audio / named models
-      I84 = SP+'image%2089.png',   // touch-display station w/ face recognition — premium / multi
-      I86 = SP+'image%2089.png',
-      I87 = SP+'image%2089.png';   // BUS / stainless multi → premium touch-display
+  var I82 = SP+'video-station.png',   // single-party video station (anthracite, Vossberg)
+      I83 = SP+'audio-station-namensschild.png',   // station with nameplate (Vossmann) — audio / named models
+      I84 = SP+'touch-display-station.png',   // touch-display station w/ face recognition — premium / multi
+      I86 = SP+'touch-display-station.png',
+      I87 = SP+'touch-display-station.png';   // BUS / stainless multi → premium touch-display
   var SALE = {type:'sale', text:'−15 %'};
   var PRODUCTS = [
     { id:'dominik1', name:'ADM10 Audio-Türsprechanlage | 1 Klingeltaster | RAL 7016 Anthrazit | Dominik', line:'IP-System', price:424.15, uvp:499.00, rating:5, reviews:2,
-      badge:SALE, showMeta:true, award:'Badge/Component%207.svg', colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'1', tuer:[], type:'audio', img:I83 },
+      badge:SALE, showMeta:true, award:'Badge/reddot-award-badge.svg', colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'1', tuer:[], type:'audio', img:I83 },
     { id:'sdm10x', name:'Türsprechanlage mit Kamera | Gesichtserkennung | Touch-Display | Live-HD-Video | Ein- & Mehrfamilien | SDM10X', line:'IP-System', price:1266.50, uvp:1490.00, rating:5, reviews:9,
       badge:SALE, showMeta:true, colors:['anthrazit','edelstahl','schwarz','weiss','grau'], system:'ip', klingel:'flex', tuer:['gesicht','rfid','pin'], material:'edelstahl', type:'video', img:I84 },
     { id:'colson1', name:'VDM10 2.0 Video-Türsprechanlage | 1 Klingeltaster | Colson', line:'IP-System', price:594.15, uvp:699.00, rating:5, reviews:63,
@@ -284,7 +284,7 @@
     var tags = sys ? '<div class="pcard__tags">' + sys + '</div>' : '';
     /* Red Dot award: the full "reddot winner 2026" lockup sits on the product image
        itself (no longer a meta-row pill / seal). */
-    var awardBadge = p.award ? '<img class="pcard__award-badge" src="Badge/Component%207.svg" alt="Red Dot Award winner 2026">' : '';
+    var awardBadge = p.award ? '<img class="pcard__award-badge" src="Badge/reddot-award-badge.svg" alt="Red Dot Award winner 2026">' : '';
 
     c.innerHTML =
       '<div class="pcard__media">' +
@@ -331,7 +331,7 @@
         '<div class="hero-banner__stage" aria-hidden="true">' +
           '<div class="hero-banner__device">' +
             '<img class="hero-banner__poster" src="../Home/XDM10%20Banner/Photo.png" alt="">' +
-            '<img class="hero-banner__award" src="Badge/Component%204.svg" alt="Red Dot Award Winner 2026">' +
+            '<img class="hero-banner__award" src="Badge/reddot-award-lockup.svg" alt="Red Dot Award Winner 2026">' +
           '</div>' +
         '</div>' +
       '</section>';

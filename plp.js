@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  var IMG = 'Product%20Image/image%2068.png';
+  var IMG = 'Product%20Image/einfamilien-briefkasten.png';
   var PAGE = 12; // products per page; page 1 = 2 rows + banner + 2 rows
 
   /* ---- Color system (swatch rendering) — order matches the live website ---- */
@@ -54,13 +54,13 @@
 
   /* ---- Subcategory rail ---- */
   var SUBCATS = [
-    { t: 'Einfamilien-Briefkasten', n: 80, img: 'Product%20Image/image%2068.png' },
-    { t: 'Briefkasten ohne Gravur', n: 22, img: 'Product%20Image/Briefkasten%20ohne%20Gravur.webp' },
-    { t: 'Standbriefkästen', n: 14, img: 'Product%20Image/Standbriefk%C3%A4sten.webp' },
-    { t: 'Mit Klingel & Sprechanlage', n: 11, img: 'Product%20Image/Briefkasten%20mit%20Klingel%20%26%20Sprechanlage.webp' },
-    { t: 'Mehrfamilien-Anlagen', n: 9, img: 'Product%20Image/Mehrfamilien%20Briefk%C3%A4sten.webp' },
-    { t: 'Unterputz-Briefkästen', n: 12, img: 'Product%20Image/Unterputz%20Briefk%C3%A4sten.webp' },
-    { t: 'Anlagen-Konfigurator', n: null, cta: true, img: 'Product%20Image/Briefkastenanlage/image%2080.png' }
+    { t: 'Einfamilien-Briefkasten', n: 80, img: 'Product%20Image/einfamilien-briefkasten.png' },
+    { t: 'Briefkasten ohne Gravur', n: 22, img: 'Product%20Image/briefkasten-ohne-gravur.webp' },
+    { t: 'Standbriefkästen', n: 14, img: 'Product%20Image/standbriefkaesten.webp' },
+    { t: 'Mit Klingel & Sprechanlage', n: 11, img: 'Product%20Image/briefkasten-klingel-sprechanlage.webp' },
+    { t: 'Mehrfamilien-Anlagen', n: 9, img: 'Product%20Image/mehrfamilien-briefkaesten.webp' },
+    { t: 'Unterputz-Briefkästen', n: 12, img: 'Product%20Image/unterputz-briefkaesten.webp' },
+    { t: 'Anlagen-Konfigurator', n: null, cta: true, img: 'Product%20Image/Briefkastenanlage/konfigurator-tile.png' }
   ];
 
   /* ---- Product catalogue (single placeholder image for all) ---- */
@@ -268,8 +268,8 @@
     b.setAttribute('aria-label', 'Original Metzler Briefkästen');
     b.innerHTML =
       '<picture>' +
-        '<source media="(max-width: 767px)" srcset="Banner/image%2076.png">' +
-        '<img src="Banner/image%2074.png" alt="Original Metzler Briefkästen — Vergleichssieger bei Vergleich.org. Langlebig & wetterfest, minimalistisches Design, sicheres Schließsystem, individuelle Gravur, flexibel montierbar." loading="lazy">' +
+        '<source media="(max-width: 767px)" srcset="Banner/promo-briefkasten-mobile.png">' +
+        '<img src="Banner/promo-briefkasten-desktop.png" alt="Original Metzler Briefkästen — Vergleichssieger bei Vergleich.org. Langlebig & wetterfest, minimalistisches Design, sicheres Schließsystem, individuelle Gravur, flexibel montierbar." loading="lazy">' +
       '</picture>';
     return b;
   }
@@ -573,10 +573,10 @@
       ];
     }
     function pickImg(p) {
-      if (p.montage === 'stand')      return 'Product%20Image/Standbriefk%C3%A4sten.webp';
-      if (p.faecher === '3')          return 'Product%20Image/Mehrfamilien%20Briefk%C3%A4sten.webp';
-      if (p.montage === 'unterputz')  return 'Product%20Image/Unterputz%20Briefk%C3%A4sten.webp';
-      return 'Product%20Image/image%2068.png';
+      if (p.montage === 'stand')      return 'Product%20Image/standbriefkaesten.webp';
+      if (p.faecher === '3')          return 'Product%20Image/mehrfamilien-briefkaesten.webp';
+      if (p.montage === 'unterputz')  return 'Product%20Image/unterputz-briefkaesten.webp';
+      return 'Product%20Image/einfamilien-briefkasten.png';
     }
     /* Does product p satisfy a single facet pick? (mirrors matches()) */
     function sat(p, o) {
