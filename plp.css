@@ -325,6 +325,9 @@
 .pcard__ab { font-size: var(--text-body); font-weight: 400; color: var(--ink-60); }
 .pcard__price { font-size: var(--text-h4); font-weight: 800; color: var(--schwarz); }
 .pcard__price--sale { color: var(--red-default); }
+/* Sprechanlage: main (sale) price 16px on tablet/desktop. Min-width so the mobile
+   clamp (which fits the narrow 2-up cards) is left untouched. */
+@media (min-width: 768px) { .sprech .pcard__price { font-size: 16px; } }
 .pcard__uvp { font-size: var(--text-body-sm); color: var(--graphite-500); text-decoration: line-through; }
 
 /* Sprechanlage cards gate the price behind showMeta, so most have no price row to
