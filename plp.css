@@ -1360,7 +1360,7 @@
   transition: background .15s ease;
 }
 .advisor__send:hover { background: var(--teal-600); }
-.advisor__send svg { width: 18px; height: 18px; }   /* desktop icon-square chevron — sized down for the 2.25 stroke */
+.advisor__send svg { width: 20px; height: 20px; }   /* desktop icon-square chevron — matches the rec-card "›" chevrons (20px, 2.25 stroke) */
 .advisor__send-label { display: none; }   /* desktop: icon-only square; shown on phones (full-width button) */
 /* Success confirmation = DS success alert (Green / Select #009951) */
 .advisor__sent {
