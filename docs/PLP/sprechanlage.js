@@ -281,12 +281,15 @@
       : '';
     var reviews = p.reviews ? '<span class="pcard__reviews">(' + p.reviews + ')</span>' : '';
     var sys = p.line ? '<span class="pcard__sys">' + p.line + '</span>' : '';   /* IP-System / BUS-System tag */
-    var awardPill = p.award ? '<span class="pcard__award"><img class="pcard__award-ico" src="Badge/reddot-seal.svg" alt="Red Dot Award"><span class="pcard__award-txt">red<b>dot</b> winner 2026</span></span>' : '';
-    var tags = (sys || awardPill) ? '<div class="pcard__tags">' + sys + awardPill + '</div>' : '';
+    var tags = sys ? '<div class="pcard__tags">' + sys + '</div>' : '';
+    /* Red Dot award: the full "reddot winner 2026" lockup sits on the product image
+       itself (no longer a meta-row pill / seal). */
+    var awardBadge = p.award ? '<img class="pcard__award-badge" src="Badge/Component%207.svg" alt="Red Dot Award winner 2026">' : '';
 
     c.innerHTML =
       '<div class="pcard__media">' +
         badge +
+        awardBadge +
         '<img class="pcard__img" src="' + (p.img || IMG) + '" alt="' + p.name + '" loading="lazy">' +
       '</div>' +
       '<div class="pcard__body">' +
@@ -480,11 +483,27 @@
         engage();                             /* first arrow click reveals the prev arrow */
         var dir = b.getAttribute('data-sub-scroll') === 'next' ? 1 : -1;
         var w = loopW();
-        var step = track.clientWidth * 0.7;
+        var first = track.children[0];
+        /* Step in whole TILES so a tile always lands fully in view (0.7·viewport
+           skipped past the adjacent tile on phones). On wide screens advance a
+           "page" minus one tile so a column of context carries over. */
+        var pitch = track.children[1].offsetLeft - first.offsetLeft;   /* tile width + gap */
+        var visible = Math.max(1, Math.floor(track.clientWidth / pitch));
+        var tilesPerStep = Math.max(1, visible - 1);
+        /* Land each tile at the snap inset so it clears the prev arrow / edge fade.
+           Read the actual scroll-padding so this adapts to the breakpoint (≈46px on
+           phones, 0 on desktop). */
+        var inset = parseFloat(getComputedStyle(track).scrollPaddingLeft) || 0;
         /* pre-shift into the duplicate so there's always identical content to scroll into */
         if (dir === 1 && track.scrollLeft >= w) track.scrollLeft -= w;
-        else if (dir === -1 && track.scrollLeft < step) track.scrollLeft += w;
-        track.scrollBy({ left: dir * step, behavior: 'smooth' });
+        else if (dir === -1 && track.scrollLeft < pitch) track.scrollLeft += w;
+        var curN = Math.round((track.scrollLeft - first.offsetLeft + inset) / pitch);
+        var target = first.offsetLeft + (curN + dir * tilesPerStep) * pitch - inset;
+        target = Math.max(0, Math.min(target, track.scrollWidth - track.clientWidth));
+        /* Instant (not 'smooth'): with mandatory scroll-snap a smooth programmatic
+           scroll is unreliable (it can snap back to origin). The target is already a
+           snap position, so the jump is crisp and tile-aligned. */
+        track.scrollTo({ left: target, behavior: 'auto' });
       });
     });
   }

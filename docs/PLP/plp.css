@@ -81,6 +81,11 @@
 .subnav:not(.is-engaged) .subnav__arrow--prev { opacity: 0; pointer-events: none; }
 .subnav.is-start .subnav__arrow--prev,
 .subnav.is-end   .subnav__arrow--next { opacity: 0 !important; pointer-events: none; }
+/* Until the rail is first advanced, keep the LEFT fade retracted too — otherwise it
+   overlays the first subcategory tile at rest. The first tile must read fully visible;
+   only the right fade + next arrow hint that more is scrollable. (Mirrors the prev-arrow
+   rule above; (0,3,1) beats the base .subnav__viewport::before opacity.) */
+.subnav:not(.is-engaged) .subnav__viewport::before { opacity: 0; }
 
 /* Media-chip rail — compact product thumbnails, keeps the grid high */
 /* Carousel rail: square cards scroll horizontally; side arrows reveal on hover */
@@ -276,12 +281,13 @@
 .pcard__badge--best { background: var(--teal-dark); }
 .pcard__badge--new  { background: var(--teal); }
 .pcard__badge--sale { background: #B23A18; }
-/* Award rendered as a PILL beside the system tag (per PILL RULE: Graphite 100 fill,
-   Schwarz label) with the red-dot seal as a mini icon. */
 .pcard__tags { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-2); align-self: flex-start; }
-.pcard__award { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px 2px 6px; border-radius: 999px; background: var(--graphite-100); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08); color: var(--schwarz); font-size: var(--text-caption); font-weight: 500; letter-spacing: .02em; white-space: nowrap; }
-.pcard__award-ico { width: 15px; height: 15px; display: block; flex: none; }
-.pcard__award-txt b { color: #E30613; font-weight: 500; }
+/* Red Dot award — the full "reddot winner 2026" lockup integrated onto the product
+   image, lower-left (opposite the discount badge top-left), as a clean corner mark. */
+.pcard__award-badge {
+  position: absolute; left: 12px; bottom: 12px; z-index: 2;
+  width: 44%; max-width: 132px; height: auto; pointer-events: none;
+}
 
 .pcard__body { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5) var(--sp-5); flex: 1; }
 
@@ -747,14 +753,69 @@
 
 /* Mobile */
 @media (max-width: 767px) {
-  .subtile { width: 150px; }        /* smaller cards on phones (image frame stays square) */
+  .subtile { width: 168px; }        /* smaller than desktop, but wide enough that the longest
+                                       label ("Briefkasten/Paketbox") fits without clipping */
   .pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
-  .pcard__body { padding: var(--sp-3) var(--sp-3) var(--sp-4); }
+  .pcard__body { padding: var(--sp-3) var(--sp-3) var(--sp-4); gap: var(--sp-2); }
   .pcard__title { font-size: var(--text-body-sm); }
+
+  /* 2-up cards are only ~150px wide on phones — keep the dense card content from
+     wrapping mid-token. Stars shrink so all 5 fit; brand/reviews go caption-size. */
+  .pcard__top { gap: 6px; }
+  .pcard__stars { font-size: 14px; letter-spacing: 0; }
+  .pcard__brand, .pcard__reviews { font-size: var(--text-caption); }
+
+  /* Price: the whole row — struck UVP + "ab" + sale price — stays on ONE line.
+     Sale price 15px, secondary (UVP + "ab") 13px. Capped at those sizes but allowed to
+     scale down on the smallest phones so the widest pair ("1490,00 € ab 1266,50 €")
+     never clips a ~125px card. */
+  .pcard__pricerow { flex-wrap: nowrap; gap: 2px; align-items: baseline; }
+  .pcard__uvp, .pcard__ab, .pcard__price { white-space: nowrap; }
+  .pcard__uvp { font-size: clamp(10px, 3vw, 13px); }
+  .pcard__ab  { font-size: clamp(10px, 3vw, 13px); }
+  .pcard__price { font-size: clamp(12px, 3.45vw, 15px); }
+
+  /* Colour palette: smaller swatches and never split the "+N weitere" link. */
+  .pcard__colors { gap: 6px; }
+  .pcard__sw { width: 22px; height: 22px; }
+  .pcard__more { white-space: nowrap; font-size: var(--text-caption); }
+
+  /* System pill — slightly tighter on the narrow card. (The Red Dot award is now a
+     badge on the image, not a meta-row pill, so the tags row is just IP-System.) */
+  .pcard__sys { font-size: 11px; padding: 2px 8px; }
+  .pcard__tags { gap: 6px; }
+  /* Award badge a touch larger relative to the small mobile media so it stays legible. */
+  .pcard__award-badge { width: 52%; left: 8px; bottom: 8px; }
+
   .catalog__title { font-size: 17px; }
   .catalog__count { font-size: var(--text-body-sm); }
   .catalog__filter-btn { height: 34px; padding: 0 14px; }
-  .subnav__arrow { display: none; }
+
+  /* Keep the carousel arrows on phones (same affordance as desktop), but smaller
+     so they don't swallow the narrower 150px tiles. */
+  .subnav__arrow { display: grid; width: 34px; height: 34px; }
+  .subnav__arrow svg { width: 20px; height: 20px; }
+  /* Narrower edge fades — the 72px desktop fade covered half a mobile tile and
+     clipped its label; tuck it behind the (smaller) arrow instead. */
+  .subnav__viewport::before, .subnav__viewport::after { width: 44px; }
+  /* Guarantee at least one tile is ALWAYS framed fully: snap hard to tile edges,
+     and inset the snap port past the arrows/fades so the snapped tile is never
+     hidden behind them. (At the very start the prev arrow + left fade are hidden,
+     so the first tile still reads flush.) */
+  .subnav__track { scroll-snap-type: x mandatory; scroll-padding-left: 46px; scroll-padding-right: 46px; }
+
+  /* Kaufberater bar: on phones the CTA floated mid-way down the wrapped paragraph.
+     Stack it — text block, then the CTA on its own line beneath — so it no longer
+     floats. The CTA stays bare teal text + chevron (NOT a button), matching desktop.
+     NB: the .advisor base rules live LATER in this file, so these overrides are
+     scoped `.advisor …` (0,2,0) to win the cascade regardless of source order. */
+  .advisor .advisor__bar { flex-direction: column; align-items: flex-start; gap: var(--sp-3); padding: var(--sp-4); }
+  .advisor .advisor__bar-cta { margin-left: 0; align-self: flex-end; }   /* link right-aligned */
+
+  /* Subcategory labels: some are one word (1 line), others wrap to 2 ("Mit
+     Briefkasten/Paketbox") — reserve 2 lines so the "X Modelle" count and the cards
+     stay aligned across the rail regardless of label length. */
+  .subtile__label { min-height: 2.7em; display: flex; align-items: center; justify-content: center; }
 }
 
 /* Very small phones — keep grid usable */
