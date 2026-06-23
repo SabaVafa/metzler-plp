@@ -287,7 +287,7 @@
    the wordmark line rests on the white card background just beneath the device. */
 .pcard__award-badge {
   position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); z-index: 2;
-  width: 60%; max-width: 160px; height: auto; pointer-events: none;
+  width: 40%; max-width: 116px; height: auto; pointer-events: none;
 }
 
 .pcard__body { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5) var(--sp-5); flex: 1; }
@@ -788,8 +788,8 @@
      badge on the image, not a meta-row pill, so the tags row is just IP-System.) */
   .pcard__sys { font-size: 11px; padding: 2px 8px; }
   .pcard__tags { gap: 6px; }
-  /* Award badge a touch wider relative to the small mobile media so the wordmark stays legible. */
-  .pcard__award-badge { width: 66%; }
+  /* Award badge kept compact on the small mobile media. */
+  .pcard__award-badge { width: 46%; }
 
   .catalog__title { font-size: 17px; }
   .catalog__count { font-size: var(--text-body-sm); }
