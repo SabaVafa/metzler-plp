@@ -1179,7 +1179,7 @@
 .advisor__bar-title { font-size: var(--text-body); font-weight: 700; color: var(--schwarz); line-height: 1.3; }
 .advisor__bar-sub { font-size: var(--text-body-sm); color: var(--ink-60); }
 .advisor__bar-cta { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; font-size: var(--text-body-sm); font-weight: 700; color: var(--teal); }
-.advisor__bar-cta svg { width: 24px; height: 24px; stroke-width: 1.5; }   /* match the subcategory-rail arrow (.subnav__arrow svg) */
+.advisor__bar-cta svg { width: 24px; height: 24px; transform: rotate(90deg); }   /* thin (1.5) chevron-right rotated → down, consistent with the collapse + card chevrons */
 .advisor:not(.is-open) .advisor__card { display: none; }   /* collapsed by default */
 .advisor.is-open .advisor__bar { display: none; }
 /* Collapse control — bare teal chevron, consistent with the collapsed bar CTA (no container) */
