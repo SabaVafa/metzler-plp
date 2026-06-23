@@ -1370,7 +1370,8 @@
   /* The 48px send square wrapped onto its own line, reading as a lonely box. Make it
      a full-width submit button on its row with a text label (consistent with the
      field above, flush to the form's left edge). */
-  .advisor__capture-row .advisor__send { flex: 1 1 100%; width: 100%; display: flex; align-items: center; justify-content: center; gap: var(--sp-2); }
+  .advisor__capture-row .advisor__send { flex: 1 1 100%; width: 100%; display: flex; align-items: center; justify-content: center; }
+  .advisor__capture-row .advisor__send svg { display: none; }   /* label-only on phones */
   .advisor__send-label { display: inline; font-size: var(--text-body); font-weight: 500; line-height: 1.2; }
 }
 
