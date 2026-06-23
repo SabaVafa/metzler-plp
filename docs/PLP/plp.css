@@ -316,6 +316,7 @@
 /* Sprechanlage titles can run long ("… | Gesichtserkennung | Touch-Display | …") —
    clamp to 3 lines with an ellipsis so cards in a row stay aligned. */
 .sprech .pcard__title {
+  font-size: 15px;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
   overflow: hidden;
 }
