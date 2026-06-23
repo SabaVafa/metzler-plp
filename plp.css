@@ -763,7 +763,9 @@
   /* 2-up cards are only ~150px wide on phones — keep the dense card content from
      wrapping mid-token. Stars shrink so all 5 fit; brand/reviews go caption-size. */
   .pcard__top { gap: 6px; }
-  .pcard__stars { font-size: 14px; letter-spacing: 0; }
+  /* Stars maximized now that the "(N)" count is gone — as large as fits the row next
+     to the brand, scaling up with viewport (capped at the desktop 22px). */
+  .pcard__stars { font-size: clamp(15px, 4.3vw, 22px); letter-spacing: 1px; }
   .pcard__brand { font-size: var(--text-caption); }
   .pcard__reviews { display: none; }   /* hide the rating count "(N)" on phones */
 
