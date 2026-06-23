@@ -1145,13 +1145,9 @@
   padding: var(--sp-4) var(--sp-5) var(--sp-5);
 }
 .mega-panel .mega-poster__eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
   margin-bottom: 8px;
   font-size: 0.6875rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
   color: var(--teal);                           /* brand teal accent on the grey panel */
-}
-.mega-panel .mega-poster__eyebrow::before {     /* small teal lead mark */
-  content: ""; width: 18px; height: 2px; border-radius: 2px; background: var(--teal); flex: 0 0 auto;
 }
 .mega-panel .mega-poster__title {
   margin: 0; font-size: 1.25rem; font-weight: 600; line-height: 1.22; letter-spacing: -0.01em; color: var(--schwarz);
