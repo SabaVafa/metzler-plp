@@ -814,9 +814,10 @@
     }
 
     function resultHTML(res, top) {
-      var headText = (res.kept.length && res.count >= 2)   /* count title only when it matches the 2 cards shown */
-        ? '<strong>' + res.count + '</strong> passende Empfehlungen für Sie kuratiert'
-        : 'Unsere Top-Empfehlungen für Sie';
+      /* Always the top picks (we only ever show 2 cards). The total match count is
+         truthfully conveyed by the "Alle N Modelle ansehen" button, not the title —
+         a count here read as "N curated" when only 2 are shown. */
+      var headText = 'Unsere Top-Empfehlungen für Sie';
       var cards = top.map(function (t) { return recCardHTML(t.p); }).join('');
       var chips = res.kept.map(function (o) {
         var chipText = o.chip || o.label || labelFor(o.group, o.value);
