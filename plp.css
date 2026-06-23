@@ -1490,6 +1490,19 @@
   .advisor__view, .advisor__reset { width: 100%; }
 }
 
+/* Phones: tidy the expanded quiz card (placed after the advisor base rules so it
+   wins the cascade). */
+@media (max-width: 767px) {
+  /* The JS locks the quiz to the TALLEST step's height (inline min-height) so the
+     card doesn't jump between steps — fine on desktop, but on the short first steps
+     it leaves a big empty gap on phones. Drop it (!important beats the inline style). */
+  .advisor__quiz { min-height: 0 !important; }
+  /* Step tracker: stack the dots over the "Schritt N von 7" label so neither runs
+     under the absolute collapse chevron (inline, they overflowed past it). */
+  .advisor__progress { flex-direction: column; align-items: flex-start; gap: var(--sp-2); }
+  .advisor__progress-dots span { width: 16px; }
+}
+
 /* Respect reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .advisor__step, .advisor__result { transition: none; transform: none; opacity: 1; }
