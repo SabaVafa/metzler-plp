@@ -1517,6 +1517,11 @@
      "Quiz neu starten" link is centered. */
   .advisor__result-title { padding-right: 44px; }
   .advisor__reset { justify-content: center; }
+  /* Option cards: one per row (full width) — the auto-fit 2-col grid cramped the
+     swatch options and wrapped their captions badly. */
+  .advisor__opts { grid-template-columns: 1fr; }
+  /* Thinking state: keep the "Wir analysieren …" line clear of the collapse chevron. */
+  .advisor__thinking-head { display: flex; padding-right: 40px; }
 }
 
 /* Respect reduced-motion */
