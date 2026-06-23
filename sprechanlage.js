@@ -484,12 +484,10 @@
         var dir = b.getAttribute('data-sub-scroll') === 'next' ? 1 : -1;
         var w = loopW();
         var first = track.children[0];
-        /* Step in whole TILES so a tile always lands fully in view (0.7·viewport
-           skipped past the adjacent tile on phones). On wide screens advance a
-           "page" minus one tile so a column of context carries over. */
+        /* Advance exactly ONE tile per click so the movement is small, predictable
+           and easy to follow (paging several tiles at once read as a confusing jump). */
         var pitch = track.children[1].offsetLeft - first.offsetLeft;   /* tile width + gap */
-        var visible = Math.max(1, Math.floor(track.clientWidth / pitch));
-        var tilesPerStep = Math.max(1, visible - 1);
+        var tilesPerStep = 1;
         /* Land each tile at the snap inset so it clears the prev arrow / edge fade.
            Read the actual scroll-padding so this adapts to the breakpoint (≈46px on
            phones, 0 on desktop). */
@@ -500,10 +498,9 @@
         var curN = Math.round((track.scrollLeft - first.offsetLeft + inset) / pitch);
         var target = first.offsetLeft + (curN + dir * tilesPerStep) * pitch - inset;
         target = Math.max(0, Math.min(target, track.scrollWidth - track.clientWidth));
-        /* Instant (not 'smooth'): with mandatory scroll-snap a smooth programmatic
-           scroll is unreliable (it can snap back to origin). The target is already a
-           snap position, so the jump is crisp and tile-aligned. */
-        track.scrollTo({ left: target, behavior: 'auto' });
+        /* Smooth so the one-tile move is followable. The target is a tile-aligned
+           snap position, so snap can't pull it elsewhere. */
+        track.scrollTo({ left: target, behavior: 'smooth' });
       });
     });
   }
