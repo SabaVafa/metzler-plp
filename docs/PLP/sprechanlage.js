@@ -837,12 +837,14 @@
               '<svg class="advisor__field-ico advisor__field-ico--mail" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>' +
               '<input type="email" class="advisor__input" data-email autocomplete="email" placeholder="E-Mail-Adresse eingeben" aria-label="E-Mail-Adresse">' +
             '</div>' +
-            '<label class="advisor__optin">' +
-              '<input type="checkbox" data-optin>' +
-              '<span class="advisor__optin-box" aria-hidden="true"></span>' +
-              '<span>Schicken Sie mir Metzler News &amp; Angebote.</span>' +
-            '</label>' +
-            '<button type="button" class="advisor__send" data-email-send aria-label="Absenden"><span class="advisor__send-label">Absenden</span><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+            '<div class="advisor__capture-end">' +
+              '<label class="advisor__optin">' +
+                '<input type="checkbox" data-optin>' +
+                '<span class="advisor__optin-box" aria-hidden="true"></span>' +
+                '<span>Schicken Sie mir Metzler News &amp; Angebote.</span>' +
+              '</label>' +
+              '<button type="button" class="advisor__send" data-email-send aria-label="Absenden"><span class="advisor__send-label">Absenden</span><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+            '</div>' +
           '</div>' +
           '<p class="advisor__optin-info" data-optin-info role="status">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11.5v4.5"/><path d="M12 7.7h.01"/></svg>' +

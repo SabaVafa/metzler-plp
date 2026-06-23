@@ -1341,15 +1341,18 @@
 .advisor__optin-info.is-shown { display: flex; }
 .advisor__optin-info svg { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; }
 /* Field + opt-in + shared send button on one line */
-/* Full width to align with the recommendation cards above; field + opt-in are two
-   equal halves (like the two cards) with the send button — balanced, not a single
-   stretched input. */
-.advisor__capture-row { display: flex; align-items: stretch; gap: var(--sp-3); }
+/* Two equal halves matching the recommendation-card grid above: the e-mail field is
+   one half (same width + edges as the left card) and the opt-in + send make the other
+   half. Same gap as .advisor__recs (--sp-4) so the field's right edge aligns with the
+   left card's right edge. */
+.advisor__capture-row { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; gap: var(--sp-4); }   /* same 2×1fr + gap as .advisor__recs → the field is exactly one card width */
 .advisor__capture-row .advisor__field,
 .advisor__capture-row .advisor__optin,
 .advisor__capture-row .advisor__send { min-height: 3rem; }   /* consistent height across field, opt-in & CTA */
-.advisor__capture-row .advisor__field { flex: 1 1 0; }
-.advisor__capture-row .advisor__optin { flex: 1 1 0; }   /* equal half, mirrors the field (mobile re-sets to 1 1 auto) */
+.advisor__capture-row > .advisor__field { min-width: 0; }    /* col 1 (= left card width) */
+.advisor__capture-end { min-width: 0; display: flex; align-items: stretch; gap: var(--sp-3); }   /* col 2 (= right card width): opt-in + send */
+.advisor__capture-end .advisor__optin { flex: 1 1 auto; min-width: 0; }   /* fills the half minus the send button */
+.advisor__capture-end .advisor__send { flex: 0 0 auto; }
 .advisor__send {
   flex: 0 0 auto; align-self: stretch; display: grid; place-items: center;
   width: 48px; border: 0; border-radius: var(--r-m);
@@ -1371,8 +1374,8 @@
 .advisor__sent-text { margin: 0; font-size: var(--text-body-sm); color: var(--schwarz); }   /* AA body ink, 14px floor */
 .advisor__sent-text strong { font-weight: 700; color: var(--schwarz); }
 @media (max-width: 760px) {
-  .advisor__capture-row { flex-wrap: wrap; }
-  .advisor__capture-row .advisor__field { flex: 1 1 100%; }
+  .advisor__capture-row { grid-template-columns: 1fr; gap: var(--sp-3); }   /* stack: field, then opt-in/send group */
+  .advisor__capture-end { flex-direction: column; gap: var(--sp-3); }       /* stack opt-in then send on phones */
   .advisor__capture-row .advisor__optin { flex: 1 1 auto; }
   /* The 48px send square wrapped onto its own line, reading as a lonely box. Make it
      a full-width submit button on its row with a text label (consistent with the
