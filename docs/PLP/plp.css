@@ -282,11 +282,12 @@
 .pcard__badge--new  { background: var(--teal); }
 .pcard__badge--sale { background: #B23A18; }
 .pcard__tags { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-2); align-self: flex-start; }
-/* Red Dot award — the full "reddot winner 2026" lockup integrated onto the product
-   image, right side (the seal overlaps the product's right edge). */
+/* Red Dot award — the full "reddot winner 2026" lockup (seal upper-left + full-width
+   wordmark along the bottom) sits low on the image: the seal overlaps the device while
+   the wordmark line rests on the white card background just beneath the device. */
 .pcard__award-badge {
-  position: absolute; right: 8px; top: 50%; transform: translateY(-50%); z-index: 2;
-  width: 44%; max-width: 132px; height: auto; pointer-events: none;
+  position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); z-index: 2;
+  width: 60%; max-width: 160px; height: auto; pointer-events: none;
 }
 
 .pcard__body { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5) var(--sp-5); flex: 1; }
@@ -785,8 +786,8 @@
      badge on the image, not a meta-row pill, so the tags row is just IP-System.) */
   .pcard__sys { font-size: 11px; padding: 2px 8px; }
   .pcard__tags { gap: 6px; }
-  /* Award badge a touch larger relative to the small mobile media so it stays legible. */
-  .pcard__award-badge { width: 52%; right: 6px; }
+  /* Award badge a touch wider relative to the small mobile media so the wordmark stays legible. */
+  .pcard__award-badge { width: 66%; }
 
   .catalog__title { font-size: 17px; }
   .catalog__count { font-size: var(--text-body-sm); }
