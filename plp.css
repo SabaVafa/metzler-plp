@@ -286,8 +286,13 @@
    wordmark along the bottom) sits low on the image: the seal overlaps the device while
    the wordmark line rests on the white card background just beneath the device. */
 .pcard__award-badge {
-  position: absolute; left: 6px; bottom: 14px; z-index: 2;
-  width: 40%; max-width: 116px; height: auto; pointer-events: none;
+  position: absolute; z-index: 2; width: 44%; max-width: 150px; height: auto; pointer-events: none;
+  /* Positioned so BOTH the seal→device and wordmark→device gaps are 4px, derived from
+     the lockup geometry (seal right edge = 31.9% of width, wordmark top = 79.3% of
+     height) and image 90's device bounds (left 32.5%, bottom 89.1% of the media). The
+     calc(%-4px) form keeps the 4px constant at any card width. Only the ADM10 card
+     (image 90) carries the badge, so this is tuned to that image. */
+  left: calc(18.5% - 4px); bottom: calc(6.81% - 4px);
 }
 
 .pcard__body { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5) var(--sp-5); flex: 1; }
@@ -418,6 +423,22 @@
 @container (max-width: 820px) {
   .hero-banner--inline .hero-banner__stage { display: none; }
   .hero-banner--inline .hero-banner__copy { width: auto; max-width: none; }
+}
+
+/* Phones: bring the device image back, stacked BENEATH the copy. The base
+   styles-v2.css mobile rule already switches .hero-banner to a column, so the
+   copy sits on top and the device below. Placed after the @media/@container
+   text-only rules above so it wins the cascade on phones. */
+@media (max-width: 767px) {
+  .hero-banner--inline .hero-banner__stage {
+    display: block; position: relative; left: 0; right: auto;
+    width: 100%; height: 240px; margin-top: var(--sp-2);
+  }
+  .hero-banner--inline .hero-banner__device {
+    position: relative; height: 100%; width: auto; aspect-ratio: 613 / 553;
+    margin: 0 auto; transform: none;
+  }
+  .hero-banner--inline .hero-banner__poster { height: 100%; width: 100%; }
 }
 
 /* ============================================================
@@ -788,8 +809,6 @@
      badge on the image, not a meta-row pill, so the tags row is just IP-System.) */
   .pcard__sys { font-size: 11px; padding: 2px 8px; }
   .pcard__tags { gap: 6px; }
-  /* Award badge kept compact on the small mobile media. */
-  .pcard__award-badge { width: 46%; }
 
   .catalog__title { font-size: 17px; }
   .catalog__count { font-size: var(--text-body-sm); }
