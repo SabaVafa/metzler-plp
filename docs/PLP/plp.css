@@ -1113,8 +1113,14 @@
   display: flex; flex-direction: column;
   height: 100%; min-height: 360px;
   border-radius: var(--r-l);
-  background: var(--paper-white); color: var(--schwarz);   /* light grey — same as the header search bar (#F5F6FA) */
+  /* premium surface: soft cool gradient + faint teal hairline + depth */
+  background: linear-gradient(165deg, #F8F9FC 0%, #E8EFEF 100%);
+  color: var(--schwarz);
+  border: 1px solid rgba(1,82,83,0.10);
+  box-shadow: 0 1px 2px rgba(26,23,27,0.05);
+  transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease;
 }
+.mega-panel .mega-poster:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(26,23,27,0.13); }
 /* Upper section: scaled-down device photo.
    flex:1 1 0 + min-height:0 lets it grow to fill the space ABOVE the copy; the img is
    absolutely positioned so its (very tall) intrinsic size can't drive the poster height. */
@@ -1122,7 +1128,7 @@
   position: relative; flex: 1 1 0; min-height: 0; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
   padding: 18px 18px 6px;                       /* breathing room around the scaled-down shot */
-  background: var(--paper-white);               /* same light grey as the poster / header search bar */
+  background: radial-gradient(ellipse 76% 64% at 50% 44%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 72%);   /* soft spotlight behind the device */
 }
 .mega-panel .mega-poster__bg {
   display: block;
@@ -1139,28 +1145,39 @@
   padding: var(--sp-4) var(--sp-5) var(--sp-5);
 }
 .mega-panel .mega-poster__eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
   margin-bottom: 8px;
   font-size: 0.6875rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
   color: var(--teal);                           /* brand teal accent on the grey panel */
 }
+.mega-panel .mega-poster__eyebrow::before {     /* small teal lead mark */
+  content: ""; width: 18px; height: 2px; border-radius: 2px; background: var(--teal); flex: 0 0 auto;
+}
 .mega-panel .mega-poster__title {
-  margin: 0; font-size: 1.25rem; font-weight: 500; line-height: 1.22; letter-spacing: -0.01em; color: var(--schwarz);
+  margin: 0; font-size: 1.25rem; font-weight: 600; line-height: 1.22; letter-spacing: -0.01em; color: var(--schwarz);
+}
+.mega-panel .mega-poster__features {
+  margin: 10px 0 0; font-size: 0.6875rem; font-weight: 600; letter-spacing: .02em; color: var(--ink-60);
 }
 .mega-panel .mega-poster__meta {
   margin-top: 10px; font-size: 0.6875rem; line-height: 1.4; letter-spacing: .01em; color: rgba(255,255,255,0.6);
 }
-/* Full-width outline button CTA */
+/* Full-width filled teal CTA with an arrow that nudges on hover */
 .mega-panel .mega-poster__cta {
   margin-top: var(--sp-4); width: 100%;
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 0.7rem 1.15rem;
-  border: 1px solid rgba(0,0,0,0.4); border-radius: var(--r-m);
-  background: transparent; color: var(--schwarz);
-  font-size: var(--text-body-sm); font-weight: 500; line-height: 1; white-space: nowrap;
-  transition: background .18s ease, border-color .18s ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 0.72rem 1.15rem;
+  border: 0; border-radius: var(--r-m);
+  background: var(--teal); color: #fff;
+  font-size: var(--text-body-sm); font-weight: 600; line-height: 1; white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(1,82,83,0.25);
+  transition: background .18s ease, box-shadow .18s ease;
 }
+.mega-panel .mega-poster__cta svg { width: 16px; height: 16px; transition: transform .18s ease; }
 .mega-panel .mega-poster__cta:hover,
-.mega-panel .mega-poster__cta:focus-visible { background: rgba(0,0,0,0.06); border-color: var(--schwarz); color: var(--schwarz); }
+.mega-panel .mega-poster__cta:focus-visible { background: var(--teal-600); box-shadow: 0 4px 12px rgba(1,82,83,0.30); }
+.mega-panel .mega-poster:hover .mega-poster__cta svg,
+.mega-panel .mega-poster__cta:hover svg { transform: translateX(3px); }
 
 /* ════════════════════════════════════════════════════════════════════
    KI-KAUFBERATER — guided quiz, built to the Metzler Design System.
