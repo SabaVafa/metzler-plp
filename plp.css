@@ -735,7 +735,7 @@
    plp.css loads after the home design system, so these override its circular framed +-icon
    (background/border/border-radius) AND its open-state svg rotate(45deg). Used by both PLPs. */
 .faq__q-icon { flex: 0 0 auto; width: 24px; height: 24px; display: grid; place-items: center; background: none; border: 0; border-radius: 0; color: var(--ink-60); }
-.faq__q-icon svg { width: 22px; height: 22px; transition: transform .2s ease; }
+.faq__q-icon svg { width: 1.5rem; height: 1.5rem; transition: transform .2s ease; }   /* 24px · stroke 2.25 (symbol) */
 .faq__item[open] .faq__q-icon { background: none; border: 0; color: var(--teal); }
 .faq__item[open] .faq__q-icon svg { transform: scaleY(-1); }   /* down chevron flips to up */
 .faq__a { padding: 0 40px var(--sp-5) var(--sp-5); color: var(--ink-72); line-height: 1.6; max-width: none; }
