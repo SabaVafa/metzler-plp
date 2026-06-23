@@ -1366,6 +1366,10 @@
   .advisor__capture-row { flex-wrap: wrap; }
   .advisor__capture-row .advisor__field { flex: 1 1 100%; }
   .advisor__capture-row .advisor__optin { flex: 1 1 auto; }
+  /* The 48px send square wrapped onto its own line, reading as a lonely box. Make it
+     a full-width submit button on its row — consistent with the field above, flush
+     to the form's left edge. */
+  .advisor__capture-row .advisor__send { flex: 1 1 100%; width: 100%; }
 }
 
 /* ── Buttons — DS .btn-primary / .btn-secondary semantics ── */
