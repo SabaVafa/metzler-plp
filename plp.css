@@ -1337,17 +1337,19 @@
   padding: 10px 14px; border-radius: var(--r-m);
   background: #E6F1FB; color: #185FA5;   /* info blue (50 fill · 600 text) */
   font-size: var(--text-body-sm); line-height: 1.5;
-  max-width: 720px;   /* don't stretch into a thin full-width strip on large screens */
 }
 .advisor__optin-info.is-shown { display: flex; }
 .advisor__optin-info svg { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; }
 /* Field + opt-in + shared send button on one line */
-.advisor__capture-row { display: flex; align-items: stretch; gap: var(--sp-3); max-width: 720px; }   /* compact block — don't stretch edge-to-edge on large screens */
+/* Full width to align with the recommendation cards above; field + opt-in are two
+   equal halves (like the two cards) with the send button — balanced, not a single
+   stretched input. */
+.advisor__capture-row { display: flex; align-items: stretch; gap: var(--sp-3); }
 .advisor__capture-row .advisor__field,
 .advisor__capture-row .advisor__optin,
 .advisor__capture-row .advisor__send { min-height: 3rem; }   /* consistent height across field, opt-in & CTA */
-.advisor__capture-row .advisor__field { flex: 1 1 auto; }
-.advisor__capture-row .advisor__optin { flex: 0 0 auto; }   /* don't shrink → label stays on one line (mobile re-sets this to 1 1 auto) */
+.advisor__capture-row .advisor__field { flex: 1 1 0; }
+.advisor__capture-row .advisor__optin { flex: 1 1 0; }   /* equal half, mirrors the field (mobile re-sets to 1 1 auto) */
 .advisor__send {
   flex: 0 0 auto; align-self: stretch; display: grid; place-items: center;
   width: 48px; border: 0; border-radius: var(--r-m);
