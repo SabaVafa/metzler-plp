@@ -814,7 +814,7 @@
               '<span class="advisor__optin-box" aria-hidden="true"></span>' +
               '<span>Schicken Sie mir Metzler News &amp; Angebote.</span>' +
             '</label>' +
-            '<button type="button" class="advisor__send" data-email-send aria-label="Empfehlung senden"><span class="advisor__send-label">Empfehlung senden</span><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+            '<button type="button" class="advisor__send" data-email-send aria-label="Absenden"><span class="advisor__send-label">Absenden</span><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
           '<p class="advisor__optin-info" data-optin-info role="status">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11.5v4.5"/><path d="M12 7.7h.01"/></svg>' +

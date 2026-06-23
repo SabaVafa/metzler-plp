@@ -1493,9 +1493,12 @@
   .advisor__skeleton { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
+  /* Stretch the summary so the actions span the full card width (matching the e-mail
+     submit button below) instead of shrinking to content. */
+  .advisor__summary { flex-direction: column; align-items: stretch; }
   /* Proximity: the two actions are one group → tight gap between them (8px), clearly
      smaller than the separation from the cards above / e-mail section below (16px+). */
-  .advisor__actions { flex-direction: column; gap: var(--sp-2); }
+  .advisor__actions { flex-direction: column; gap: var(--sp-2); align-items: stretch; }
   .advisor__view, .advisor__reset { width: 100%; }
 }
 
@@ -1510,10 +1513,10 @@
      under the absolute collapse chevron (inline, they overflowed past it). */
   .advisor__progress { flex-direction: column; align-items: flex-start; gap: var(--sp-2); }
   .advisor__progress-dots span { width: 16px; }
-  /* Result step: keep the title clear of the collapse chevron, and right-align the
-     "Quiz neu starten" link (it's full-width on phones → was centered). */
+  /* Result step: keep the title clear of the collapse chevron; the full-width
+     "Quiz neu starten" link is centered. */
   .advisor__result-title { padding-right: 44px; }
-  .advisor__reset { justify-content: flex-end; }
+  .advisor__reset { justify-content: center; }
 }
 
 /* Respect reduced-motion */
