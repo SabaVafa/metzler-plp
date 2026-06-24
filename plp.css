@@ -309,9 +309,9 @@
 
 .pcard__title { font-size: var(--text-body); font-weight: 700; line-height: 1.35; color: var(--schwarz); }
 .pcard__title a:hover { color: var(--teal); }
-/* Sprechanlage titles can run long ("… | Gesichtserkennung | Touch-Display | …") —
-   clamp to 3 lines with an ellipsis so cards in a row stay aligned. */
-.sprech .pcard__title {
+/* Product titles can run long — clamp to 3 lines with an ellipsis so cards in a
+   row stay aligned. Shared across both PLPs so the grids look consistent. */
+.pcard__title {
   font-size: 15px;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
   overflow: hidden;
