@@ -24,6 +24,7 @@
   .advisor__qrow{ display:flex; align-items:center; gap:8px; margin:0 0 var(--sp-4); }   /* restores the gap the DS .advisor__q margin gave before it was zeroed */
   .advisor__qrow .advisor__q{ margin:0; }
   .advisor__qhint{ margin:4px 0 0; font-size: var(--text-body-sm); color: var(--ink-60); }
+  .advisor__q-wrap{ flex:0 1 auto; min-width:0; }   /* shrink-to-content so the ℹ️ sits right after the question, not pushed to the far edge */
   .advisor__info{ position:relative; flex:0 0 auto; }
   .advisor__info-btn{ width:20px; height:20px; border-radius:50%; border:1px solid var(--teal); background:transparent; color:var(--teal); cursor:pointer; padding:0; display:grid; place-items:center; font-size:12px; font-weight:700; line-height:1; transition:background .15s ease, color .15s ease; }
   .advisor__info-btn:hover, .advisor__info.is-open .advisor__info-btn{ background:var(--teal); color:#fff; }
@@ -34,7 +35,6 @@
   .advisor__info-pop dt{ font-weight:700; color:var(--teal-700); }
   .advisor__info-pop dd{ margin:0; color:var(--ink-60); }
   .advisor__info-pop .note{ margin:10px 0 0; color:var(--ink-60); font-size: var(--text-caption); }
-  .advisor__q-wrap{ flex:0 1 auto; min-width:0; }   /* shrink-to-content so the ℹ️ sits right after the question, not pushed to the far edge */
 </style>
 </head>
 <body class="plp">
@@ -65,10 +65,33 @@
   <div class="container">
     <button type="button" class="advisor__bar" data-ai-toggle aria-expanded="false">
       <span class="advisor__bar-txt">
-        <span class="advisor__bar-head">
-          <span class="advisor__bar-title">Finden statt Suchen</span>
-        </span>
+        <span class="advisor__bar-head"><span class="advisor__bar-title">Finden statt Suchen</span></span>
         <span class="advisor__bar-sub">Beantworten Sie ein paar kurze Fragen – der Berater empfiehlt Ihnen die passenden Paketboxen.</span>
+      </span>
+      <span class="advisor__bar-cta">Kaufberater<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></span>
+    </button>
+    <div class="advisor__card">
+      <button type="button" class="advisor__collapse" data-ai-toggle aria-label="Berater schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+      <div class="advisor__quiz" data-ai-quiz></div>
+      <div class="advisor__results" data-ai-results aria-live="polite" hidden></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ Kaufberater 02 · Mülltonnenboxen ════ -->
+<div class="container">
+  <div class="kb-cat__bar">
+    <span class="kb-cat__no">02</span>
+    <h2 class="kb-cat__title">Mülltonnenboxen</h2>
+    <span class="kb-cat__count">83 Modelle</span>
+  </div>
+</div>
+<section class="advisor" data-ai="muelltonnenboxen" aria-label="Kaufberater Mülltonnenboxen">
+  <div class="container">
+    <button type="button" class="advisor__bar" data-ai-toggle aria-expanded="false">
+      <span class="advisor__bar-txt">
+        <span class="advisor__bar-head"><span class="advisor__bar-title">Finden statt Suchen</span></span>
+        <span class="advisor__bar-sub">Beantworten Sie ein paar kurze Fragen – der Berater empfiehlt Ihnen die passende Mülltonnenbox.</span>
       </span>
       <span class="advisor__bar-cta">Kaufberater<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></span>
     </button>
@@ -84,50 +107,64 @@
 (function(){
   "use strict";
 
+  /* Swatches reused across categories */
+  const SW_KLASSISCH = "linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)";
+  const SW_EDELSTAHL = "linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)";
+  const SW_HOLZ      = "linear-gradient(135deg,#b07b46,#7a5230)";
+
+  /* Colorset match helper: product field `field` ∈ option's colors[] → 1, else 0.15 */
+  const colorsetMatch = field => (p, v, s) => {
+    const o = s.opts.find(o => o.v === v);
+    const set = (o && o.colors) || [v];
+    return set.includes(p[field]) ? 1 : 0.15;
+  };
+
   /* ──────────────────────────────────────────────────────────────
-     Category configs. Add a new category = add an entry here + an
-     <section class="advisor" data-ai="<key>"> block above.
+     Category configs. Add a category = add an entry here + an
+     <section class="advisor" data-ai="<key>"> block above. Each step:
+       { key, type:'single'|'multi', q, hint?, info?, opts:[{v,label,sub?,sw?,colors?,exclusive?,chip?}],
+         when?(answers), match?(product, value, step) -> 0..1 }
+     Default scoring = exact match product[step.key] === value.
      ────────────────────────────────────────────────────────────── */
-  const SIZE_TIERS = [
-    {v:"S",  label:"S — DHL Päckchen S", sub:"bis 35 × 25 × 10 cm"},
-    {v:"M",  label:"M — DHL Päckchen M", sub:"bis 37,5 × 13,5 × 30 cm"},
-    {v:"L",  label:"L — DHL Paket",      sub:"bis 60 × 36 × 22 cm"},
-    {v:"XL", label:"XL — Großpaket",     sub:"mehrere / sperrige Pakete"},
-  ];
+  const SIZE_TOOLTIP =
+    '<h4>Größenratgeber</h4>'+
+    '<dl><dt>S</dt><dd>DHL Päckchen S · bis 35 × 25 × 10 cm</dd>'+
+    '<dt>M</dt><dd>DHL Päckchen M · bis 37,5 × 13,5 × 30 cm</dd>'+
+    '<dt>L</dt><dd>DHL Paket · bis 60 × 36 × 22 cm</dd>'+
+    '<dt>XL</dt><dd>Großpaket · mehrere / sperrige Sendungen</dd></dl>'+
+    '<p class="note">Maße = max. Paketgröße im Innenraum (B × H × T). Mehrere kleine Pakete passen entsprechend übereinander.</p>';
 
   const CATS = {
     paketboxen: {
       img: "Kaufbrater/Paketbox.png",
-      labels: {
-        briefkasten:"Briefkasten", klingel:"Klingel", sprechanlage:"Sprechanlage", paketbox:"Nur Paketbox",
-        freistehend:"Freistehend", wand:"Wandmontage",
-        S:"Größe S", M:"Größe M", L:"Größe L", XL:"Größe XL",
-        klassisch:"Klassische Farbe", edelstahl:"Edelstahl-Optik",
-        lasergravur:"Lasergravur", namensschild:"Wechselschild", ohne:"Ohne Gravur",
-      },
       steps: [
         { key:"kombi", type:"multi",
           q:"Womit möchten Sie Ihre Paketbox kombinieren?",
           hint:"Mehrfachauswahl möglich · „Nur Paketbox“ schließt die anderen aus.",
-          opts:[ {v:"briefkasten",label:"Briefkasten"}, {v:"klingel",label:"Klingel"}, {v:"sprechanlage",label:"Sprechanlage"}, {v:"paketbox",label:"Nur Paketbox",exclusive:true} ] },
+          opts:[ {v:"briefkasten",label:"Briefkasten"}, {v:"klingel",label:"Klingel"}, {v:"sprechanlage",label:"Sprechanlage"}, {v:"paketbox",label:"Nur Paketbox",exclusive:true} ],
+          match:(p,set)=>{ if(set.has("paketbox")) return (p.kombi.length===1 && p.kombi[0]==="paketbox")?1:0.2; const need=[...set]; return need.filter(k=>p.kombi.includes(k)).length/need.length; } },
         { key:"montage", type:"single",
           q:"Wie soll Ihre Paketbox montiert werden?",
-          opts:[ {v:"freistehend",label:"Freistehend",sub:"mit Standfuß / Füßen"}, {v:"wand",label:"Wandmontage",sub:"an der Hauswand befestigt"}, {v:"egal",label:"Egal",sub:"keine Präferenz"} ] },
-        { key:"groesse", type:"single", info:true,
+          opts:[ {v:"freistehend",label:"Freistehend",sub:"mit Standfuß / Füßen"}, {v:"wand",label:"Wandmontage",sub:"an der Hauswand befestigt"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Montage egal"} ] },
+        { key:"groesse", type:"single", info:SIZE_TOOLTIP, infoLabel:"Größenratgeber",
           q:"Welche Paketgröße soll hineinpassen?",
-          opts: SIZE_TIERS },
-        { key:"faecher", type:"single", when:a => a.kombi.has("briefkasten"),
+          opts:[ {v:"S",label:"S — DHL Päckchen S",sub:"bis 35 × 25 × 10 cm",chip:"Größe S"}, {v:"M",label:"M — DHL Päckchen M",sub:"bis 37,5 × 13,5 × 30 cm",chip:"Größe M"}, {v:"L",label:"L — DHL Paket",sub:"bis 60 × 36 × 22 cm",chip:"Größe L"}, {v:"XL",label:"XL — Großpaket",sub:"mehrere / sperrige Pakete",chip:"Größe XL"} ],
+          match:(p,v)=>{ const ord=["S","M","L","XL"]; const d=Math.abs(ord.indexOf(p.groesse)-ord.indexOf(v)); return d===0?1:d===1?0.5:0.1; } },
+        { key:"faecher", type:"single", when:a=>a.kombi.has("briefkasten"),
           q:"Wie viele Brieffächer benötigen Sie?",
-          opts:[ {v:1,label:"1 Fach"}, {v:2,label:"2 Fächer"}, {v:3,label:"3 Fächer"} ] },
-        { key:"klingeltaster", type:"single", when:a => a.kombi.has("klingel") || a.kombi.has("sprechanlage"),
+          opts:[ {v:1,label:"1 Fach",chip:"1 Brieffach"}, {v:2,label:"2 Fächer",chip:"2 Brieffächer"}, {v:3,label:"3 Fächer",chip:"3 Brieffächer"} ],
+          match:(p,v)=>p.faecher===v?1:(p.faecher?0.4:0) },
+        { key:"klingeltaster", type:"single", when:a=>a.kombi.has("klingel")||a.kombi.has("sprechanlage"),
           q:"Wie viele Klingeltaster benötigen Sie?",
-          opts:[ {v:1,label:"1 Taster"}, {v:2,label:"2 Taster"}, {v:3,label:"3 Taster"} ] },
+          opts:[ {v:1,label:"1 Taster",chip:"1 Klingeltaster"}, {v:2,label:"2 Taster",chip:"2 Klingeltaster"}, {v:3,label:"3 Taster",chip:"3 Klingeltaster"} ],
+          match:(p,v)=>p.klingeltaster===v?1:(p.klingeltaster?0.4:0) },
         { key:"farbe", type:"single",
           q:"Welche Optik passt zu Ihrem Eingang?",
-          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Schwarz, Weiß oder Grau",sw:"linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)",colors:["anthrazit","braun","schwarz","eisenglimmer","weiss","grau"]}, {v:"edelstahl",label:"Edelstahl",sub:"rostfrei und zeitlos",sw:"linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)",colors:["edelstahl"]} ] },
+          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Schwarz, Weiß oder Grau",sw:SW_KLASSISCH,colors:["anthrazit","braun","schwarz","eisenglimmer","weiss","grau"]}, {v:"edelstahl",label:"Edelstahl",sub:"rostfrei und zeitlos",sw:SW_EDELSTAHL,colors:["edelstahl"],chip:"Edelstahl-Optik"} ],
+          match:colorsetMatch("farbe") },
         { key:"gravur", type:"single",
           q:"Wie möchten Sie Ihre Box beschriften?",
-          opts:[ {v:"lasergravur",label:"Lasergravur",sub:"individuell, dauerhaft"}, {v:"namensschild",label:"Austauschbares Schild",sub:"flexibel wechselbar"}, {v:"ohne",label:"Ohne Beschriftung"} ] },
+          opts:[ {v:"lasergravur",label:"Lasergravur",sub:"individuell, dauerhaft"}, {v:"namensschild",label:"Austauschbares Schild",sub:"flexibel wechselbar",chip:"Wechselschild"}, {v:"ohne",label:"Ohne Beschriftung",chip:"Ohne Gravur"} ] },
       ],
       products: [
         {name:"Bispo 2 — Paketbox mit Briefkasten & Gravur", price:329, reviews:173, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"edelstahl", gravur:"lasergravur"},
@@ -144,25 +181,72 @@
         {name:"Bispo 3 — Paketbox mit Briefkasten, Sichtfenster & Gravur", price:419, reviews:8, kombi:["briefkasten"], montage:"wand", groesse:"L", faecher:1, farbe:"schwarz", gravur:"lasergravur"},
       ],
     },
+
+    muelltonnenboxen: {
+      img: "Kaufbrater/Mülltonnenboxen.png",
+      steps: [
+        { key:"anzahl", type:"single",
+          q:"Für wie viele Mülltonnen?",
+          opts:[ {v:1,label:"1 Mülltonne",chip:"1 Tonne"}, {v:2,label:"2 Mülltonnen",chip:"2 Tonnen"}, {v:3,label:"3 Mülltonnen",chip:"3 Tonnen"}, {v:4,label:"4 Mülltonnen",chip:"4 Tonnen"}, {v:5,label:"5 Mülltonnen",chip:"5 Tonnen"} ],
+          match:(p,v)=>{ const d=Math.abs(p.anzahl-v); return d===0?1:d===1?0.4:0.1; } },
+        { key:"material", type:"single",
+          q:"Welches Material bevorzugen Sie?",
+          opts:[ {v:"stahl",label:"Pulverbeschichteter Stahl",sub:"robust & preiswert",chip:"Stahl"}, {v:"aluminium",label:"Aluminium",sub:"rostfrei & besonders langlebig"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Material egal"} ] },
+        { key:"dach", type:"single",
+          q:"Welche Dachoption möchten Sie?",
+          opts:[ {v:"pflanzdach",label:"Mit Pflanzdach",sub:"begrünbar",chip:"Pflanzdach"}, {v:"standard",label:"Standard-Ausführung",sub:"Flachdach",chip:"Standard-Dach"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Dach egal"} ] },
+        { key:"sichtstreifen", type:"single",
+          q:"Möchten Sie dekorative Sichtstreifen?",
+          opts:[ {v:"ja",label:"Mit Sichtstreifen",sub:"dekorative Akzentstreifen",chip:"Mit Sichtstreifen"}, {v:"nein",label:"Ohne Sichtstreifen",sub:"glatte, geschlossene Front",chip:"Ohne Sichtstreifen"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Sichtstreifen egal"} ],
+          match:(p,v)=>(v==="ja"?p.sichtstreifen:!p.sichtstreifen)?1:0.2 },
+        { key:"optik", type:"single",
+          q:"Welche Optik passt zu Ihrem Zuhause?",
+          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Weiß, Grau oder Beige",sw:SW_KLASSISCH,colors:["anthrazit","weiss","grau","beige"]}, {v:"holzoptik",label:"Holzoptik",sub:"warme Lamellen-Optik",sw:SW_HOLZ,colors:["holzoptik"]}, {v:"edelstahl-akzente",label:"Edelstahl-Akzente",sub:"edle Metall-Details",sw:SW_EDELSTAHL,colors:["edelstahl-akzente"],chip:"Edelstahl-Akzente"} ],
+          match:colorsetMatch("finish") },
+      ],
+      products: [
+        {name:"Mülltonnenbox | 3er | 240 l | Stahl | Türgriff mit Schloss", price:799, reviews:85, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox mit Pflanzdach | 3er | 240 l | Anthrazit", price:799, reviews:22, anzahl:3, material:"stahl", dach:"pflanzdach", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 3er | 240 l | Anthrazit | mit Sichtstreifen", price:799, reviews:27, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:true, finish:"anthrazit"},
+        {name:"Mülltonnenbox mit Edelstahl-Akzenten | 3er | 240 l | Anthrazit", price:799, reviews:31, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:true, finish:"edelstahl-akzente"},
+        {name:"Mülltonnenbox | 3er | 240 l | Holzoptik | Anthrazit", price:879, reviews:34, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"holzoptik"},
+        {name:"Mülltonnenbox mit Pflanzdach | 3er | 240 l | Holzoptik", price:879, reviews:37, anzahl:3, material:"stahl", dach:"pflanzdach", sichtstreifen:false, finish:"holzoptik"},
+        {name:"Mülltonnenbox mit Rauputz | 3er | 240 l | Grau", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"grau"},
+        {name:"Mülltonnenbox mit Rauputz | 3er | 240 l | Beige", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"beige"},
+        {name:"Mülltonnenbox mit Rauputz | 3er | 240 l | Weiß", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"weiss"},
+        {name:"Mülltonnenbox | freihändig per Fußpedal | 3er | 240 l", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Design-Mülltonnenbox | 3er | 240 l | Nexus", price:1149, reviews:3, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 4er | 240 l | aus Stahl", price:899, reviews:0, anzahl:4, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 2er | 240 l | aus Stahl", price:649, reviews:0, anzahl:2, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 3er | 240 l | aus Aluminium | rostfrei", price:1599, reviews:2, anzahl:3, material:"aluminium", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox mit Pflanzdach | 3er | 240 l | Aluminium", price:1599, reviews:5, anzahl:3, material:"aluminium", dach:"pflanzdach", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 2er mit Paketbox | Aluminium", price:1799, reviews:3, anzahl:2, material:"aluminium", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+      ],
+    },
   };
 
   const fmtPrice = n => "ab " + n.toLocaleString("de-DE") + ",00 €";
 
-  /* ── Wire one advisor instance (mirrors plp.js wireAiAdvisor) ── */
+  /* ── Wire one advisor instance (generic, config-driven) ── */
   function wireAdvisor(root){
     const cfg = CATS[root.getAttribute("data-ai")];
     if(!cfg) return;
-    const STEPS = cfg.steps, LABELS = cfg.labels, PRODUCTS = cfg.products;
-    const FARBE_SETS = {};   /* option value → set of product colours it covers (colorset approach) */
-    (STEPS.find(s=>s.key==="farbe")||{opts:[]}).opts.forEach(o=>{ if(o.colors) FARBE_SETS[o.v]=o.colors; });
+    const STEPS = cfg.steps, PRODUCTS = cfg.products;
     const quiz = root.querySelector("[data-ai-quiz]");
     const results = root.querySelector("[data-ai-results]");
     const lead = { email:"", news:false };
 
-    const answers = { kombi:new Set(), montage:null, groesse:null, faecher:null, klingeltaster:null, farbe:null, gravur:null };
+    const answers = {};
+    STEPS.forEach(s=>{ answers[s.key] = (s.type==="multi") ? new Set() : null; });
     let step = 0;
 
     const activeSteps = () => STEPS.filter(s => !s.when || s.when(answers));
+    const optById = (s, v) => s.opts.find(o => String(o.v) === String(v));
+
+    /* Drop answers for steps whose `when` no longer holds. */
+    function pruneAnswers(){
+      STEPS.forEach(s=>{ if(s.when && !s.when(answers)) answers[s.key] = (s.type==="multi") ? new Set() : null; });
+    }
 
     /* ---- Step markup (shared by render + height probe) ---- */
     function stepHTML(i){
@@ -182,15 +266,8 @@
 
       const info = s.info ? (
         '<span class="advisor__info" data-info>'+
-          '<button type="button" class="advisor__info-btn" data-info-btn aria-label="Größenratgeber">i</button>'+
-          '<span class="advisor__info-pop">'+
-            '<h4>Größenratgeber</h4>'+
-            '<dl><dt>S</dt><dd>DHL Päckchen S · bis 35 × 25 × 10 cm</dd>'+
-            '<dt>M</dt><dd>DHL Päckchen M · bis 37,5 × 13,5 × 30 cm</dd>'+
-            '<dt>L</dt><dd>DHL Paket · bis 60 × 36 × 22 cm</dd>'+
-            '<dt>XL</dt><dd>Großpaket · mehrere / sperrige Sendungen</dd></dl>'+
-            '<p class="note">Maße = max. Paketgröße im Innenraum (B × H × T). Mehrere kleine Pakete passen entsprechend übereinander.</p>'+
-          '</span>'+
+          '<button type="button" class="advisor__info-btn" data-info-btn aria-label="'+(s.infoLabel||"Mehr Infos")+'">i</button>'+
+          '<span class="advisor__info-pop">'+s.info+'</span>'+
         '</span>') : "";
 
       return '<div class="advisor__step">'+
@@ -212,11 +289,10 @@
 
     function isPicked(s, v){
       if(s.type==="multi") return answers[s.key].has(v);
-      return answers[s.key] === v;
+      return String(answers[s.key]) === String(v);
     }
 
-    /* If any option's label+sub wraps to a 2nd line, stack ALL options in the
-       step (label over sub) so every tile is consistent — same as plp.js. */
+    /* If any option's label+sub wraps to a 2nd line, stack ALL options (label over sub). */
     function markStacked(scope){
       const optsEl = scope.querySelector(".advisor__opts");
       if(!optsEl) return;
@@ -251,8 +327,9 @@
 
       quiz.querySelectorAll(".advisor__opt").forEach(btn=>{
         btn.addEventListener("click",()=>{
-          const v = isNaN(+btn.dataset.v) ? btn.dataset.v : +btn.dataset.v;
-          if(s.type==="multi") toggleMulti(s.key, v, btn);
+          const raw = btn.dataset.v;
+          const v = isNaN(+raw) ? raw : +raw;
+          if(s.type==="multi") toggleMulti(s.key, v);
           else selectSingle(s.key, v, btn);
         });
       });
@@ -273,15 +350,16 @@
       answers[key] = v;
       btn.parentNode.querySelectorAll(".advisor__opt").forEach(b=>{ b.classList.remove("is-active"); b.setAttribute("aria-pressed","false"); });
       btn.classList.add("is-active"); btn.setAttribute("aria-pressed","true");
+      pruneAnswers();
     }
-    function toggleMulti(key, v, btn){
+    function toggleMulti(key, v){
       const set = answers[key];
-      if(v==="paketbox"){ if(set.has(v)) set.delete(v); else { set.clear(); set.add(v); } }
-      else { set.delete("paketbox"); set.has(v) ? set.delete(v) : set.add(v); }
-      if(!set.has("briefkasten")) answers.faecher = null;
-      if(!set.has("klingel") && !set.has("sprechanlage")) answers.klingeltaster = null;
-      // re-render the step so the exclusive/clear state is reflected on all tiles
-      renderStep();
+      const s = STEPS.find(x=>x.key===key);
+      const opt = optById(s, v);
+      if(opt && opt.exclusive){ set.has(v) ? set.delete(v) : (set.clear(), set.add(v)); }
+      else { s.opts.forEach(o=>{ if(o.exclusive) set.delete(o.v); }); set.has(v) ? set.delete(v) : set.add(v); }
+      pruneAnswers();
+      renderStep();   /* reflect exclusive/clear state across all tiles */
     }
 
     /* ---- Loader ---- */
@@ -290,23 +368,20 @@
       return '<div class="advisor__thinking"><span class="advisor__thinking-head"><span class="advisor__wave"><i></i><i></i><i></i><i></i><i></i></span>Wir analysieren Ihre Antworten und kuratieren passende Modelle…</span><div class="advisor__skeleton">'+sk+sk+'</div></div>';
     }
 
-    /* ---- Scoring ---- */
+    /* ---- Scoring (generic dispatch) ---- */
+    function stepScore(s, p, v){ return s.match ? s.match(p, v, s) : (p[s.key] === v ? 1 : 0); }
     function score(p){
       let got=0, max=0;
-      if(answers.kombi.size){ max++;
-        if(answers.kombi.has("paketbox")) got += (p.kombi.length===1 && p.kombi[0]==="paketbox") ? 1 : 0.2;
-        else { const need=[...answers.kombi]; got += need.filter(k=>p.kombi.includes(k)).length/need.length; }
-      }
-      if(answers.montage && answers.montage!=="egal"){ max++; got += p.montage===answers.montage?1:0; }
-      if(answers.groesse){ max++; const ord=["S","M","L","XL"]; const d=Math.abs(ord.indexOf(p.groesse)-ord.indexOf(answers.groesse)); got += d===0?1:d===1?0.5:0.1; }
-      if(answers.faecher!=null){ max++; got += (p.faecher===answers.faecher)?1:(p.faecher?0.4:0); }
-      if(answers.klingeltaster!=null){ max++; got += (p.klingeltaster===answers.klingeltaster)?1:(p.klingeltaster?0.4:0); }
-      if(answers.farbe){ max++; const set = FARBE_SETS[answers.farbe] || [answers.farbe]; got += set.includes(p.farbe) ? 1 : 0.15; }
-      if(answers.gravur){ max++; got += p.gravur===answers.gravur?1:0.2; }
+      STEPS.forEach(s=>{
+        const v = answers[s.key];
+        if(s.type==="multi"){ if(!v || !v.size) return; }
+        else { if(v==null || v==="egal") return; }
+        max++; got += stepScore(s, p, v);
+      });
       return max ? got/max : 1;
     }
 
-    function recCardHTML(p, pct){
+    function recCardHTML(p){
       return '<a class="advisor__rec" href="#" data-details>'+
         '<span class="advisor__rec-thumb"><img src="'+cfg.img+'" alt="'+p.name+'" loading="lazy"></span>'+
         '<span class="advisor__rec-info">'+
@@ -317,21 +392,20 @@
       '</a>';
     }
 
+    function chipText(s, v){ const o = optById(s, v); return o ? (o.chip || o.label) : v; }
     function buildChips(){
-      const a = answers, out=[];
-      if(a.kombi.size) out.push({key:"kombi", text:[...a.kombi].map(k=>LABELS[k]).join(" + ")});
-      if(a.montage) out.push({key:"montage", text:a.montage==="egal"?"Montage egal":LABELS[a.montage]});
-      if(a.groesse) out.push({key:"groesse", text:LABELS[a.groesse]});
-      if(a.faecher!=null) out.push({key:"faecher", text:a.faecher===1?"1 Brieffach":a.faecher+" Brieffächer"});
-      if(a.klingeltaster!=null) out.push({key:"klingeltaster", text:a.klingeltaster+" Klingeltaster"});
-      if(a.farbe) out.push({key:"farbe", text:LABELS[a.farbe]});
-      if(a.gravur) out.push({key:"gravur", text:LABELS[a.gravur]});
+      const out=[];
+      STEPS.forEach(s=>{
+        const v = answers[s.key];
+        if(s.type==="multi"){ if(v && v.size) out.push({key:s.key, text:[...v].map(x=>chipText(s,x)).join(" + ")}); }
+        else if(v!=null){ out.push({key:s.key, text:chipText(s,v)}); }
+      });
       return out;
     }
-
     function removeAnswer(key){
-      if(key==="kombi"){ answers.kombi.clear(); answers.faecher=null; answers.klingeltaster=null; }
-      else answers[key]=null;
+      const s = STEPS.find(x=>x.key===key);
+      answers[key] = (s && s.type==="multi") ? new Set() : null;
+      pruneAnswers();
     }
 
     function resultHTML(){
@@ -339,7 +413,7 @@
       const top = ranked.slice(0,2);
       const total = Math.max(top.length, ranked.filter(r=>r.s>=0.5).length);
       const exact = ranked.length && ranked[0].s>=0.999;
-      const cards = top.map(({p,s})=>recCardHTML(p, Math.max(72,Math.round(s*100)))).join("");
+      const cards = top.map(({p})=>recCardHTML(p)).join("");
       const chips = buildChips().map(c=>'<span class="advisor__chip">'+c.text+'<button type="button" class="advisor__chip-x" data-chip="'+c.key+'" aria-label="Filter '+c.text+' entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button></span>').join("");
       const note = exact ? "" : '<p class="advisor__note">Kein exakter Treffer – wir zeigen Ihnen die besten Alternativen.</p>';
       const viewLabel = total===1 ? "Das Modell ansehen" : "Alle "+total+" Modelle ansehen";
@@ -434,14 +508,13 @@
     function restart(){
       clearTimeout(thinkTimer);
       root.classList.remove("is-result");
-      answers.kombi.clear(); answers.montage=answers.groesse=answers.faecher=answers.klingeltaster=answers.farbe=answers.gravur=null;
+      STEPS.forEach(s=>{ answers[s.key] = (s.type==="multi") ? new Set() : null; });
       step = 0; results.hidden = true; results.innerHTML = "";
       renderStep();
     }
 
     renderStep();   /* render step 0 into the (collapsed) card */
 
-    /* Collapsible dropdown — collapsed by default */
     function toggle(){
       const open = root.classList.toggle("is-open");
       const bar = root.querySelector(".advisor__bar");
