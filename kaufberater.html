@@ -423,7 +423,7 @@
       steps: [
         { key:"produktart", type:"single",
           q:"Wonach suchen Sie?",
-          opts:[ {v:"einzelkamera",label:"Einzelkamera",sub:"eine einzelne Überwachungskamera",chip:"Einzelkamera"}, {v:"set",label:"Komplett-Set",sub:"mehrere Kameras inkl. Rekorder",chip:"Komplett-Set"}, {v:"alarm",label:"Alarmanlage",sub:"Funk-Alarm mit Meldern & Sirene",chip:"Alarmanlage"} ],
+          opts:[ {v:"einzelkamera",label:"Einzelkamera",sub:"eine einzelne Überwachungskamera",chip:"Einzelkamera"}, {v:"set",label:"Komplett-Set",sub:"mehrere Kameras inkl. Rekorder",chip:"Komplett-Set"} ],
           match:(p,v)=>p.produktart===v?1:0 },
 
         /* ── Einzelkamera ── */
@@ -466,11 +466,6 @@
           opts:[ {v:"app",label:"Smartphone-App",sub:"Live-Bild & Benachrichtigungen"}, {v:"ki",label:"KI-Erkennung",sub:"erkennt Person / Fahrzeug"}, {v:"farbnacht",label:"Farb-Nachtsicht",sub:"Smart Hybrid Light – Farbe bei Nacht"} ],
           match:(p,set)=>{ const need=[...set]; return need.filter(k=>(p.smart||[]).includes(k)).length/need.length; } },
 
-        /* ── Alarmanlage ── */
-        { key:"alarm_was", type:"single", when:a=>a.produktart==="alarm",
-          q:"Was benötigen Sie für Ihre Alarmanlage?",
-          opts:[ {v:"set",label:"Komplett-Set (Starter)",sub:"Hub, Melder, Sirene & Fernbedienung",chip:"Alarm-Set"}, {v:"tuer",label:"Tür-/Fensterkontakt",sub:"Funk-Magnetkontakt",chip:"Tür-/Fensterkontakt"}, {v:"bewegung",label:"Bewegungsmelder",sub:"PIR, haustierimmun",chip:"Bewegungsmelder"}, {v:"sirene",label:"Sirene",sub:"Innen- oder Außensirene",chip:"Sirene"}, {v:"bedienteil",label:"Bedienteil",sub:"Keypad oder Fernbedienung",chip:"Bedienteil"} ],
-          match:(p,v)=>p.alarm_was===v?1:0.2 },
       ],
       products: [
         /* Einzelkameras */
@@ -494,15 +489,6 @@
         {name:"HiLook 8 MP Set | 180° Sichtfeld | 4× Turret | NVR 16-CH | 4 TB", price:739.50, reviews:1, produktart:"set", anschluss:"ip", mp:8, anzahl:4, smart:["app","ki","farbnacht"]},
         {name:"HiLook EasyLink WLAN-Kit | 2× 4 MP Bullet | WiFi NVS | Farbnachtsicht", price:299, reviews:0, produktart:"set", anschluss:"wlan", mp:4, anzahl:2, smart:["app","ki","farbnacht"]},
         {name:"HiLook EasyLink WLAN-Kit | 4 MP Bullet + PT Turret | WiFi NVS", price:399, reviews:0, produktart:"set", anschluss:"wlan", mp:4, anzahl:2, smart:["app","ki","farbnacht"]},
-        /* Alarmanlagen */
-        {name:"HiLook Funk-Alarmanlage | 6-teiliges Komplettset (Hub + Melder + Sirene)", price:199, reviews:0, produktart:"alarm", alarm_was:"set"},
-        {name:"HiLook Funk-Alarmanlage | Basis-Set (Hub + Melder + Fernbedienung)", price:149, reviews:0, produktart:"alarm", alarm_was:"set"},
-        {name:"HiLook Tür- & Fensterkontakt | Funk-Magnetkontakt", price:24.99, reviews:0, produktart:"alarm", alarm_was:"tuer"},
-        {name:"HiLook Funk-Bewegungsmelder | PIR | haustierimmun bis 25 kg", price:34.99, reviews:0, produktart:"alarm", alarm_was:"bewegung"},
-        {name:"HiLook Funk-Keypad | LED-Statusanzeige", price:44.99, reviews:0, produktart:"alarm", alarm_was:"bedienteil"},
-        {name:"HiLook Funk-Fernbedienung | 4 Tasten", price:19.99, reviews:0, produktart:"alarm", alarm_was:"bedienteil"},
-        {name:"HiLook Funk-Innensirene | 95 dB | LED-Blitzlicht", price:39.99, reviews:0, produktart:"alarm", alarm_was:"sirene"},
-        {name:"HiLook Funk-Außensirene | 110 dB | IP65", price:69.99, reviews:0, produktart:"alarm", alarm_was:"sirene"},
       ],
     },
 
@@ -581,6 +567,9 @@
          A lone gating step (e.g. the Produktart opener before a branch unlocks more
          steps) shows "Weiter" instead. */
       const last = i === steps.length - 1 && steps.length > 1;
+      /* On a lone gating step (e.g. Produktart), require a selection before "Weiter" shows. */
+      const picked = s.type==="multi" ? (answers[s.key] && answers[s.key].size>0) : answers[s.key]!=null;
+      const hideFwd = steps.length <= 1 && !picked;
       let dots = "";
       for(let d=0; d<steps.length; d++) dots += '<span class="' + (d<i?"is-done":(d===i?"is-current":"")) + '"></span>';
 
@@ -611,7 +600,7 @@
         '<div class="advisor__opts" role="group" aria-label="'+s.q+'">'+opts+'</div>'+
         '<div class="advisor__nav">'+
           (i>0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>')+
-          '<button type="button" class="advisor__forward'+(last?" advisor__forward--cta":"")+'" data-next>'+(last?"Empfehlung anzeigen":"Weiter")+'<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>'+
+          '<button type="button" class="advisor__forward'+(last?" advisor__forward--cta":"")+'" data-next'+(hideFwd?' style="display:none"':'')+'>'+(last?"Empfehlung anzeigen":"Weiter")+'<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>'+
         '</div>'+
       '</div>';
     }
@@ -676,10 +665,15 @@
     }
 
     function selectSingle(key, v, btn){
+      const before = activeSteps().length;
       answers[key] = v;
       btn.parentNode.querySelectorAll(".advisor__opt").forEach(b=>{ b.classList.remove("is-active"); b.setAttribute("aria-pressed","false"); });
       btn.classList.add("is-active"); btn.setAttribute("aria-pressed","true");
       pruneAnswers();
+      /* If the selection unlocked more steps (a gating step like Produktart), re-render
+         so the progress bar + "Weiter" appear and reflect the now-known flow length. */
+      if(activeSteps().length !== before){ renderStep(); return; }
+      const fwd = quiz.querySelector("[data-next]"); if(fwd) fwd.style.display = "";   /* reveal "Weiter" once a gating step is answered */
     }
     function toggleMulti(key, v){
       const set = answers[key];
