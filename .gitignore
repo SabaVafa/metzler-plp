@@ -1,3 +1,6 @@
 .claude/
 .DS_Store
 Thumbs.db
+
+# Internal content source-of-truth — must NOT be published to this public repo
+metzler-content-briefing.md

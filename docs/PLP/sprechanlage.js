@@ -734,7 +734,7 @@
           '<div class="advisor__opts" role="group" aria-label="' + s.q + '">' + opts + '</div>' +
           '<div class="advisor__nav">' +
             (i > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>') +
-            '<button type="button" class="advisor__forward" data-next>Weiter<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+            '<button type="button" class="advisor__forward' + (i === STEPS - 1 ? ' advisor__forward--cta' : '') + '" data-next>' + (i === STEPS - 1 ? 'Empfehlung anzeigen' : 'Weiter') + '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
         '</div>';
     }
@@ -828,7 +828,7 @@
           '</button></span>';
       });
       var note = res.dropped.length
-        ? '<p class="advisor__note">Kein exakter Treffer – wir zeigen die besten Alternativen.</p>'
+        ? '<p class="advisor__note">Kein exakter Treffer – wir zeigen Ihnen die besten Alternativen.</p>'
         : '';
       var capture =
         '<div class="advisor__capture" data-result-capture>' +

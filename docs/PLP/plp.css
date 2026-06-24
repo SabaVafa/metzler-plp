@@ -1160,7 +1160,7 @@
   box-shadow: var(--shadow-lg); border-color: rgba(1,82,83,0.25);
 }
 .advisor__opt:focus-visible { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-10); }   /* Teal 500 focus ring */
-.advisor__opt.is-active { border-color: var(--teal); box-shadow: inset 0 0 0 1px var(--teal); background: var(--teal-5); }   /* selected = whole tile (Teal 500 ring + Teal 50 fill) */
+.advisor__opt.is-active { border-color: var(--teal); background: var(--teal-5); }   /* selected = whole tile (single 1px Teal 500 border + Teal 50 fill) */
 .advisor__opt-sw { flex: 0 0 auto; align-self: center; width: 18px; height: 18px; border-radius: var(--r-m); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.14); }   /* color swatch matches facet list */
 .advisor__opt-label { font-size: var(--text-body-sm); font-weight: 500; color: var(--schwarz); }   /* Body SM Medium */
 .advisor__opt-sub { font-size: var(--text-body-sm); color: var(--ink-60); }   /* KI flow floor: 14px min */
@@ -1183,6 +1183,18 @@
 .advisor__back:hover { color: var(--teal); }
 .advisor__forward { color: var(--teal); }            /* same link, Teal 500 — the only difference */
 .advisor__forward:hover { color: var(--teal-700); }
+/* Last step only: the forward control becomes a filled teal CTA (the conversion
+   moment), matching the result-screen .advisor__view button. Added via the
+   advisor__forward--cta modifier in plp.js / sprechanlage.js on step === STEPS-1. */
+.advisor__forward--cta {
+  padding: .7rem 1.4rem; min-height: 2.625rem; border-radius: var(--r-m);
+  background: var(--teal); color: var(--white);
+  font-size: var(--text-body); font-weight: 500; gap: 8px;
+  transition: background .15s ease;
+}
+.advisor__forward--cta:hover  { background: var(--teal-600); color: var(--white); }
+.advisor__forward--cta:active { background: var(--teal-700); color: var(--white); }
+.advisor__forward--cta svg { width: 1.1em; height: 1.1em; }
 .advisor__back svg, .advisor__forward svg { width: 1.3em; height: 1.3em; stroke-width: 1.5; flex: 0 0 auto; }   /* scales with the 15px label, stays inline-centered */
 .advisor__back svg { transform: rotate(180deg); }    /* chevron points left (back) */
 

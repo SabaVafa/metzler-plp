@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Metzler Kaufberater — Vorschau</title>
+<!-- Same design system as Briefkasten / Sprechanlage -->
+<link rel="stylesheet" href="../Home/styles-v2.css?v=9" />
+<link rel="stylesheet" href="plp.css?v=230" />
+<style>
+  /* Showcase-only chrome (page head + category divider) + the size tooltip,
+     all built from the SAME design-system tokens as plp.css. */
+  .kb-head{ padding-top: var(--sp-8); }
+  .kb-head__eyebrow{ margin:0 0 8px; font-size: var(--text-caption); font-weight:700; letter-spacing:.14em; text-transform:uppercase; color: var(--teal); }
+  .kb-head__title{ margin:0; font-size: var(--text-h1); font-weight:700; line-height:1.2; color: var(--schwarz); }
+  .kb-head__sub{ margin:10px 0 0; color: var(--ink-60); max-width:60ch; }
+
+  .kb-cat__bar{ display:flex; align-items:baseline; gap: var(--sp-3); margin: var(--sp-8) 0 0; padding-bottom: var(--sp-3); border-bottom:1px solid var(--graphite-300); }
+  .kb-cat__no{ font-size: var(--text-body-sm); font-weight:700; color: var(--graphite-500); }
+  .kb-cat__title{ margin:0; font-size: var(--text-h3); font-weight:700; color: var(--schwarz); }
+  .kb-cat__count{ margin-left:auto; font-size: var(--text-body-sm); color: var(--ink-60); }
+
+  /* Size-guide tooltip — additive feature, themed with DS tokens. */
+  .advisor__qrow{ display:flex; align-items:center; gap:8px; margin:0 0 var(--sp-4); }   /* restores the gap the DS .advisor__q margin gave before it was zeroed */
+  .advisor__qrow .advisor__q{ margin:0; }
+  .advisor__qhint{ margin:4px 0 0; font-size: var(--text-body-sm); color: var(--ink-60); }
+  .advisor__info{ position:relative; flex:0 0 auto; }
+  .advisor__info-btn{ width:20px; height:20px; border-radius:50%; border:1px solid var(--teal); background:transparent; color:var(--teal); cursor:pointer; padding:0; display:grid; place-items:center; font-size:12px; font-weight:700; line-height:1; transition:background .15s ease, color .15s ease; }
+  .advisor__info-btn:hover, .advisor__info.is-open .advisor__info-btn{ background:var(--teal); color:#fff; }
+  .advisor__info-pop{ display:none; position:absolute; left:0; top:30px; z-index:20; width:min(330px,78vw); padding:14px 16px; border-radius: var(--r-xl); background:#fff; color:var(--schwarz); box-shadow: var(--shadow-lg); border:1px solid var(--graphite-300); font-size: var(--text-body-sm); line-height:1.5; }
+  .advisor__info.is-open .advisor__info-pop{ display:block; }
+  .advisor__info-pop h4{ margin:0 0 8px; font-size: var(--text-body-sm); font-weight:700; }
+  .advisor__info-pop dl{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:4px 10px; }
+  .advisor__info-pop dt{ font-weight:700; color:var(--teal-700); }
+  .advisor__info-pop dd{ margin:0; color:var(--ink-60); }
+  .advisor__info-pop .note{ margin:10px 0 0; color:var(--ink-60); font-size: var(--text-caption); }
+  .advisor__q-wrap{ flex:0 1 auto; min-width:0; }   /* shrink-to-content so the ℹ️ sits right after the question, not pushed to the far edge */
+</style>
+</head>
+<body class="plp">
+
+<!-- ===== SVG ICON SPRITE (subset used by the advisor) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></symbol>
+  </defs>
+</svg>
+
+<div class="container kb-head">
+  <p class="kb-head__eyebrow">Metzler · Interaktiver Kaufberater</p>
+  <h1 class="kb-head__title">Kaufberater — Vorschau</h1>
+  <p class="kb-head__sub">Jede Produktkategorie erhält einen eigenständigen Kaufberater. Diese Seite zeigt alle Berater nebeneinander – im selben Design wie auf den Briefkasten- und Sprechanlagen-Seiten.</p>
+</div>
+
+<!-- ════ Kaufberater 01 · Paketboxen ════ -->
+<div class="container">
+  <div class="kb-cat__bar">
+    <span class="kb-cat__no">01</span>
+    <h2 class="kb-cat__title">Paketboxen</h2>
+    <span class="kb-cat__count">69 Modelle</span>
+  </div>
+</div>
+<section class="advisor" data-ai="paketboxen" aria-label="Kaufberater Paketboxen">
+  <div class="container">
+    <button type="button" class="advisor__bar" data-ai-toggle aria-expanded="false">
+      <span class="advisor__bar-txt">
+        <span class="advisor__bar-head">
+          <span class="advisor__bar-title">Finden statt Suchen</span>
+        </span>
+        <span class="advisor__bar-sub">Beantworten Sie ein paar kurze Fragen – der Berater empfiehlt Ihnen die passenden Paketboxen.</span>
+      </span>
+      <span class="advisor__bar-cta">Kaufberater<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></span>
+    </button>
+    <div class="advisor__card">
+      <button type="button" class="advisor__collapse" data-ai-toggle aria-label="Berater schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+      <div class="advisor__quiz" data-ai-quiz></div>
+      <div class="advisor__results" data-ai-results aria-live="polite" hidden></div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ──────────────────────────────────────────────────────────────
+     Category configs. Add a new category = add an entry here + an
+     <section class="advisor" data-ai="<key>"> block above.
+     ────────────────────────────────────────────────────────────── */
+  const SIZE_TIERS = [
+    {v:"S",  label:"S — DHL Päckchen S", sub:"bis 35 × 25 × 10 cm"},
+    {v:"M",  label:"M — DHL Päckchen M", sub:"bis 37,5 × 13,5 × 30 cm"},
+    {v:"L",  label:"L — DHL Paket",      sub:"bis 60 × 36 × 22 cm"},
+    {v:"XL", label:"XL — Großpaket",     sub:"mehrere / sperrige Pakete"},
+  ];
+
+  const CATS = {
+    paketboxen: {
+      img: "Kaufbrater/Paketbox.png",
+      labels: {
+        briefkasten:"Briefkasten", klingel:"Klingel", sprechanlage:"Sprechanlage", paketbox:"Nur Paketbox",
+        freistehend:"Freistehend", wand:"Wandmontage",
+        S:"Größe S", M:"Größe M", L:"Größe L", XL:"Größe XL",
+        klassisch:"Klassische Farbe", edelstahl:"Edelstahl-Optik",
+        lasergravur:"Lasergravur", namensschild:"Wechselschild", ohne:"Ohne Gravur",
+      },
+      steps: [
+        { key:"kombi", type:"multi",
+          q:"Womit möchten Sie Ihre Paketbox kombinieren?",
+          hint:"Mehrfachauswahl möglich · „Nur Paketbox“ schließt die anderen aus.",
+          opts:[ {v:"briefkasten",label:"Briefkasten"}, {v:"klingel",label:"Klingel"}, {v:"sprechanlage",label:"Sprechanlage"}, {v:"paketbox",label:"Nur Paketbox",exclusive:true} ] },
+        { key:"montage", type:"single",
+          q:"Wie soll Ihre Paketbox montiert werden?",
+          opts:[ {v:"freistehend",label:"Freistehend",sub:"mit Standfuß / Füßen"}, {v:"wand",label:"Wandmontage",sub:"an der Hauswand befestigt"}, {v:"egal",label:"Egal",sub:"keine Präferenz"} ] },
+        { key:"groesse", type:"single", info:true,
+          q:"Welche Paketgröße soll hineinpassen?",
+          opts: SIZE_TIERS },
+        { key:"faecher", type:"single", when:a => a.kombi.has("briefkasten"),
+          q:"Wie viele Brieffächer benötigen Sie?",
+          opts:[ {v:1,label:"1 Fach"}, {v:2,label:"2 Fächer"}, {v:3,label:"3 Fächer"} ] },
+        { key:"klingeltaster", type:"single", when:a => a.kombi.has("klingel") || a.kombi.has("sprechanlage"),
+          q:"Wie viele Klingeltaster benötigen Sie?",
+          opts:[ {v:1,label:"1 Taster"}, {v:2,label:"2 Taster"}, {v:3,label:"3 Taster"} ] },
+        { key:"farbe", type:"single",
+          q:"Welche Optik passt zu Ihrem Eingang?",
+          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Schwarz, Weiß oder Grau",sw:"linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)",colors:["anthrazit","braun","schwarz","eisenglimmer","weiss","grau"]}, {v:"edelstahl",label:"Edelstahl",sub:"rostfrei und zeitlos",sw:"linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)",colors:["edelstahl"]} ] },
+        { key:"gravur", type:"single",
+          q:"Wie möchten Sie Ihre Box beschriften?",
+          opts:[ {v:"lasergravur",label:"Lasergravur",sub:"individuell, dauerhaft"}, {v:"namensschild",label:"Austauschbares Schild",sub:"flexibel wechselbar"}, {v:"ohne",label:"Ohne Beschriftung"} ] },
+      ],
+      products: [
+        {name:"Bispo 2 — Paketbox mit Briefkasten & Gravur", price:329, reviews:173, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"edelstahl", gravur:"lasergravur"},
+        {name:"Taren — Paketbox mit Briefkasten & Gravur", price:339, reviews:33, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"weiss", gravur:"lasergravur"},
+        {name:"Zivo 2 — Paketbox mit Briefkasten, Entnahme Rückseite", price:339, reviews:13, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"edelstahl", gravur:"lasergravur"},
+        {name:"Zivo 2 — mit Briefkasten, austauschbares Schild, Anthrazit", price:309, reviews:6, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"anthrazit", gravur:"namensschild"},
+        {name:"Bispo 2 LED — Paketbox mit Briefkasten & Gravur", price:369, reviews:36, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"grau", gravur:"lasergravur"},
+        {name:"Bispo 2 SF — Briefkasten, Sichtfenster, Anthrazit", price:349, reviews:5, kombi:["briefkasten"], montage:"wand", groesse:"L", faecher:1, farbe:"anthrazit", gravur:"lasergravur"},
+        {name:"Bispo Funk — Funk-Paketbox mit Klingel & Briefkasten", price:379, reviews:16, kombi:["briefkasten","klingel"], montage:"wand", groesse:"M", faecher:1, klingeltaster:1, farbe:"edelstahl", gravur:"lasergravur"},
+        {name:"Zivo 2 Renz LED — Paketbox, austauschbares Schild, Anthrazit", price:349, reviews:4, kombi:["paketbox"], montage:"wand", groesse:"M", farbe:"anthrazit", gravur:"namensschild"},
+        {name:"Ben — Paketbox XXL, höhenverstellbare Füße, Anthrazit", price:699, reviews:6, kombi:["paketbox"], montage:"freistehend", groesse:"XL", farbe:"anthrazit", gravur:"namensschild"},
+        {name:"Bispo Max 2 — Paketbox XL mit Briefkasten & Gravur", price:549, reviews:26, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"edelstahl", gravur:"lasergravur"},
+        {name:"Bispo Max 2 — XL mit Briefkasten, LED, Anthrazit", price:589, reviews:5, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"anthrazit", gravur:"lasergravur"},
+        {name:"Bispo 3 — Paketbox mit Briefkasten, Sichtfenster & Gravur", price:419, reviews:8, kombi:["briefkasten"], montage:"wand", groesse:"L", faecher:1, farbe:"schwarz", gravur:"lasergravur"},
+      ],
+    },
+  };
+
+  const fmtPrice = n => "ab " + n.toLocaleString("de-DE") + ",00 €";
+
+  /* ── Wire one advisor instance (mirrors plp.js wireAiAdvisor) ── */
+  function wireAdvisor(root){
+    const cfg = CATS[root.getAttribute("data-ai")];
+    if(!cfg) return;
+    const STEPS = cfg.steps, LABELS = cfg.labels, PRODUCTS = cfg.products;
+    const FARBE_SETS = {};   /* option value → set of product colours it covers (colorset approach) */
+    (STEPS.find(s=>s.key==="farbe")||{opts:[]}).opts.forEach(o=>{ if(o.colors) FARBE_SETS[o.v]=o.colors; });
+    const quiz = root.querySelector("[data-ai-quiz]");
+    const results = root.querySelector("[data-ai-results]");
+    const lead = { email:"", news:false };
+
+    const answers = { kombi:new Set(), montage:null, groesse:null, faecher:null, klingeltaster:null, farbe:null, gravur:null };
+    let step = 0;
+
+    const activeSteps = () => STEPS.filter(s => !s.when || s.when(answers));
+
+    /* ---- Step markup (shared by render + height probe) ---- */
+    function stepHTML(i){
+      const steps = activeSteps();
+      const s = steps[i];
+      const last = i === steps.length - 1;
+      let dots = "";
+      for(let d=0; d<steps.length; d++) dots += '<span class="' + (d<i?"is-done":(d===i?"is-current":"")) + '"></span>';
+
+      const opts = s.opts.map(o => {
+        const on = isPicked(s, o.v) ? " is-active" : "";
+        const sw = o.sw ? '<span class="advisor__opt-sw" style="background:'+o.sw+'" aria-hidden="true"></span>' : "";
+        const text = '<span class="advisor__opt-label">'+o.label+'</span>' + (o.sub ? '<span class="advisor__opt-sub">'+o.sub+'</span>' : "");
+        const inner = o.sw ? sw + '<span class="advisor__opt-text">'+text+'</span>' : text;
+        return '<button type="button" class="advisor__opt'+(o.sw?" advisor__opt--sw":"")+on+'" data-v="'+o.v+'" aria-pressed="'+(on?"true":"false")+'">'+inner+'</button>';
+      }).join("");
+
+      const info = s.info ? (
+        '<span class="advisor__info" data-info>'+
+          '<button type="button" class="advisor__info-btn" data-info-btn aria-label="Größenratgeber">i</button>'+
+          '<span class="advisor__info-pop">'+
+            '<h4>Größenratgeber</h4>'+
+            '<dl><dt>S</dt><dd>DHL Päckchen S · bis 35 × 25 × 10 cm</dd>'+
+            '<dt>M</dt><dd>DHL Päckchen M · bis 37,5 × 13,5 × 30 cm</dd>'+
+            '<dt>L</dt><dd>DHL Paket · bis 60 × 36 × 22 cm</dd>'+
+            '<dt>XL</dt><dd>Großpaket · mehrere / sperrige Sendungen</dd></dl>'+
+            '<p class="note">Maße = max. Paketgröße im Innenraum (B × H × T). Mehrere kleine Pakete passen entsprechend übereinander.</p>'+
+          '</span>'+
+        '</span>') : "";
+
+      return '<div class="advisor__step">'+
+        '<div class="advisor__progress">'+
+          '<span class="advisor__progress-dots">'+dots+'</span>'+
+          '<span class="advisor__progress-label">Schritt '+(i+1)+' von '+steps.length+'</span>'+
+        '</div>'+
+        '<div class="advisor__qrow">'+
+          '<div class="advisor__q-wrap"><h3 class="advisor__q">'+s.q+'</h3>'+(s.hint?'<p class="advisor__qhint">'+s.hint+'</p>':"")+'</div>'+
+          info+
+        '</div>'+
+        '<div class="advisor__opts" role="group" aria-label="'+s.q+'">'+opts+'</div>'+
+        '<div class="advisor__nav">'+
+          (i>0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>')+
+          '<button type="button" class="advisor__forward'+(last?" advisor__forward--cta":"")+'" data-next>'+(last?"Empfehlung anzeigen":"Weiter")+'<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>'+
+        '</div>'+
+      '</div>';
+    }
+
+    function isPicked(s, v){
+      if(s.type==="multi") return answers[s.key].has(v);
+      return answers[s.key] === v;
+    }
+
+    /* If any option's label+sub wraps to a 2nd line, stack ALL options in the
+       step (label over sub) so every tile is consistent — same as plp.js. */
+    function markStacked(scope){
+      const optsEl = scope.querySelector(".advisor__opts");
+      if(!optsEl) return;
+      const anyWrapped = [].some.call(scope.querySelectorAll(".advisor__opt:not(.advisor__opt--sw)"), o=>{
+        const lab = o.querySelector(".advisor__opt-label"), sub = o.querySelector(".advisor__opt-sub");
+        return sub && sub.getBoundingClientRect().top >= lab.getBoundingClientRect().bottom - 2;
+      });
+      if(anyWrapped) optsEl.classList.add("advisor__opts--stacked");
+    }
+
+    function lockQuizHeight(){
+      const w = quiz.clientWidth; if(!w) return;
+      const probe = document.createElement("div");
+      probe.className = quiz.className;
+      probe.style.cssText = "position:absolute;left:-9999px;top:0;visibility:hidden;width:"+w+"px";
+      quiz.parentNode.appendChild(probe);
+      const steps = activeSteps(); let max = 0;
+      for(let i=0;i<steps.length;i++){ probe.innerHTML = stepHTML(i); markStacked(probe); const el = probe.querySelector(".advisor__step"); const h = el?el.offsetHeight:0; if(h>max) max=h; }
+      probe.remove(); if(max) quiz.style.minHeight = max + "px";
+    }
+
+    function renderStep(){
+      const steps = activeSteps();
+      if(step >= steps.length){ finish(); return; }
+      if(step < 0) step = 0;
+      results.hidden = true; results.innerHTML = "";
+      const s = steps[step];
+      quiz.innerHTML = stepHTML(step);
+      markStacked(quiz);
+      const stepEl = quiz.querySelector(".advisor__step");
+      requestAnimationFrame(()=>{ if(stepEl) stepEl.classList.add("is-in"); });
+
+      quiz.querySelectorAll(".advisor__opt").forEach(btn=>{
+        btn.addEventListener("click",()=>{
+          const v = isNaN(+btn.dataset.v) ? btn.dataset.v : +btn.dataset.v;
+          if(s.type==="multi") toggleMulti(s.key, v, btn);
+          else selectSingle(s.key, v, btn);
+        });
+      });
+      const back = quiz.querySelector("[data-back]");
+      if(back) back.addEventListener("click",()=>{ if(step>0){ step--; renderStep(); } });
+      quiz.querySelector("[data-next]").addEventListener("click",()=>{ step++; renderStep(); });
+
+      const infoBtn = quiz.querySelector("[data-info-btn]");
+      if(infoBtn){
+        const wrap = quiz.querySelector("[data-info]");
+        infoBtn.addEventListener("click",e=>{ e.stopPropagation(); wrap.classList.toggle("is-open"); });
+        document.addEventListener("click",()=>wrap.classList.remove("is-open"));
+      }
+      lockQuizHeight();
+    }
+
+    function selectSingle(key, v, btn){
+      answers[key] = v;
+      btn.parentNode.querySelectorAll(".advisor__opt").forEach(b=>{ b.classList.remove("is-active"); b.setAttribute("aria-pressed","false"); });
+      btn.classList.add("is-active"); btn.setAttribute("aria-pressed","true");
+    }
+    function toggleMulti(key, v, btn){
+      const set = answers[key];
+      if(v==="paketbox"){ if(set.has(v)) set.delete(v); else { set.clear(); set.add(v); } }
+      else { set.delete("paketbox"); set.has(v) ? set.delete(v) : set.add(v); }
+      if(!set.has("briefkasten")) answers.faecher = null;
+      if(!set.has("klingel") && !set.has("sprechanlage")) answers.klingeltaster = null;
+      // re-render the step so the exclusive/clear state is reflected on all tiles
+      renderStep();
+    }
+
+    /* ---- Loader ---- */
+    function loaderHTML(){
+      const sk = '<div class="adv-sk"><span class="adv-sk__thumb"></span><span class="adv-sk__lines"><span class="adv-sk__line adv-sk__line--sm"></span><span class="adv-sk__line adv-sk__line--lg"></span><span class="adv-sk__line adv-sk__line--md"></span></span></div>';
+      return '<div class="advisor__thinking"><span class="advisor__thinking-head"><span class="advisor__wave"><i></i><i></i><i></i><i></i><i></i></span>Wir analysieren Ihre Antworten und kuratieren passende Modelle…</span><div class="advisor__skeleton">'+sk+sk+'</div></div>';
+    }
+
+    /* ---- Scoring ---- */
+    function score(p){
+      let got=0, max=0;
+      if(answers.kombi.size){ max++;
+        if(answers.kombi.has("paketbox")) got += (p.kombi.length===1 && p.kombi[0]==="paketbox") ? 1 : 0.2;
+        else { const need=[...answers.kombi]; got += need.filter(k=>p.kombi.includes(k)).length/need.length; }
+      }
+      if(answers.montage && answers.montage!=="egal"){ max++; got += p.montage===answers.montage?1:0; }
+      if(answers.groesse){ max++; const ord=["S","M","L","XL"]; const d=Math.abs(ord.indexOf(p.groesse)-ord.indexOf(answers.groesse)); got += d===0?1:d===1?0.5:0.1; }
+      if(answers.faecher!=null){ max++; got += (p.faecher===answers.faecher)?1:(p.faecher?0.4:0); }
+      if(answers.klingeltaster!=null){ max++; got += (p.klingeltaster===answers.klingeltaster)?1:(p.klingeltaster?0.4:0); }
+      if(answers.farbe){ max++; const set = FARBE_SETS[answers.farbe] || [answers.farbe]; got += set.includes(p.farbe) ? 1 : 0.15; }
+      if(answers.gravur){ max++; got += p.gravur===answers.gravur?1:0.2; }
+      return max ? got/max : 1;
+    }
+
+    function recCardHTML(p, pct){
+      return '<a class="advisor__rec" href="#" data-details>'+
+        '<span class="advisor__rec-thumb"><img src="'+cfg.img+'" alt="'+p.name+'" loading="lazy"></span>'+
+        '<span class="advisor__rec-info">'+
+          '<span class="advisor__rec-name">'+p.name+'</span>'+
+          '<span class="advisor__rec-price">'+fmtPrice(p.price)+'</span>'+
+        '</span>'+
+        '<svg class="advisor__rec-go" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>'+
+      '</a>';
+    }
+
+    function buildChips(){
+      const a = answers, out=[];
+      if(a.kombi.size) out.push({key:"kombi", text:[...a.kombi].map(k=>LABELS[k]).join(" + ")});
+      if(a.montage) out.push({key:"montage", text:a.montage==="egal"?"Montage egal":LABELS[a.montage]});
+      if(a.groesse) out.push({key:"groesse", text:LABELS[a.groesse]});
+      if(a.faecher!=null) out.push({key:"faecher", text:a.faecher===1?"1 Brieffach":a.faecher+" Brieffächer"});
+      if(a.klingeltaster!=null) out.push({key:"klingeltaster", text:a.klingeltaster+" Klingeltaster"});
+      if(a.farbe) out.push({key:"farbe", text:LABELS[a.farbe]});
+      if(a.gravur) out.push({key:"gravur", text:LABELS[a.gravur]});
+      return out;
+    }
+
+    function removeAnswer(key){
+      if(key==="kombi"){ answers.kombi.clear(); answers.faecher=null; answers.klingeltaster=null; }
+      else answers[key]=null;
+    }
+
+    function resultHTML(){
+      const ranked = PRODUCTS.map(p=>({p, s:score(p)})).sort((a,b)=>b.s-a.s || (b.p.reviews||0)-(a.p.reviews||0));
+      const top = ranked.slice(0,2);
+      const total = Math.max(top.length, ranked.filter(r=>r.s>=0.5).length);
+      const exact = ranked.length && ranked[0].s>=0.999;
+      const cards = top.map(({p,s})=>recCardHTML(p, Math.max(72,Math.round(s*100)))).join("");
+      const chips = buildChips().map(c=>'<span class="advisor__chip">'+c.text+'<button type="button" class="advisor__chip-x" data-chip="'+c.key+'" aria-label="Filter '+c.text+' entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button></span>').join("");
+      const note = exact ? "" : '<p class="advisor__note">Kein exakter Treffer – wir zeigen Ihnen die besten Alternativen.</p>';
+      const viewLabel = total===1 ? "Das Modell ansehen" : "Alle "+total+" Modelle ansehen";
+
+      const capture =
+        '<div class="advisor__capture" data-result-capture>'+
+          '<p class="advisor__capture-q">Empfehlung per E-Mail erhalten?</p>'+
+          '<div class="advisor__capture-row">'+
+            '<div class="advisor__field">'+
+              '<svg class="advisor__field-ico advisor__field-ico--mail" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>'+
+              '<input type="email" class="advisor__input" data-email autocomplete="email" placeholder="E-Mail-Adresse eingeben" aria-label="E-Mail-Adresse">'+
+            '</div>'+
+            '<div class="advisor__capture-end">'+
+              '<label class="advisor__optin">'+
+                '<input type="checkbox" data-optin>'+
+                '<span class="advisor__optin-box" aria-hidden="true"></span>'+
+                '<span>Schicken Sie mir Metzler News &amp; Angebote.</span>'+
+              '</label>'+
+              '<button type="button" class="advisor__send" data-email-send aria-label="Absenden"><span class="advisor__send-label">Absenden</span><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>'+
+            '</div>'+
+          '</div>'+
+          '<p class="advisor__optin-info" data-optin-info role="status">'+
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11.5v4.5"/><path d="M12 7.7h.01"/></svg>'+
+            '<span>Wir senden Ihnen eine E-Mail mit einem Freischalt-Link für den Erhalt unseres Newsletters. Die Abmeldung ist jederzeit möglich.</span>'+
+          '</p>'+
+          '<p class="advisor__legal">Hinweise zum Datenschutz finden Sie <a href="#">hier</a>.</p>'+
+        '</div>';
+
+      return '<div class="advisor__result">'+
+        '<div class="advisor__result-head"><h3 class="advisor__result-title">Unsere Top-Empfehlungen für Sie</h3></div>'+
+        '<div class="advisor__recs">'+cards+'</div>'+
+        '<div class="advisor__aside">'+
+          '<div class="advisor__summary">'+
+            (chips ? '<div class="advisor__chips">'+chips+'</div>' : '<span></span>')+
+            '<div class="advisor__actions">'+
+              '<button type="button" class="advisor__view" data-ai-view>'+viewLabel+'</button>'+
+              '<button type="button" class="advisor__reset" data-ai-reset>Quiz neu starten</button>'+
+            '</div>'+
+          '</div>'+
+          note+
+        '</div>'+
+        capture+
+      '</div>';
+    }
+
+    function renderResult(){
+      results.innerHTML = resultHTML();
+      const el = results.querySelector(".advisor__result");
+      requestAnimationFrame(()=>{ if(el) el.classList.add("is-in"); });
+      const reset = results.querySelector("[data-ai-reset]");
+      if(reset) reset.addEventListener("click", restart);
+      results.querySelectorAll(".advisor__chip-x").forEach(b=>{
+        b.addEventListener("click",()=>{ removeAnswer(b.dataset.chip); renderResult(); });
+      });
+      wireCapture();
+    }
+
+    function wireCapture(){
+      const cap = results.querySelector("[data-result-capture]");
+      if(!cap) return;
+      const pristine = cap.innerHTML;
+      const email = cap.querySelector("[data-email]");
+      const optin = cap.querySelector("[data-optin]");
+      const optinLabel = cap.querySelector(".advisor__optin");
+      const optinInfo = cap.querySelector("[data-optin-info]");
+      let revertTimer;
+      optin.addEventListener("change",()=>{
+        optinLabel.classList.toggle("is-on", optin.checked);
+        optinInfo.classList.toggle("is-shown", optin.checked);
+      });
+      function submit(){
+        const v = email.value.trim();
+        if(!v){ email.focus(); return; }
+        lead.email = v; lead.news = optin.checked;
+        cap.innerHTML = '<div class="advisor__sent" role="status"><svg class="advisor__sent-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.4 12.3l2.4 2.4 4.8-5.4"/></svg><p class="advisor__sent-text">Ihre Empfehlung wird an <strong>'+v+'</strong> gesendet'+(lead.news?" – inkl. News &amp; Angebote":"")+'.'+(lead.news?" Bitte bestätigen Sie die E-Mail in Ihrem Postfach.":"")+'</p></div>';
+        clearTimeout(revertTimer);
+        revertTimer = setTimeout(()=>{ cap.innerHTML = pristine; wireCapture(); }, 4000);
+      }
+      email.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); submit(); } });
+      cap.querySelector("[data-email-send]").addEventListener("click", submit);
+    }
+
+    let thinkTimer;
+    function finish(){
+      clearTimeout(thinkTimer);
+      root.classList.add("is-result");
+      results.hidden = false;
+      results.innerHTML = loaderHTML();
+      thinkTimer = setTimeout(renderResult, 1400);
+    }
+
+    function restart(){
+      clearTimeout(thinkTimer);
+      root.classList.remove("is-result");
+      answers.kombi.clear(); answers.montage=answers.groesse=answers.faecher=answers.klingeltaster=answers.farbe=answers.gravur=null;
+      step = 0; results.hidden = true; results.innerHTML = "";
+      renderStep();
+    }
+
+    renderStep();   /* render step 0 into the (collapsed) card */
+
+    /* Collapsible dropdown — collapsed by default */
+    function toggle(){
+      const open = root.classList.toggle("is-open");
+      const bar = root.querySelector(".advisor__bar");
+      if(bar) bar.setAttribute("aria-expanded", open?"true":"false");
+      if(open){ const st = quiz.querySelector(".advisor__step"); if(st) st.classList.add("is-in"); lockQuizHeight(); }
+    }
+    root.querySelectorAll("[data-ai-toggle]").forEach(b=>b.addEventListener("click", toggle));
+    window.addEventListener("resize",()=>{ if(root.classList.contains("is-open")) lockQuizHeight(); });
+  }
+
+  document.querySelectorAll("[data-ai]").forEach(wireAdvisor);
+})();
+</script>
+</body>
+</html>
