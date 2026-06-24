@@ -47,6 +47,7 @@
       { key: 'qr',          label: 'QR-Code', count: 3 },
       { key: 'rfid',        label: 'RFID', count: 7 }
     ]},
+    /* advisor-only group — NOT rendered as a sidebar facet (no #facet-material in markup, no buildFacetGroup('material') call). Feeds the Kaufberater "Optik" step + LABELS only. */
     material: { title: 'material', items: [
       { key: 'edelstahl',   label: 'Edelstahl', count: 5 },
       { key: 'galvanisiert',label: 'Galvanisierter Stahl', count: 1 },
@@ -86,8 +87,8 @@
       I87 = SP+'touch-display-station.png';   // BUS / stainless multi → premium touch-display
   var SALE = {type:'sale', text:'−15 %'};
   var PRODUCTS = [
-    { id:'dominik1', name:'ADM10 Audio-Türsprechanlage | 1 Klingeltaster | RAL 7016 Anthrazit | Dominik', line:'IP-System', price:424.15, uvp:499.00, rating:5, reviews:2,
-      badge:SALE, showMeta:true, award:'Badge/reddot-award-badge.svg', colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'1', tuer:[], type:'audio', img:I83 },
+    { id:'dominik1', name:'XDM10 Video-Türsprechanlage mit austauschbarem Namensschild | 2-Draht-BUS | 1 Klingeltaster | Maxior', line:'BUS-System', price:424.15, uvp:499.00, rating:5, reviews:2,
+      badge:SALE, showMeta:true, award:'Badge/reddot-award-badge.svg', colors:['anthrazit','weiss','grau','schwarz'], system:'bus', klingel:'1', tuer:[], type:'video', img:I83 },
     { id:'sdm10x', name:'Türsprechanlage mit Kamera | Gesichtserkennung | Touch-Display | Live-HD-Video | Ein- & Mehrfamilien | SDM10X', line:'IP-System', price:1266.50, uvp:1490.00, rating:5, reviews:9,
       badge:SALE, showMeta:true, colors:['anthrazit','edelstahl','schwarz','weiss','grau'], system:'ip', klingel:'flex', tuer:['gesicht','rfid','pin'], material:'edelstahl', type:'video', img:I84 },
     { id:'colson1', name:'VDM10 2.0 Video-Türsprechanlage | 1 Klingeltaster | Colson', line:'IP-System', price:594.15, uvp:699.00, rating:5, reviews:63,
@@ -887,13 +888,13 @@
       function ratioOf(p) { return selAll.length ? selAll.filter(function (o) { return sat(p, o); }).length / selAll.length : 1; }
       var ranked = PRODUCTS.filter(matches).map(function (p) {
         return { p: p, ratio: ratioOf(p) };
-      }).sort(function (a, b) { return b.ratio - a.ratio || b.p.rating - a.p.rating || b.p.reviews - a.p.reviews; });
+      }).sort(function (a, b) { return b.ratio - a.ratio || b.p.rating - a.p.rating || (b.p.reviews||0) - (a.p.reviews||0); });
       var top = ranked.slice(0, 2);
       if (top.length < 2) {   /* always fill 2 cards — pad with the next-best alternatives (no lone card / blank) */
         var have = top.map(function (t) { return t.p.id; });
         var fill = PRODUCTS.filter(function (p) { return have.indexOf(p.id) === -1; })
           .map(function (p) { return { p: p, ratio: ratioOf(p) }; })
-          .sort(function (a, b) { return b.ratio - a.ratio || b.p.rating - a.p.rating || b.p.reviews - a.p.reviews; });
+          .sort(function (a, b) { return b.ratio - a.ratio || b.p.rating - a.p.rating || (b.p.reviews||0) - (a.p.reviews||0); });
         top = top.concat(fill).slice(0, 2);
       }
       results.innerHTML = resultHTML(res, top);

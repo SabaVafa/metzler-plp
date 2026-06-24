@@ -57,8 +57,6 @@
 }
 .subnav__viewport::before { left: 0; background: linear-gradient(90deg, #fff 15%, rgba(255,255,255,0)); }
 .subnav__viewport::after  { right: 0; background: linear-gradient(270deg, #fff 15%, rgba(255,255,255,0)); }
-.subnav.is-start .subnav__viewport::before { opacity: 0; }
-.subnav.is-end   .subnav__viewport::after  { opacity: 0; }
 
 /* Arrows reveal on hover/focus, sit over the fade, and respect scroll position */
 .subnav__arrow {
@@ -79,8 +77,6 @@
 /* Prev arrow stays hidden until the user first advances the rail (JS adds .is-engaged).
    (0,3,0) so it beats the .subnav__arrow{opacity:1} + :hover/:focus reveal rules. */
 .subnav:not(.is-engaged) .subnav__arrow--prev { opacity: 0; pointer-events: none; }
-.subnav.is-start .subnav__arrow--prev,
-.subnav.is-end   .subnav__arrow--next { opacity: 0 !important; pointer-events: none; }
 /* Until the rail is first advanced, keep the LEFT fade retracted too — otherwise it
    overlays the first subcategory tile at rest. The first tile must read fully visible;
    only the right fade + next arrow hint that more is scrollable. (Mirrors the prev-arrow
@@ -156,8 +152,6 @@
   color: var(--schwarz);
 }
 .catalog__count { font-size: var(--text-body-sm); font-weight: 500; color: var(--ink-60); white-space: nowrap; }   /* subtitle styling (weight/colour), slightly larger size */
-.catalog__count strong { color: var(--ink-60); font-weight: 400; }
-.catalog__count-sub { font-size: var(--text-body-sm); color: var(--teal); font-weight: 600; }
 
 .catalog__bar {
   display: flex; align-items: center; gap: var(--sp-3);
@@ -289,10 +283,11 @@
   position: absolute; z-index: 2; width: 40%; max-width: 140px; height: auto; pointer-events: none;
   /* Positioned so BOTH the seal→device and wordmark→device gaps are 4px, derived from
      the lockup geometry (seal right edge = 31.9% of width, wordmark top = 79.3% of
-     height) and image 90's device bounds (left 32.5%, bottom 89.1% of the media). The
+     height) and the device bounds of audio-station-namensschild.png (left 32.5%, bottom
+     89.1% of the media; formerly image 90.png, renamed in the asset cleanup). The
      calc(%-4px) form keeps the 4px constant at any card width; left/bottom are
      re-derived whenever the width changes (here width:40%). Only the ADM10 card
-     (image 90) carries the badge, so this is tuned to that image. */
+     (audio-station-namensschild.png) carries the badge, so this is tuned to that image. */
   left: calc(19.78% - 4px); bottom: calc(7.18% - 4px);
 }
 
@@ -492,15 +487,20 @@
   /* Open state — floating white panel that OVERLAYS the page (doesn't push it down) */
   .quickbar.is-open { z-index: 40; }
   .quickbar.is-open .quickbar-inner { position: relative; z-index: 1; }
-  .quickbar.is-open .qa-panel { display: block; position: absolute; left: 0; right: 0; top: 100%; background: #fff; padding: 4px clamp(24px,4vw,56px) 14px; box-shadow: 0 16px 28px -18px rgba(1,40,40,.30); animation: qa-sheet .28s cubic-bezier(.2,.8,.2,1); }
+  .quickbar.is-open .qa-panel { display: flex; flex-direction: column; position: absolute; left: 0; right: 0; top: 100%; background: #fff; padding: 4px clamp(24px,4vw,56px) 14px; box-shadow: 0 16px 28px -18px rgba(1,40,40,.30); animation: qa-sheet .28s cubic-bezier(.2,.8,.2,1); }
   /* Toggle strip stays teal, full-bleed across the white panel */
   .quickbar.is-open .qa-mobile-toggle { width: calc(100% + 2 * clamp(24px,4vw,56px)); margin: 0 calc(-1 * clamp(24px,4vw,56px)); padding: 10px clamp(24px,4vw,56px); background: var(--teal); }
   .quickbar.is-open .qa-divider { display: none; }
-  .quickbar.is-open .qa-group { display: flex; flex-direction: column; align-items: stretch; gap: 0; margin: 0; padding-top: 0; }
+  /* Flatten the group so all four items are flex children of the panel (enables reordering) */
+  .quickbar.is-open .qa-group { display: contents; }
   /* Card — mirrors the contact modal .row */
   .quickbar.is-open .qa,
   .quickbar.is-open .qa-cta { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 14px; margin: 0; padding: 13px 0; border-radius: 0; text-align: left; background: #fff; border: 0; border-bottom: 1px solid var(--border); color: var(--ink); font-weight: 400; letter-spacing: 0; box-shadow: none; transform: none; transition: border-color .25s ease, background .25s ease, transform .25s ease; }
-  .quickbar.is-open .qa-cta { margin: 0; border-bottom: 0; }
+  /* Mobile dropdown order: Hotline · FAQ · Termin · Fachhandelspartner */
+  .quickbar.is-open .qa[href^="tel:"] { order: 1; }
+  .quickbar.is-open .qa-cta { order: 2; }
+  .quickbar.is-open .qa.termin { order: 3; }
+  .quickbar.is-open .qa[href="#partner"] { order: 4; border-bottom: 0; }
   .quickbar.is-open .qa-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 4px; background: linear-gradient(135deg,#f0f6f6 0%,#e2edec 100%); box-shadow: inset 0 0 0 1px rgba(1,82,83,.08), inset 0 1px 0 rgba(255,255,255,.8); color: var(--teal); }
   .quickbar.is-open .qa-ico svg { width: 16px; height: 16px; stroke-width: 1.5; color: var(--teal); }
   .quickbar.is-open .qa-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
@@ -640,11 +640,15 @@
   background:transparent;border:0;
   color:#7A7A82;cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;
-  transition:color .15s ease;
+  transition:background .15s ease, color .15s ease;
   user-select:none;-webkit-tap-highlight-color:transparent;
 }
 .m-close svg{width:14px;height:14px}
 .m-close:hover{color:var(--ink)}
+/* Desktop only — hover background (mobile close sits on the teal panel, so no bg there) */
+@media (min-width:768px){
+  .m-close:hover{background:#f4f6f6}
+}
 
 @media (max-width:767px){
   .overlay.is-open{padding:0;align-items:flex-end}
@@ -987,115 +991,6 @@
 .mega-card:hover .mega-card__label,
 .mega-card:focus-visible .mega-card__label { color: var(--teal); }
 
-/* ── Badge / pill — shared DS treatment ──
-   DS Caption Bold (0.75rem · 700 · line-height 1.4), border-radius-sm,
-   Digital Schwarz fill, Pure White label. No uppercase / letter-spacing
-   (not defined for badges in the DS). Used by both the tile flag and the
-   featured-card badge so the two pills are identical. */
-.mega-card__flag,
-.mega-feature__badge {
-  padding: 0.25rem 0.5rem;                      /* 4px 8px */
-  border-radius: var(--r-s);                    /* DS: badges use border-radius-sm */
-  background: var(--schwarz);                   /* Digital Schwarz */
-  color: var(--white);                          /* Pure White */
-  font-size: var(--text-caption, 0.75rem);      /* DS Caption Bold */
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-/* Corner flag for merchandising (e.g. Top-Seller) */
-.mega-card__flag {
-  position: absolute;
-  top: var(--sp-3); left: var(--sp-3);
-}
-
-/* ── Right zone: persistent featured promo (full-height) ── */
-.mega-feature {
-  display: flex;
-  flex-direction: column;
-  height: 100%;                                 /* fill the stretched grid cell → full-height anchor */
-  padding: var(--sp-4);
-  border-radius: var(--r-l);
-  /* Distinct brand-tinted background separates it from the white tile grid */
-  background: linear-gradient(165deg, var(--teal-5) 0%, #EEF2F2 100%);
-  box-shadow: inset 0 0 0 1px var(--teal-10);
-}
-.mega-feature__badge {                            /* 3D-Konfigurator label — light Teal 100 pill drawn from the
-                                                      promo's teal-tinted panel (same approach as .advisor__badge);
-                                                      overrides the shared Schwarz flag, which stays black on white tiles */
-  align-self: flex-start;
-  margin-bottom: var(--sp-3);
-  padding: 0.25rem 0.625rem;                      /* 4px 10px — pill proportions */
-  background: #E6EEEE; color: var(--teal-700); border: 1px solid var(--teal-10);
-  border-radius: var(--r-pill);
-  letter-spacing: .02em;
-}
-.mega-feature__media {
-  display: block;
-  aspect-ratio: 16 / 9;
-  max-height: 160px;                           /* taller promo image */
-  margin-bottom: var(--sp-3);
-  border-radius: var(--r-m);
-  background: var(--white);
-  overflow: hidden;
-}
-.mega-feature__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.mega-feature__title {
-  margin: 0 0 var(--sp-2);
-  font-size: 1.125rem;                          /* DS H4 — compact card title */
-  font-weight: 700;
-  line-height: 1.3;
-  color: var(--schwarz);
-}
-/* Benefit list — scoped reset (it's a <ul> inside .header__nav: flex/nowrap leak) */
-.mega-panel .mega-feature__list {
-  display: block;
-  height: auto;
-  margin: 0 0 var(--sp-4);      /* guarantee breathing room before the CTA */
-  padding: 0 0 0 1.15em;
-  list-style: disc;
-}
-.mega-panel .mega-feature__list li {
-  display: list-item;
-  margin: 0 0 var(--sp-1);      /* tight spacing between bullets */
-  padding: 0;
-  white-space: normal;
-  font-size: var(--text-body-sm);               /* DS Body SM Regular */
-  font-weight: 400;
-  line-height: 1.35;
-  color: var(--ink-72);
-}
-.mega-panel .mega-feature__list li:last-child { margin-bottom: 0; }
-.mega-panel .mega-feature__list li::marker { color: var(--schwarz); }   /* black bullets */
-/* CTA — Metzler DS primary button (§6): Teal 500 fill, 2.625rem tall, .25rem radius, 1rem/500.
-   Scoped `.mega-panel …` so its white label beats the inherited `.header__nav a{color:#000}`. */
-.mega-panel .mega-feature__cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  width: 100%;
-  height: 2.625rem;
-  margin-top: auto;                             /* pin CTA to card bottom */
-  padding: 0.7rem 1.2rem;
-  border: none;
-  border-radius: var(--r-m);                    /* DS default radius (.25rem) */
-  background: var(--teal);                      /* Teal 500 */
-  color: var(--white);
-  font-size: var(--text-body);                  /* 1rem */
-  font-weight: 500;
-  line-height: 1.2;
-  white-space: nowrap;
-  transition: background 0.15s ease;
-}
-/* DS primary-button hover: only the fill darkens — label stays Pure White.
-   color + border-bottom are re-pinned here at (0,3,0) so they beat the inherited
-   `.header__nav a:hover { color: var(--teal); border-bottom-color: var(--teal) }`
-   (0,2,1), which otherwise turned the label teal-on-teal (invisible) on hover. */
-.mega-panel .mega-feature__cta:hover,
-.mega-panel .mega-feature__cta:focus-visible { background: var(--teal-600); color: var(--white); border-bottom: 0; }   /* Teal 600 */
-.mega-panel .mega-feature__cta:active        { background: var(--teal-700); color: var(--white); border-bottom: 0; }   /* Teal 700 */
-
 /* Both dropdowns: cards fill their 5 columns with a fixed 20px gap (instead of
    146px cards + space-between, whose gap grows past the 46px card→poster gap on wide
    screens). Keeps the inter-card gap clearly SMALLER than the gap to the poster, and
@@ -1125,9 +1020,9 @@
    flex:1 1 0 + min-height:0 lets it grow to fill the space ABOVE the copy; the img is
    absolutely positioned so its (very tall) intrinsic size can't drive the poster height. */
 .mega-panel .mega-poster__media {
-  position: relative; flex: 1 1 0; min-height: 0; overflow: hidden;
+  position: relative; flex: 0 0 auto; aspect-ratio: 1 / 1; overflow: hidden;   /* square box → image fills the width and scales with it (responsive) */
   display: flex; align-items: center; justify-content: center;
-  padding: 18px 18px 6px;                       /* breathing room around the scaled-down shot */
+  padding: clamp(14px, 6%, 22px);               /* symmetric, proportional breathing room */
   background: radial-gradient(ellipse 76% 64% at 50% 44%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 72%);   /* soft spotlight behind the device */
 }
 .mega-panel .mega-poster__bg {
@@ -1163,9 +1058,6 @@
 }
 .mega-panel .mega-poster__features {
   margin: 10px 0 0; font-size: 0.6875rem; font-weight: 600; letter-spacing: .02em; color: var(--ink-60);
-}
-.mega-panel .mega-poster__meta {
-  margin-top: 10px; font-size: 0.6875rem; line-height: 1.4; letter-spacing: .01em; color: rgba(255,255,255,0.6);
 }
 /* Full-width filled teal CTA */
 .mega-panel .mega-poster__cta {
@@ -1231,8 +1123,7 @@
 /* ════════════════════════════════════════════════════════════════════
    PILL RULE — every pill is a text-only tinted chip whose surface is
    derived from the container it sits on, with a label that is a darker
-   shade of that fill. Applies to .advisor__badge, .advisor__chip and
-   .mega-feature__badge.
+   shade of that fill. Applies to .advisor__chip.
 
    1. FILL  = the light 100-tint of the CONTAINER's background hue
               · teal-tinted surface (advisor/promo panel) → Teal 100  #E6EEEE
@@ -1244,22 +1135,6 @@
    4. NO ICONS — pills are text only (no spark / dot / check)
    5. SHAPE = border-radius var(--r-pill); padding ~4–5px / 10–12px
    ════════════════════════════════════════════════════════════════════ */
-
-/* ── Intro ── */
-.advisor__badge {                                  /* KI label — text-only pill: Teal 100 fill (shade of the
-                                                      teal panel), Teal 700 label (shade of the fill), hairline */
-  display: inline-flex; align-items: center;
-  padding: 0.3125rem 0.75rem; border-radius: var(--r-pill);
-  background: #E6EEEE; color: var(--teal-700); border: 1px solid var(--teal-10);
-  font-size: var(--text-body-sm); font-weight: 700; line-height: 1.4; letter-spacing: .02em;   /* KI flow floor: 14px min */
-}
-.advisor__head { display: flex; flex-direction: column; gap: var(--sp-2); }   /* compact, top-aligned with the tracker */
-.advisor__head-row { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }   /* pill next to the title */
-.advisor__title {                                  /* H2 — 1.5rem / 700, Digital Schwarz */
-  margin: 0;
-  font-size: 1.5rem; font-weight: 700; line-height: 1.3; color: var(--schwarz);
-}
-.advisor__sub { margin: 0; max-width: none; font-size: var(--text-body-sm); line-height: 1.55; color: var(--ink-72); }
 
 /* ── Guided quiz ── */
 .advisor__quiz { min-width: 0; }
@@ -1305,16 +1180,16 @@
 
 .advisor__nav { display: flex; align-items: center; justify-content: space-between; margin-top: var(--sp-5); }
 /* Zurück + Weiter — identical link treatment; only the colour differs */
-.advisor__back, .advisor__skip, .advisor__forward {
+.advisor__back, .advisor__forward {
   padding: 6px 0; border: 0; background: none; cursor: pointer;
   font-size: 0.9375rem; font-weight: 500;   /* 15px */
   display: inline-flex; align-items: center; gap: 2px; transition: color .15s ease;
 }
-.advisor__back, .advisor__skip { color: var(--ink-60); }
-.advisor__back:hover, .advisor__skip:hover { color: var(--teal); }
+.advisor__back { color: var(--ink-60); }
+.advisor__back:hover { color: var(--teal); }
 .advisor__forward { color: var(--teal); }            /* same link, Teal 500 — the only difference */
 .advisor__forward:hover { color: var(--teal-700); }
-.advisor__back svg, .advisor__skip svg, .advisor__forward svg { width: 1.3em; height: 1.3em; stroke-width: 1.5; flex: 0 0 auto; }   /* scales with the 15px label, stays inline-centered */
+.advisor__back svg, .advisor__forward svg { width: 1.3em; height: 1.3em; stroke-width: 1.5; flex: 0 0 auto; }   /* scales with the 15px label, stays inline-centered */
 .advisor__back svg { transform: rotate(180deg); }    /* chevron points left (back) */
 
 /* ── Final step: e-mail capture — DS .form-control treatment ── */
@@ -1406,15 +1281,6 @@
 }
 
 /* ── Buttons — DS .btn-primary / .btn-secondary semantics ── */
-.advisor__next {                                   /* (legacy) .btn-primary — Teal 500 fill, white */
-  display: flex; width: 100%; align-items: center; justify-content: center;
-  min-height: 2.625rem; padding: .7rem 1.2rem; border: 0; border-radius: var(--r-m); margin-top: var(--sp-4);
-  background: var(--teal); color: var(--white); cursor: pointer;
-  font-size: var(--text-body); font-weight: 500; line-height: 1.2;
-  transition: background .15s ease;
-}
-.advisor__next:hover { background: var(--teal-600); }
-.advisor__next:active { background: var(--teal-700); }
 .advisor__view {                                   /* primary action — DS .btn-primary (Teal 500 fill, white) */
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 2.625rem; padding: .7rem 1.2rem; border: 0; border-radius: var(--r-m); cursor: pointer;
@@ -1436,8 +1302,7 @@
 /* ── Results region (full width, below) ── */
 .advisor__results { grid-column: 1 / -1; margin-top: var(--sp-5); }
 .advisor__results[hidden] { display: none; }
-/* Result step: drop the intro/quiz so the result owns the whole card */
-.advisor.is-result .advisor__head,
+/* Result step: drop the quiz so the result owns the whole card */
 .advisor.is-result .advisor__quiz { display: none; }
 .advisor.is-result .advisor__results { margin-top: 0; }
 
