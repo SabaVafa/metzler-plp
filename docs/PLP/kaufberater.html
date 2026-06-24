@@ -178,6 +178,31 @@
   </div>
 </section>
 
+<!-- ════ Kaufberater 06 · Türklingeln ════ -->
+<div class="container">
+  <div class="kb-cat__bar">
+    <span class="kb-cat__no">06</span>
+    <h2 class="kb-cat__title">Türklingeln</h2>
+    <span class="kb-cat__count">88 Modelle</span>
+  </div>
+</div>
+<section class="advisor" data-ai="tuerklingel" aria-label="Kaufberater Türklingeln">
+  <div class="container">
+    <button type="button" class="advisor__bar" data-ai-toggle aria-expanded="false">
+      <span class="advisor__bar-txt">
+        <span class="advisor__bar-head"><span class="advisor__bar-title">Finden statt Suchen</span></span>
+        <span class="advisor__bar-sub">Beantworten Sie ein paar kurze Fragen – der Berater empfiehlt Ihnen die passende Türklingel.</span>
+      </span>
+      <span class="advisor__bar-cta">Kaufberater<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></span>
+    </button>
+    <div class="advisor__card">
+      <button type="button" class="advisor__collapse" data-ai-toggle aria-label="Berater schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+      <div class="advisor__quiz" data-ai-quiz></div>
+      <div class="advisor__results" data-ai-results aria-live="polite" hidden></div>
+    </div>
+  </div>
+</section>
+
 <script>
 (function(){
   "use strict";
@@ -321,32 +346,32 @@
           match:(p,v)=>{ const ord=["S","M","L","XL"]; const d=Math.abs(ord.indexOf(p.groesse)-ord.indexOf(v)); return d===0?1:d===1?0.5:0.1; } },
         { key:"faecher", type:"single", when:a=>a.kombi.has("briefkasten"),
           q:"Wie viele Brieffächer benötigen Sie?",
-          opts:[ {v:1,label:"1 Fach",sub:"für 1 Haushalt",chip:"1 Brieffach"}, {v:2,label:"2 Fächer",sub:"für 2 Haushalte",chip:"2 Brieffächer"}, {v:3,label:"3 Fächer",sub:"für 3 Haushalte",chip:"3 Brieffächer"} ],
+          opts:[ {v:1,label:"1 Fach",sub:"für 1 Haushalt",chip:"1 Brieffach"}, {v:2,label:"2 Fächer",sub:"für 2 Haushalte",chip:"2 Brieffächer"}, {v:3,label:"3 Fächer",sub:"für 3 Haushalte",chip:"3 Brieffächer"}, {v:4,label:"4 Fächer",sub:"für 4 Haushalte",chip:"4 Brieffächer"}, {v:5,label:"5 Fächer",sub:"für 5 Haushalte",chip:"5 Brieffächer"} ],
           match:(p,v)=>p.faecher===v?1:(p.faecher?0.4:0) },
         { key:"klingeltaster", type:"single", when:a=>a.kombi.has("klingel")||a.kombi.has("sprechanlage"),
           q:"Wie viele Klingeltaster benötigen Sie?",
           opts:[ {v:1,label:"1 Taster",sub:"für 1 Partei",chip:"1 Klingeltaster"}, {v:2,label:"2 Taster",sub:"für 2 Parteien",chip:"2 Klingeltaster"}, {v:3,label:"3 Taster",sub:"für 3 Parteien",chip:"3 Klingeltaster"} ],
           match:(p,v)=>p.klingeltaster===v?1:(p.klingeltaster?0.4:0) },
-        { key:"farbe", type:"single",
-          q:"Welche Optik passt zu Ihrem Eingang?",
-          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Schwarz, Weiß oder Grau",sw:SW_KLASSISCH,colors:["anthrazit","braun","schwarz","eisenglimmer","weiss","grau"]}, {v:"edelstahl",label:"Edelstahl",sub:"rostfrei und zeitlos",sw:SW_EDELSTAHL,colors:["edelstahl"],chip:"Edelstahl-Optik"} ],
-          match:colorsetMatch("farbe") },
+        { key:"led", type:"single",
+          q:"Soll die Paketbox beleuchtet sein?",
+          opts:[ {v:"ja",label:"Mit LED-Beleuchtung",sub:"beleuchtetes Namensschild",chip:"Mit LED"}, {v:"nein",label:"Ohne Beleuchtung",chip:"Ohne LED"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"LED egal"} ],
+          match:(p,v)=>(v==="ja"?!!p.led:!p.led)?1:0.2 },
         { key:"gravur", type:"single",
           q:"Wie möchten Sie Ihre Box beschriften?",
           opts:[ {v:"lasergravur",label:"Lasergravur",sub:"individuell, dauerhaft"}, {v:"namensschild",label:"Austauschbares Schild",sub:"flexibel wechselbar",chip:"Wechselschild"}, {v:"ohne",label:"Ohne Beschriftung",chip:"Ohne Gravur"} ] },
       ],
       products: [
-        {name:"Bispo 2 — Paketbox mit Briefkasten & Gravur", price:329, reviews:173, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"edelstahl", gravur:"lasergravur"},
+        {name:"Bispo 2 — Paketbox mit Briefkasten & Gravur", price:329, reviews:173, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"anthrazit", gravur:"lasergravur"},
         {name:"Taren — Paketbox mit Briefkasten & Gravur", price:339, reviews:33, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"weiss", gravur:"lasergravur"},
-        {name:"Zivo 2 — Paketbox mit Briefkasten, Entnahme Rückseite", price:339, reviews:13, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"edelstahl", gravur:"lasergravur"},
+        {name:"Zivo 2 — Paketbox mit Briefkasten, Entnahme Rückseite", price:339, reviews:13, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"eisenglimmer", gravur:"lasergravur"},
         {name:"Zivo 2 — mit Briefkasten, austauschbares Schild, Anthrazit", price:309, reviews:6, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"anthrazit", gravur:"namensschild"},
-        {name:"Bispo 2 LED — Paketbox mit Briefkasten & Gravur", price:369, reviews:36, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"grau", gravur:"lasergravur"},
-        {name:"Bispo 2 SF — Briefkasten, Sichtfenster, Anthrazit", price:349, reviews:5, kombi:["briefkasten"], montage:"wand", groesse:"L", faecher:1, farbe:"anthrazit", gravur:"lasergravur"},
-        {name:"Bispo Funk — Funk-Paketbox mit Klingel & Briefkasten", price:379, reviews:16, kombi:["briefkasten","klingel"], montage:"wand", groesse:"M", faecher:1, klingeltaster:1, farbe:"edelstahl", gravur:"lasergravur"},
-        {name:"Zivo 2 Renz LED — Paketbox, austauschbares Schild, Anthrazit", price:349, reviews:4, kombi:["paketbox"], montage:"wand", groesse:"M", farbe:"anthrazit", gravur:"namensschild"},
+        {name:"Bispo 2 LED — Paketbox mit Briefkasten & Gravur", price:369, reviews:36, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"grau", gravur:"lasergravur", led:true},
+        {name:"Bispo 2 SF — Briefkasten, Sichtfenster, Anthrazit", price:349, reviews:5, kombi:["briefkasten"], montage:"wand", groesse:"L", faecher:1, farbe:"anthrazit", gravur:"lasergravur", led:true},
+        {name:"Bispo Funk — Funk-Paketbox mit Klingel & Briefkasten", price:379, reviews:16, kombi:["briefkasten","klingel"], montage:"wand", groesse:"M", faecher:1, klingeltaster:1, farbe:"anthrazit", gravur:"lasergravur"},
+        {name:"Zivo 2 Renz LED — Paketbox, austauschbares Schild, Anthrazit", price:349, reviews:4, kombi:["paketbox"], montage:"wand", groesse:"M", farbe:"anthrazit", gravur:"namensschild", led:true},
         {name:"Ben — Paketbox XXL, höhenverstellbare Füße, Anthrazit", price:699, reviews:6, kombi:["paketbox"], montage:"freistehend", groesse:"XL", farbe:"anthrazit", gravur:"namensschild"},
-        {name:"Bispo Max 2 — Paketbox XL mit Briefkasten & Gravur", price:549, reviews:26, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"edelstahl", gravur:"lasergravur"},
-        {name:"Bispo Max 2 — XL mit Briefkasten, LED, Anthrazit", price:589, reviews:5, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"anthrazit", gravur:"lasergravur"},
+        {name:"Bispo Max 2 — Paketbox XL mit Briefkasten & Gravur", price:549, reviews:26, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"eisenglimmer", gravur:"lasergravur"},
+        {name:"Bispo Max 2 — XL mit Briefkasten, LED, Anthrazit", price:589, reviews:5, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"anthrazit", gravur:"lasergravur", led:true},
         {name:"Bispo 3 — Paketbox mit Briefkasten, Sichtfenster & Gravur", price:419, reviews:8, kombi:["briefkasten"], montage:"wand", groesse:"L", faecher:1, farbe:"schwarz", gravur:"lasergravur"},
       ],
     },
@@ -396,44 +421,131 @@
     sicherheitstechnik: {
       img: "Kaufbrater/Sicherheitstechnik.png",
       steps: [
-        { key:"einsatz", type:"single",
+        { key:"produktart", type:"single",
+          q:"Wonach suchen Sie?",
+          opts:[ {v:"einzelkamera",label:"Einzelkamera",sub:"eine einzelne Überwachungskamera",chip:"Einzelkamera"}, {v:"set",label:"Komplett-Set",sub:"mehrere Kameras inkl. Rekorder",chip:"Komplett-Set"}, {v:"alarm",label:"Alarmanlage",sub:"Funk-Alarm mit Meldern & Sirene",chip:"Alarmanlage"} ],
+          match:(p,v)=>p.produktart===v?1:0 },
+
+        /* ── Einzelkamera ── */
+        { key:"einsatz", type:"single", when:a=>a.produktart==="einzelkamera",
           q:"Wo möchten Sie überwachen?",
           opts:[ {v:"innen",label:"Innenbereich",sub:"geschützt, im Haus",chip:"Innen"}, {v:"aussen",label:"Außenbereich",sub:"IP67, wetterfest",chip:"Außen"}, {v:"beide",label:"Innen & Außen",sub:"flexibel einsetzbar",chip:"Innen & Außen"} ],
           match:(p,v)=> v==="beide" ? 1 : v==="aussen" ? (p.einsatz==="aussen"?1:0.1) : (p.einsatz==="innen"?1:(p.einsatz==="aussen"?0.6:0.3)) },
-        { key:"anschluss", type:"single",
+        { key:"anschluss", type:"single", when:a=>a.produktart==="einzelkamera",
           q:"Anschluss & Stromversorgung?",
           opts:[ {v:"wlan",label:"WLAN",sub:"kabellos · Strom per Netzteil"}, {v:"lan",label:"LAN / PoE",sub:"Strom + Daten über ein Netzwerkkabel",chip:"LAN / PoE"} ],
           match:(p,v)=>p.anschluss===v?1:0.2 },
-        { key:"aufloesung", type:"single",
+        { key:"aufloesung", type:"single", when:a=>a.produktart==="einzelkamera",
           q:"Welche Bildauflösung soll es sein?",
           opts:[ {v:2,label:"2 MP",sub:"Full HD"}, {v:4,label:"4 MP",sub:"Full HD+"}, {v:6,label:"6 MP",sub:"hohe Detailschärfe"}, {v:8,label:"8 MP (4K)",sub:"maximale Detailschärfe"} ],
           match:(p,v)=>{ const ord=[2,4,6,8]; const d=Math.abs(ord.indexOf(p.mp)-ord.indexOf(v)); return d===0?1:d===1?0.5:0.2; } },
-        { key:"smart", type:"multi",
+        { key:"smart", type:"multi", when:a=>a.produktart==="einzelkamera",
           q:"Welche smarten Funktionen sind Ihnen wichtig?",
-          opts:[ {v:"app",label:"Smartphone-App",sub:"Live-Bild & Benachrichtigungen"}, {v:"ki",label:"KI-Erkennung",sub:"erkennt Person / Fahrzeug"} ],
-          match:(p,set)=>{ const need=[...set]; return need.filter(k=>p.smart.includes(k)).length/need.length; } },
-        { key:"kameratyp", type:"single",
+          opts:[ {v:"app",label:"Smartphone-App",sub:"Live-Bild & Benachrichtigungen"}, {v:"ki",label:"KI-Erkennung",sub:"erkennt Person / Fahrzeug"}, {v:"farbnacht",label:"Farb-Nachtsicht",sub:"Smart Hybrid Light – Farbe bei Nacht"} ],
+          match:(p,set)=>{ const need=[...set]; return need.filter(k=>(p.smart||[]).includes(k)).length/need.length; } },
+        { key:"kameratyp", type:"single", when:a=>a.produktart==="einzelkamera",
           q:"Welcher Kameratyp?",
-          opts:[ {v:"bullet",label:"Bullet",sub:"länglich, gerichtet"}, {v:"dome",label:"Dome",sub:"kuppelförmig, dezent"}, {v:"turret",label:"Turret",sub:"kompakt, flexibel"}, {v:"ptz",label:"PTZ",sub:"schwenk- & neigbar",chip:"PTZ"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Bauform egal"} ],
+          opts:[ {v:"bullet",label:"Bullet",sub:"länglich, gerichtet"}, {v:"dome",label:"Dome",sub:"kuppelförmig, dezent"}, {v:"turret",label:"Turret",sub:"kompakt, flexibel"}, {v:"ptz",label:"PTZ",sub:"schwenk- & neigbar",chip:"PTZ"}, {v:"dual",label:"Dual-Objektiv",sub:"zwei Linsen, mehr Überblick",chip:"Dual-Objektiv"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Bauform egal"} ],
           match:(p,v)=>p.kameratyp===v?1:0.3 },
-        { key:"farbe", type:"single",
-          q:"Welche Gehäusefarbe bevorzugen Sie?",
-          opts:[ {v:"weiss",label:"Weiß",sub:"klassisch, unauffällig",sw:"#FFFFFF"}, {v:"schwarz",label:"Schwarz",sub:"dezent bei Nacht",sw:"#1A171B"} ],
-          match:(p,v)=>p.farbe===v?1:0.3 },
+
+        /* ── Komplett-Set ── */
+        { key:"set_anschluss", type:"single", when:a=>a.produktart==="set",
+          q:"Welche Verkabelung soll das Set haben?",
+          opts:[ {v:"ip",label:"IP-Set (PoE)",sub:"verkabelt, dauerhaft stabil",chip:"IP-Set"}, {v:"wlan",label:"EasyLink WLAN-Set",sub:"kabellos, einfache Montage",chip:"WLAN-Set"} ],
+          match:(p,v)=>p.anschluss===v?1:0.2 },
+        { key:"set_anzahl", type:"single", when:a=>a.produktart==="set",
+          q:"Wie viele Kameras benötigen Sie?",
+          opts:[ {v:2,label:"2 Kameras",chip:"2 Kameras"}, {v:4,label:"4 Kameras",chip:"4 Kameras"} ],
+          match:(p,v)=>p.anzahl===v?1:0.4 },
+        { key:"set_aufloesung", type:"single", when:a=>a.produktart==="set",
+          q:"Welche Bildauflösung soll das Set haben?",
+          opts:[ {v:4,label:"4 MP",sub:"Full HD+"}, {v:6,label:"6 MP",sub:"hohe Detailschärfe"}, {v:8,label:"8 MP (4K)",sub:"maximale Detailschärfe"} ],
+          match:(p,v)=>{ const ord=[4,6,8]; const d=Math.abs(ord.indexOf(p.mp)-ord.indexOf(v)); return d===0?1:d===1?0.5:0.2; } },
+        { key:"set_smart", type:"multi", when:a=>a.produktart==="set",
+          q:"Welche smarten Funktionen sind Ihnen wichtig?",
+          opts:[ {v:"app",label:"Smartphone-App",sub:"Live-Bild & Benachrichtigungen"}, {v:"ki",label:"KI-Erkennung",sub:"erkennt Person / Fahrzeug"}, {v:"farbnacht",label:"Farb-Nachtsicht",sub:"Smart Hybrid Light – Farbe bei Nacht"} ],
+          match:(p,set)=>{ const need=[...set]; return need.filter(k=>(p.smart||[]).includes(k)).length/need.length; } },
+
+        /* ── Alarmanlage ── */
+        { key:"alarm_was", type:"single", when:a=>a.produktart==="alarm",
+          q:"Was benötigen Sie für Ihre Alarmanlage?",
+          opts:[ {v:"set",label:"Komplett-Set (Starter)",sub:"Hub, Melder, Sirene & Fernbedienung",chip:"Alarm-Set"}, {v:"tuer",label:"Tür-/Fensterkontakt",sub:"Funk-Magnetkontakt",chip:"Tür-/Fensterkontakt"}, {v:"bewegung",label:"Bewegungsmelder",sub:"PIR, haustierimmun",chip:"Bewegungsmelder"}, {v:"sirene",label:"Sirene",sub:"Innen- oder Außensirene",chip:"Sirene"}, {v:"bedienteil",label:"Bedienteil",sub:"Keypad oder Fernbedienung",chip:"Bedienteil"} ],
+          match:(p,v)=>p.alarm_was===v?1:0.2 },
       ],
       products: [
-        {name:"HiLook 4 MP WLAN Bullet IPC-B140HA-D", price:69.99, reviews:4, einsatz:"aussen", mp:4, anschluss:"wlan", kameratyp:"bullet", smart:["app"], farbe:"weiss"},
-        {name:"HiLook 4 MP WLAN Dome IPC-D140HA-D", price:99.99, reviews:2, einsatz:"aussen", mp:4, anschluss:"wlan", kameratyp:"dome", smart:["app"], farbe:"weiss"},
-        {name:"HiLook 4 MP WLAN PT-Kamera PTZ-N2C400I-W", price:79.99, reviews:1, einsatz:"aussen", mp:4, anschluss:"wlan", kameratyp:"ptz", smart:["app","ki"], farbe:"weiss"},
-        {name:"HiLook 4 MP Smart Hybrid Light Mini PT PTZ-N2C400M-DE(B)", price:79.99, reviews:2, einsatz:"aussen", mp:4, anschluss:"lan", kameratyp:"ptz", smart:["app","ki"], farbe:"schwarz"},
-        {name:"HiLook 4 MP TandemVu PT-Kamera PTZ-N2D400M | Dual-Objektiv", price:180, reviews:1, einsatz:"aussen", mp:4, anschluss:"lan", kameratyp:"ptz", smart:["app","ki"], farbe:"weiss"},
-        {name:"HiLook 4K Bullet IPC-B180HA-LUF", price:89.99, reviews:2, einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"bullet", smart:["app","ki"], farbe:"weiss"},
-        {name:"HiLook 4K Dome IPC-D180HA-LU", price:89.99, reviews:2, einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"dome", smart:["app","ki"], farbe:"weiss"},
-        {name:"HiLook 4K Turret IPC-T280HA-LUF", price:89.99, reviews:7, einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"turret", smart:["app","ki"], farbe:"weiss"},
-        {name:"HiLook 8 MP 180° Turret IPC-T280HAD-LUF/SL", price:149, reviews:2, einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"turret", smart:["app","ki"], farbe:"weiss"},
-        {name:"HiLook 8 MP Bullet IPC-B480HAD-LUF/SL", price:159, reviews:0, einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"bullet", smart:["app","ki"], farbe:"weiss"},
-        {name:"HiLook 6 MP Turret IPC-T260HA", price:74.99, reviews:0, einsatz:"aussen", mp:6, anschluss:"lan", kameratyp:"turret", smart:["app"], farbe:"weiss"},
-        {name:"HiLook 4 MP Innen-Dome IPC-D140H", price:59.99, reviews:0, einsatz:"innen", mp:4, anschluss:"lan", kameratyp:"dome", smart:["app"], farbe:"weiss"},
+        /* Einzelkameras */
+        {name:"HiLook 4 MP WLAN Bullet IPC-B140HA-D", price:69.99, reviews:4, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"wlan", kameratyp:"bullet", smart:["app"]},
+        {name:"HiLook 4 MP WLAN Dome IPC-D140HA-D", price:99.99, reviews:2, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"wlan", kameratyp:"dome", smart:["app"]},
+        {name:"HiLook 4 MP WLAN PT-Kamera PTZ-N2C400I-W", price:79.99, reviews:1, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"wlan", kameratyp:"ptz", smart:["app","ki"]},
+        {name:"HiLook 4 MP Smart Hybrid Light Mini PT PTZ-N2C400M-DE(B)", price:79.99, reviews:2, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"lan", kameratyp:"ptz", smart:["app","ki","farbnacht"]},
+        {name:"HiLook 4 MP TandemVu PT-Kamera PTZ-N2D400M | Dual-Objektiv", price:180, reviews:1, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"lan", kameratyp:"dual", smart:["app","ki"]},
+        {name:"HiLook 4K Bullet IPC-B180HA-LUF", price:89.99, reviews:2, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"bullet", smart:["app","ki","farbnacht"]},
+        {name:"HiLook 4K Dome IPC-D180HA-LU", price:89.99, reviews:2, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"dome", smart:["app","ki"]},
+        {name:"HiLook 4K Turret IPC-T280HA-LUF", price:89.99, reviews:7, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"turret", smart:["app","ki","farbnacht"]},
+        {name:"HiLook 8 MP 180° Turret IPC-T280HAD-LUF/SL", price:149, reviews:2, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"turret", smart:["app","ki","farbnacht"]},
+        {name:"HiLook 8 MP Bullet IPC-B480HAD-LUF/SL", price:159, reviews:0, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"bullet", smart:["app","ki","farbnacht"]},
+        {name:"HiLook 6 MP Turret IPC-T260HA", price:74.99, reviews:0, produktart:"einzelkamera", einsatz:"aussen", mp:6, anschluss:"lan", kameratyp:"turret", smart:["app"]},
+        {name:"HiLook 4 MP Innen-Dome IPC-D140H", price:59.99, reviews:0, produktart:"einzelkamera", einsatz:"innen", mp:4, anschluss:"lan", kameratyp:"dome", smart:["app"]},
+        /* Komplett-Sets */
+        {name:"HiLook 4K Überwachungskamera-Set | 4× Bullet | NVR 8-CH | 2 TB", price:499, reviews:7, produktart:"set", anschluss:"ip", mp:8, anzahl:4, smart:["app","ki","farbnacht"]},
+        {name:"HiLook 4K Überwachungskamera-Set | 4× Turret | NVR 8-CH | 2 TB", price:499, reviews:10, produktart:"set", anschluss:"ip", mp:8, anzahl:4, smart:["app","ki","farbnacht"]},
+        {name:"HiLook 6 MP Überwachungskamera-Set | 4× Bullet | NVR 8-CH | 2 TB", price:429, reviews:3, produktart:"set", anschluss:"ip", mp:6, anzahl:4, smart:["app","ki","farbnacht"]},
+        {name:"HiLook 6 MP Überwachungskamera-Set | 4× Turret | NVR 8-CH | 2 TB", price:429, reviews:2, produktart:"set", anschluss:"ip", mp:6, anzahl:4, smart:["app","ki","farbnacht"]},
+        {name:"HiLook 8 MP Set | 180° Sichtfeld | 4× Turret | NVR 16-CH | 4 TB", price:739.50, reviews:1, produktart:"set", anschluss:"ip", mp:8, anzahl:4, smart:["app","ki","farbnacht"]},
+        {name:"HiLook EasyLink WLAN-Kit | 2× 4 MP Bullet | WiFi NVS | Farbnachtsicht", price:299, reviews:0, produktart:"set", anschluss:"wlan", mp:4, anzahl:2, smart:["app","ki","farbnacht"]},
+        {name:"HiLook EasyLink WLAN-Kit | 4 MP Bullet + PT Turret | WiFi NVS", price:399, reviews:0, produktart:"set", anschluss:"wlan", mp:4, anzahl:2, smart:["app","ki","farbnacht"]},
+        /* Alarmanlagen */
+        {name:"HiLook Funk-Alarmanlage | 6-teiliges Komplettset (Hub + Melder + Sirene)", price:199, reviews:0, produktart:"alarm", alarm_was:"set"},
+        {name:"HiLook Funk-Alarmanlage | Basis-Set (Hub + Melder + Fernbedienung)", price:149, reviews:0, produktart:"alarm", alarm_was:"set"},
+        {name:"HiLook Tür- & Fensterkontakt | Funk-Magnetkontakt", price:24.99, reviews:0, produktart:"alarm", alarm_was:"tuer"},
+        {name:"HiLook Funk-Bewegungsmelder | PIR | haustierimmun bis 25 kg", price:34.99, reviews:0, produktart:"alarm", alarm_was:"bewegung"},
+        {name:"HiLook Funk-Keypad | LED-Statusanzeige", price:44.99, reviews:0, produktart:"alarm", alarm_was:"bedienteil"},
+        {name:"HiLook Funk-Fernbedienung | 4 Tasten", price:19.99, reviews:0, produktart:"alarm", alarm_was:"bedienteil"},
+        {name:"HiLook Funk-Innensirene | 95 dB | LED-Blitzlicht", price:39.99, reviews:0, produktart:"alarm", alarm_was:"sirene"},
+        {name:"HiLook Funk-Außensirene | 110 dB | IP65", price:69.99, reviews:0, produktart:"alarm", alarm_was:"sirene"},
+      ],
+    },
+
+    tuerklingel: {
+      img: "Kaufbrater/Türklingel.png",
+      steps: [
+        { key:"taster", type:"single",
+          q:"Wie viele Klingeltaster benötigen Sie?",
+          opts:[ {v:1,label:"1 Taster",sub:"Einfamilienhaus",chip:"1 Taster"}, {v:2,label:"2 Taster",sub:"Zweifamilienhaus",chip:"2 Taster"}, {v:3,label:"3 Taster",sub:"Mehrfamilienhaus",chip:"3 Taster"}, {v:4,label:"4 Taster",sub:"Mehrfamilienhaus",chip:"4 Taster"}, {v:5,label:"5+ Taster",sub:"Großanlage",chip:"5+ Taster"} ],
+          match:(p,v)=>{ const d=Math.abs(p.taster-v); return d===0?1:d===1?0.4:0.1; } },
+        { key:"anschluss", type:"single",
+          q:"Funkklingel oder verkabelt?",
+          opts:[ {v:"funk",label:"Funkklingel",sub:"kabellos, einfach nachrüstbar",chip:"Funkklingel"}, {v:"kabel",label:"Kabelgebunden",sub:"fest verdrahtet",chip:"Kabelgebunden"} ],
+          match:(p,v)=>p.anschluss===v?1:0.2 },
+        { key:"montage", type:"single", when:a=>a.anschluss==="kabel",
+          q:"Welche Montageart?",
+          opts:[ {v:"aufputz",label:"Aufputz",sub:"auf der Wand",chip:"Aufputz"}, {v:"unterputz",label:"Unterputz",sub:"in der Wand",chip:"Unterputz"} ],
+          match:(p,v)=>p.montage===v?1:0.2 },
+        { key:"namensschild", type:"single",
+          q:"Welchen Namensschild-Typ bevorzugen Sie?",
+          opts:[ {v:"gravur",label:"Lasergravur",sub:"dauerhaft eingraviert",chip:"Gravur"}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Wechselschild"}, {v:"led3d",label:"LED-3D-Namensschild",sub:"beleuchtet, plastisch",chip:"LED-3D-Schild"}, {v:"ohne",label:"Ohne",sub:"neutral",neutral:true} ],
+          match:(p,v)=>p.namensschild===v?1:0.2 },
+        { key:"optik", type:"single",
+          q:"Welche Optik passt zu Ihrem Eingang?",
+          opts:[ {v:"edelstahl",label:"Edelstahl",sub:"rostfrei V2A, zeitlos",sw:SW_EDELSTAHL,colors:["edelstahl"]}, {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Eisenglimmer, Grau, Schwarz oder Weiß",sw:SW_KLASSISCH,colors:["anthrazit","eisenglimmer","grau","schwarz","weiss"]} ],
+          match:colorsetMatch("finish") },
+      ],
+      products: [
+        {name:"Stella — Türklingel mit Gravur (LED-Taster optional)", price:24.99, reviews:132, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Vera — Funkklingel Aufputz mit Gravur", price:69.99, reviews:27, taster:1, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Vitus — Funkklingel kabellos Edelstahl V2A (IP67, 150 m)", price:79.99, reviews:88, taster:1, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Vitus — Aufputz Türklingel mit Gravur", price:59.99, reviews:45, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Parisa — Aufputz Türklingel, austauschbares Schild", price:39.99, reviews:12, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        {name:"Otis — Aufputz Klingel, austauschbar | Anthrazit", price:34.99, reviews:23, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"wechsel", finish:"anthrazit"},
+        {name:"Alan — Funkklingel für Einfamilienhaus mit Gravur", price:89.99, reviews:49, taster:1, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Parisa — Funkklingel Aufputz, austauschbares Schild", price:59.99, reviews:17, taster:1, anschluss:"funk", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        {name:"Tara M2 — Funkklingel mit austauschbaren Namensschildern", price:119, reviews:14, taster:2, anschluss:"funk", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        {name:"Otto — Türklingel mit LED-3D-Namensschild", price:49.99, reviews:11, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"led3d", finish:"edelstahl"},
+        {name:"Heidi — Türklingel aus Edelstahl (LED-Taster optional)", price:49.99, reviews:14, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Vitus M2 — Funkklingel für Zweifamilienhaus mit Gravur", price:89.99, reviews:24, taster:2, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Tara M3 — Funkklingel für drei Parteien", price:139, reviews:8, taster:3, anschluss:"funk", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        {name:"Mehrfamilien-Klingelplatte | 3 Taster | Unterputz", price:179, reviews:5, taster:3, anschluss:"kabel", montage:"unterputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Otis — Aufputz Klingel, austauschbar | Edelstahl", price:34.99, reviews:19, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
       ],
     },
   };
@@ -465,7 +577,10 @@
     function stepHTML(i){
       const steps = activeSteps();
       const s = steps[i];
-      const last = i === steps.length - 1;
+      /* Only the genuine end of a multi-step flow gets the "Empfehlung anzeigen" CTA.
+         A lone gating step (e.g. the Produktart opener before a branch unlocks more
+         steps) shows "Weiter" instead. */
+      const last = i === steps.length - 1 && steps.length > 1;
       let dots = "";
       for(let d=0; d<steps.length; d++) dots += '<span class="' + (d<i?"is-done":(d===i?"is-current":"")) + '"></span>';
 
@@ -484,10 +599,11 @@
         '</span>') : "";
 
       return '<div class="advisor__step">'+
-        '<div class="advisor__progress">'+
-          '<span class="advisor__progress-dots">'+dots+'</span>'+
-          '<span class="advisor__progress-label">Schritt '+(i+1)+' von '+steps.length+'</span>'+
-        '</div>'+
+        (steps.length > 1 ?
+          '<div class="advisor__progress">'+
+            '<span class="advisor__progress-dots">'+dots+'</span>'+
+            '<span class="advisor__progress-label">Schritt '+(i+1)+' von '+steps.length+'</span>'+
+          '</div>' : '')+
         '<div class="advisor__qrow">'+
           '<div class="advisor__q-wrap"><h3 class="advisor__q">'+s.q+'</h3>'+(s.hint?'<p class="advisor__qhint">'+s.hint+'</p>':"")+'</div>'+
           info+
