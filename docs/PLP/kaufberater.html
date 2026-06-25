@@ -235,7 +235,6 @@
     '<h4>Größenratgeber</h4>'+
     '<dl><dt>S</dt><dd>DHL Päckchen S · bis 35 × 25 × 10 cm</dd>'+
     '<dt>M</dt><dd>DHL Päckchen M · bis 37,5 × 13,5 × 30 cm</dd>'+
-    '<dt>L</dt><dd>DHL Paket · bis 60 × 36 × 22 cm</dd>'+
     '<dt>XL</dt><dd>Großpaket · mehrere / sperrige Sendungen</dd></dl>'+
     '<p class="note">Maße = max. Paketgröße im Innenraum (B × H × T). Mehrere kleine Pakete passen entsprechend übereinander.</p>';
 
@@ -342,8 +341,8 @@
           opts:[ {v:"freistehend",label:"Freistehend",sub:"mit Standfuß / Füßen"}, {v:"wand",label:"Wandmontage",sub:"an der Hauswand befestigt"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Montage egal"} ] },
         { key:"groesse", type:"single", info:SIZE_TOOLTIP, infoLabel:"Größenratgeber",
           q:"Welche Paketgröße soll hineinpassen?",
-          opts:[ {v:"S",label:"S — DHL Päckchen S",sub:"bis 35 × 25 × 10 cm",chip:"Größe S"}, {v:"M",label:"M — DHL Päckchen M",sub:"bis 37,5 × 13,5 × 30 cm",chip:"Größe M"}, {v:"L",label:"L — DHL Paket",sub:"bis 60 × 36 × 22 cm",chip:"Größe L"}, {v:"XL",label:"XL — Großpaket",sub:"mehrere / sperrige Pakete",chip:"Größe XL"} ],
-          match:(p,v)=>{ const ord=["S","M","L","XL"]; const d=Math.abs(ord.indexOf(p.groesse)-ord.indexOf(v)); return d===0?1:d===1?0.5:0.1; } },
+          opts:[ {v:"S",label:"S — DHL Päckchen S",sub:"bis 35 × 25 × 10 cm",chip:"Größe S"}, {v:"M",label:"M — DHL Päckchen M",sub:"bis 37,5 × 13,5 × 30 cm",chip:"Größe M"}, {v:"XL",label:"XL — Großpaket",sub:"mehrere / sperrige Pakete",chip:"Größe XL"} ],
+          match:(p,v)=>{ const ord=["S","M","XL"]; const d=Math.abs(ord.indexOf(p.groesse)-ord.indexOf(v)); return d===0?1:d===1?0.5:0.1; } },
         { key:"faecher", type:"single", when:a=>a.kombi.has("briefkasten"),
           q:"Wie viele Brieffächer benötigen Sie?",
           opts:[ {v:1,label:"1 Fach",sub:"für 1 Haushalt",chip:"1 Brieffach"}, {v:2,label:"2 Fächer",sub:"für 2 Haushalte",chip:"2 Brieffächer"}, {v:3,label:"3 Fächer",sub:"für 3 Haushalte",chip:"3 Brieffächer"}, {v:4,label:"4 Fächer",sub:"für 4 Haushalte",chip:"4 Brieffächer"}, {v:5,label:"5 Fächer",sub:"für 5 Haushalte",chip:"5 Brieffächer"} ],
@@ -366,13 +365,13 @@
         {name:"Zivo 2 — Paketbox mit Briefkasten, Entnahme Rückseite", price:339, reviews:13, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"eisenglimmer", gravur:"lasergravur"},
         {name:"Zivo 2 — mit Briefkasten, austauschbares Schild, Anthrazit", price:309, reviews:6, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"anthrazit", gravur:"namensschild"},
         {name:"Bispo 2 LED — Paketbox mit Briefkasten & Gravur", price:369, reviews:36, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"grau", gravur:"lasergravur", led:true},
-        {name:"Bispo 2 SF — Briefkasten, Sichtfenster, Anthrazit", price:349, reviews:5, kombi:["briefkasten"], montage:"wand", groesse:"L", faecher:1, farbe:"anthrazit", gravur:"lasergravur", led:true},
+        {name:"Bispo 2 SF — Briefkasten, Sichtfenster, Anthrazit", price:349, reviews:5, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"anthrazit", gravur:"lasergravur", led:true},
         {name:"Bispo Funk — Funk-Paketbox mit Klingel & Briefkasten", price:379, reviews:16, kombi:["briefkasten","klingel"], montage:"wand", groesse:"M", faecher:1, klingeltaster:1, farbe:"anthrazit", gravur:"lasergravur"},
         {name:"Zivo 2 Renz LED — Paketbox, austauschbares Schild, Anthrazit", price:349, reviews:4, kombi:["paketbox"], montage:"wand", groesse:"M", farbe:"anthrazit", gravur:"namensschild", led:true},
         {name:"Ben — Paketbox XXL, höhenverstellbare Füße, Anthrazit", price:699, reviews:6, kombi:["paketbox"], montage:"freistehend", groesse:"XL", farbe:"anthrazit", gravur:"namensschild"},
         {name:"Bispo Max 2 — Paketbox XL mit Briefkasten & Gravur", price:549, reviews:26, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"eisenglimmer", gravur:"lasergravur"},
         {name:"Bispo Max 2 — XL mit Briefkasten, LED, Anthrazit", price:589, reviews:5, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"anthrazit", gravur:"lasergravur", led:true},
-        {name:"Bispo 3 — Paketbox mit Briefkasten, Sichtfenster & Gravur", price:419, reviews:8, kombi:["briefkasten"], montage:"wand", groesse:"L", faecher:1, farbe:"schwarz", gravur:"lasergravur"},
+        {name:"Bispo 3 — Paketbox mit Briefkasten, Sichtfenster & Gravur", price:419, reviews:8, kombi:["briefkasten"], montage:"wand", groesse:"XL", faecher:1, farbe:"schwarz", gravur:"lasergravur"},
       ],
     },
 
