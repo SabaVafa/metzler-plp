@@ -319,13 +319,13 @@
         { key:"system", type:"single", match:satMatch,
           q:"Neubau oder Modernisierung Ihrer bestehenden Anlage?",
           opts:[ {v:"ip",label:"IP-System",sub:"Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung",chip:"IP-System",sat:p=>p.system==="ip"}, {v:"bus",label:"BUS-System",sub:"Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung",chip:"2-Draht-BUS",sat:p=>p.system==="bus",when:a=>a.verwendung!=="flexibel"&&a.type!=="audio"}, {v:"weiss",label:"Weiß ich nicht",sub:"wir empfehlen passende Modelle für beide Systeme",neutral:true} ] },
-        { key:"tuer", type:"multi", when:p=>p.system!=="bus",   /* 2-Draht-BUS line offers no dedicated Zutritt features → hide this step */
+        { key:"tuer", type:"multi", when:a=>a.system!=="bus"&&a.type!=="audio",   /* no dedicated Zutritt features on the 2-Draht-BUS line or Audio-only models → hide this step */
           q:"Wie möchten Sie Zutritt gewähren?", hint:"Mehrfachauswahl möglich.",
           opts:[ {v:"fingerprint",label:"Fingerabdrucksensor",sub:"schlüsselloser Zutritt",chip:"Fingerprint"}, {v:"rfid",label:"RFID-Chip",sub:"Transponder oder Karte",chip:"RFID"}, {v:"gesicht",label:"Gesichtserkennung",sub:"Tür öffnet beim Erkennen",chip:"Gesichtserkennung"}, {v:"pin",label:"PIN-Code",sub:"Zahlencode am Tastenfeld",chip:"PIN-Code"}, {v:"qr",label:"QR-Code",sub:"Zutritt per QR-Scan",chip:"QR-Code"} ],
           match:(p,set)=>{ const need=[...set]; return need.filter(k=>p.tuer.includes(k)).length/need.length; } },
         { key:"namensschild", type:"single", match:satMatch,
           q:"Welches Namensschild bevorzugen Sie?",
-          opts:[ {v:"gravur",label:"Lasergravur",sub:"dauerhaft eingraviert",chip:"Gravur",sat:p=>p.ns==="gravur",when:a=>a.system!=="bus"}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Austauschbar",sat:p=>p.ns==="wechsel"}, {v:"display",label:"Display / digital",sub:"Namen am Touch-Display",chip:"Display",sat:p=>p.ns==="display"}, {v:"egal",label:"Egal",sub:"keine Präferenz",neutral:true} ] },
+          opts:[ {v:"gravur",label:"Lasergravur",sub:"dauerhaft eingraviert",chip:"Gravur",sat:p=>p.ns==="gravur",when:a=>a.system!=="bus"}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Austauschbar",sat:p=>p.ns==="wechsel"}, {v:"display",label:"Display / digital",sub:"Namen am Touch-Display",chip:"Display",sat:p=>p.ns==="display",when:a=>a.type!=="audio"}, {v:"egal",label:"Egal",sub:"keine Präferenz",neutral:true} ] },
         { key:"kombi", type:"single", match:satMatch,
           q:"Soll die Anlage mit einem Briefkasten kombiniert sein?",
           opts:[ {v:"nur",label:"Nur Türstation",sub:"klassische Außenstation",neutral:true}, {v:"briefkasten",label:"Mit Briefkasten & Paketbox",sub:"integrierte Brief-/Paketbox",chip:"Mit Briefkasten",sat:p=>!!p.kombi} ] },

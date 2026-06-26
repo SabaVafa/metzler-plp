@@ -642,7 +642,7 @@
       { q: 'Welches Namensschild bevorzugen Sie?', opts: [
         { label: 'Lasergravur',               sub: 'dauerhaft eingraviert',     group: 'namensschild', value: 'gravur',  chip: 'Gravur', hideWhen: function () { return busChosen(); } },
         { label: 'Austauschbares Namensschild', sub: 'jederzeit wechselbar',    group: 'namensschild', value: 'wechsel', chip: 'Austauschbar' },
-        { label: 'Display / digital',         sub: 'Namen am Touch-Display',    group: 'namensschild', value: 'display', chip: 'Display' },
+        { label: 'Display / digital',         sub: 'Namen am Touch-Display',    group: 'namensschild', value: 'display', chip: 'Display', hideWhen: function () { return picked('type', 'audio'); } },
         { label: 'Egal',                      sub: 'keine Präferenz',           neutral: true }
       ]},
       { q: 'Soll die Anlage mit einem Briefkasten kombiniert sein?', opts: [
@@ -686,7 +686,8 @@
       return (picks[IDX_SYSTEM] || []).some(function (o) { return o && o.value === 'bus'; });
     }
     function stepHidden(i) {
-      return i === IDX_ZUTRITT && IDX_ZUTRITT !== -1 && busChosen();
+      /* Zutritt features don't apply to BUS or to Audio-only models (no Türöffner). */
+      return i === IDX_ZUTRITT && IDX_ZUTRITT !== -1 && (busChosen() || picked('type', 'audio'));
     }
     function visibleSteps() {
       var a = [];
