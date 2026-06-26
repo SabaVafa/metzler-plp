@@ -624,7 +624,7 @@
       ]},
       { q: 'Möchten Sie sehen, wer vor der Tür steht?', opts: [
         { label: 'Mit Kamera (Video)', sub: 'Live-HD-Bild der Besucher', group: 'type', value: 'video', chip: 'Video' },
-        { label: 'Audio-only',         sub: 'nur sprechen, ohne Kamera',  group: 'type', value: 'audio', chip: 'Audio' }
+        { label: 'Audio-only',         sub: 'nur sprechen, ohne Kamera',  group: 'type', value: 'audio', chip: 'Audio', hideWhen: function () { return picked('verwendung', 'flexibel'); } }
       ]},
       { q: 'Neubau oder Modernisierung Ihrer bestehenden Anlage?', opts: [
         { label: 'IP-System',  sub: 'Ideal für Neubauten – nutzt LAN- oder 2-Draht-Sternverkabelung für maximale Flexibilität.', group: 'system', value: 'ip',  chip: 'IP-System' },

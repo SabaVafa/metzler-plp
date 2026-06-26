@@ -315,7 +315,7 @@
           opts:[ {v:"einfamilien",label:"Einfamilienhaus",sub:"ein Haushalt, eine Klingeltaste",chip:"Einfamilienhaus",sat:p=>p.verwendung==="einfamilien"}, {v:"mehrfamilien",label:"Mehrfamilienhaus",sub:"mehrere Parteien & Klingeltasten",chip:"Mehrfamilienhaus",sat:p=>p.verwendung==="mehrfamilien"}, {v:"flexibel",label:"Flexible Großanlage",sub:"flexibel von 1–500 Tasten",chip:"Großanlage",sat:p=>p.verwendung==="flexibel"} ] },
         { key:"type", type:"single", match:satMatch,
           q:"Möchten Sie sehen, wer vor der Tür steht?",
-          opts:[ {v:"video",label:"Mit Kamera (Video)",sub:"Live-HD-Bild der Besucher",chip:"Video",sat:p=>p.type==="video"}, {v:"audio",label:"Audio-only",sub:"nur sprechen, ohne Kamera",chip:"Audio",sat:p=>p.type==="audio"} ] },
+          opts:[ {v:"video",label:"Mit Kamera (Video)",sub:"Live-HD-Bild der Besucher",chip:"Video",sat:p=>p.type==="video"}, {v:"audio",label:"Audio-only",sub:"nur sprechen, ohne Kamera",chip:"Audio",sat:p=>p.type==="audio",when:a=>a.verwendung!=="flexibel"} ] },
         { key:"system", type:"single", match:satMatch,
           q:"Neubau oder Modernisierung Ihrer bestehenden Anlage?",
           opts:[ {v:"ip",label:"IP-System",sub:"Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung",chip:"IP-System",sat:p=>p.system==="ip"}, {v:"bus",label:"BUS-System",sub:"Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung",chip:"2-Draht-BUS",sat:p=>p.system==="bus",when:a=>a.verwendung!=="flexibel"&&a.type!=="audio"}, {v:"weiss",label:"Weiß ich nicht",sub:"wir empfehlen passende Modelle für beide Systeme",neutral:true} ] },
