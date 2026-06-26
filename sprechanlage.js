@@ -628,7 +628,7 @@
       ]},
       { q: 'Neubau oder Modernisierung Ihrer bestehenden Anlage?', opts: [
         { label: 'IP-System',  sub: 'Ideal für Neubauten – nutzt LAN- oder 2-Draht-Sternverkabelung für maximale Flexibilität.', group: 'system', value: 'ip',  chip: 'IP-System' },
-        { label: 'BUS-System', sub: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung, kein Neuverlegen nötig.',  group: 'system', value: 'bus', chip: '2-Draht-BUS', hideWhen: function () { return picked('verwendung', 'flexibel'); } },
+        { label: 'BUS-System', sub: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung, kein Neuverlegen nötig.',  group: 'system', value: 'bus', chip: '2-Draht-BUS', hideWhen: function () { return picked('verwendung', 'flexibel') || picked('type', 'audio'); } },
         { label: 'Weiß ich nicht', sub: 'Kein Problem – wir empfehlen passende Modelle für beide Systeme.',                       neutral: true }
       ]},
       { q: 'Wie möchten Sie Zutritt gewähren?', sub: 'Mehrfachauswahl möglich', opts: [
