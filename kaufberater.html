@@ -224,14 +224,24 @@
      each option carries sat(product); chosen option satisfied → 1, else small partial. */
   const satMatch = (p, v, s) => { const o = s.opts.find(o => String(o.v) === String(v)); return (o && o.sat && o.sat(p)) ? 1 : 0.2; };
 
-  /* Mülltonnenbox option availability: once a tonne count is chosen, later steps
-     should only offer what boxes of that count actually provide (e.g. Pflanzdach,
-     Sichtstreifen and Holz-/Edelstahl-Optik only exist on the 3er boxes). Returns
-     true (don't constrain) when no box matches the count, so the quiz never
-     strands an empty step. Reads the live product list off CATS at call time. */
-  function mtbHas(answers, pred) {
-    const prods = CATS.muelltonnenboxen.products;
-    const set = answers.anzahl == null ? prods : prods.filter(p => p.anzahl === answers.anzahl);
+  /* Mülltonnenbox option availability: a later-step option is only offered if some
+     box consistent with every OTHER answer so far provides it. This both narrows
+     by tonne count (e.g. a 4er box only comes in Stahl / Standard-Dach / Anthrazit)
+     and enforces cross-option rules (e.g. Edelstahl-Akzente isn't offered with a
+     Pflanzdach). exceptKey is the group being evaluated — its own answer is ignored
+     so siblings stay switchable. Returns true (don't constrain) when nothing
+     matches, so the quiz never strands an empty step. Reads CATS at call time. */
+  const MTB_OPTIK = { klassisch:["anthrazit","weiss","grau","beige"], holzoptik:["holzoptik"], "edelstahl-akzente":["edelstahl-akzente"] };
+  function mtbConsistent(p, a, exceptKey) {
+    if (exceptKey!=="anzahl"        && a.anzahl!=null                         && p.anzahl!==a.anzahl) return false;
+    if (exceptKey!=="material"      && a.material && a.material!=="egal"       && p.material!==a.material) return false;
+    if (exceptKey!=="dach"          && a.dach && a.dach!=="egal"              && p.dach!==a.dach) return false;
+    if (exceptKey!=="sichtstreifen" && a.sichtstreifen && a.sichtstreifen!=="egal" && p.sichtstreifen!==(a.sichtstreifen==="ja")) return false;
+    if (exceptKey!=="optik"         && a.optik) { const cols = MTB_OPTIK[a.optik] || [a.optik]; if (cols.indexOf(p.finish)===-1) return false; }
+    return true;
+  }
+  function mtbHas(answers, exceptKey, pred) {
+    const set = CATS.muelltonnenboxen.products.filter(p => mtbConsistent(p, answers, exceptKey));
     return !set.length || set.some(pred);
   }
 
@@ -315,7 +325,7 @@
           match:(p,set)=>{ const need=[...set]; return need.filter(k=>p.tuer.includes(k)).length/need.length; } },
         { key:"namensschild", type:"single", match:satMatch,
           q:"Welches Namensschild bevorzugen Sie?",
-          opts:[ {v:"gravur",label:"Lasergravur",sub:"dauerhaft eingraviert",chip:"Gravur",sat:p=>p.ns==="gravur"}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Austauschbar",sat:p=>p.ns==="wechsel"}, {v:"display",label:"Display / digital",sub:"Namen am Touch-Display",chip:"Display",sat:p=>p.ns==="display"}, {v:"egal",label:"Egal",sub:"keine Präferenz",neutral:true} ] },
+          opts:[ {v:"gravur",label:"Lasergravur",sub:"dauerhaft eingraviert",chip:"Gravur",sat:p=>p.ns==="gravur",when:a=>a.system!=="bus"}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Austauschbar",sat:p=>p.ns==="wechsel"}, {v:"display",label:"Display / digital",sub:"Namen am Touch-Display",chip:"Display",sat:p=>p.ns==="display"}, {v:"egal",label:"Egal",sub:"keine Präferenz",neutral:true} ] },
         { key:"kombi", type:"single", match:satMatch,
           q:"Soll die Anlage mit einem Briefkasten kombiniert sein?",
           opts:[ {v:"nur",label:"Nur Türstation",sub:"klassische Außenstation",neutral:true}, {v:"briefkasten",label:"Mit Briefkasten & Paketbox",sub:"integrierte Brief-/Paketbox",chip:"Mit Briefkasten",sat:p=>!!p.kombi} ] },
@@ -395,17 +405,17 @@
           match:(p,v)=>{ const d=Math.abs(p.anzahl-v); return d===0?1:d===1?0.4:0.1; } },
         { key:"material", type:"single",
           q:"Welches Material bevorzugen Sie?",
-          opts:[ {v:"stahl",label:"Pulverbeschichteter Stahl",sub:"robust & preiswert",chip:"Stahl",when:a=>mtbHas(a,p=>p.material==="stahl")}, {v:"aluminium",label:"Aluminium",sub:"rostfrei & besonders langlebig",when:a=>mtbHas(a,p=>p.material==="aluminium")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Material egal"} ] },
+          opts:[ {v:"stahl",label:"Pulverbeschichteter Stahl",sub:"robust & preiswert",chip:"Stahl",when:a=>mtbHas(a,"material",p=>p.material==="stahl")}, {v:"aluminium",label:"Aluminium",sub:"rostfrei & besonders langlebig",when:a=>mtbHas(a,"material",p=>p.material==="aluminium")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Material egal"} ] },
         { key:"dach", type:"single",
           q:"Welche Dachoption möchten Sie?",
-          opts:[ {v:"pflanzdach",label:"Mit Pflanzdach",sub:"begrünbar",chip:"Pflanzdach",when:a=>mtbHas(a,p=>p.dach==="pflanzdach")}, {v:"standard",label:"Standard-Ausführung",sub:"Flachdach",chip:"Standard-Dach",when:a=>mtbHas(a,p=>p.dach==="standard")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Dach egal"} ] },
+          opts:[ {v:"pflanzdach",label:"Mit Pflanzdach",sub:"begrünbar",chip:"Pflanzdach",when:a=>mtbHas(a,"dach",p=>p.dach==="pflanzdach")}, {v:"standard",label:"Standard-Ausführung",sub:"Flachdach",chip:"Standard-Dach",when:a=>mtbHas(a,"dach",p=>p.dach==="standard")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Dach egal"} ] },
         { key:"sichtstreifen", type:"single",
           q:"Möchten Sie dekorative Sichtstreifen?",
-          opts:[ {v:"ja",label:"Mit Sichtstreifen",sub:"dekorative Akzentstreifen",chip:"Mit Sichtstreifen",when:a=>mtbHas(a,p=>p.sichtstreifen)}, {v:"nein",label:"Ohne Sichtstreifen",sub:"glatte, geschlossene Front",chip:"Ohne Sichtstreifen",when:a=>mtbHas(a,p=>!p.sichtstreifen)}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Sichtstreifen egal"} ],
+          opts:[ {v:"ja",label:"Mit Sichtstreifen",sub:"dekorative Akzentstreifen",chip:"Mit Sichtstreifen",when:a=>mtbHas(a,"sichtstreifen",p=>p.sichtstreifen)}, {v:"nein",label:"Ohne Sichtstreifen",sub:"glatte, geschlossene Front",chip:"Ohne Sichtstreifen",when:a=>mtbHas(a,"sichtstreifen",p=>!p.sichtstreifen)}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Sichtstreifen egal"} ],
           match:(p,v)=>(v==="ja"?p.sichtstreifen:!p.sichtstreifen)?1:0.2 },
         { key:"optik", type:"single",
           q:"Welche Optik passt zu Ihrem Zuhause?",
-          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Weiß, Grau oder Beige",sw:SW_KLASSISCH,colors:["anthrazit","weiss","grau","beige"],when:a=>mtbHas(a,p=>["anthrazit","weiss","grau","beige"].indexOf(p.finish)!==-1)}, {v:"holzoptik",label:"Holzoptik",sub:"warme Lamellen-Optik",sw:SW_HOLZ,colors:["holzoptik"],when:a=>mtbHas(a,p=>p.finish==="holzoptik")}, {v:"edelstahl-akzente",label:"Edelstahl-Akzente",sub:"edle Metall-Details",sw:SW_EDELSTAHL,colors:["edelstahl-akzente"],chip:"Edelstahl-Akzente",when:a=>mtbHas(a,p=>p.finish==="edelstahl-akzente")} ],
+          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Weiß, Grau oder Beige",sw:SW_KLASSISCH,colors:["anthrazit","weiss","grau","beige"],when:a=>mtbHas(a,"optik",p=>["anthrazit","weiss","grau","beige"].indexOf(p.finish)!==-1)}, {v:"holzoptik",label:"Holzoptik",sub:"warme Lamellen-Optik",sw:SW_HOLZ,colors:["holzoptik"],when:a=>mtbHas(a,"optik",p=>p.finish==="holzoptik")}, {v:"edelstahl-akzente",label:"Edelstahl-Akzente",sub:"edle Metall-Details",sw:SW_EDELSTAHL,colors:["edelstahl-akzente"],chip:"Edelstahl-Akzente",when:a=>mtbHas(a,"optik",p=>p.finish==="edelstahl-akzente")} ],
           match:colorsetMatch("finish") },
       ],
       products: [

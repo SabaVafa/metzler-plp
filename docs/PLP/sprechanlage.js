@@ -88,7 +88,7 @@
   var SALE = {type:'sale', text:'−15 %'};
   var PRODUCTS = [
     { id:'dominik1', name:'XDM10 Video-Türsprechanlage mit austauschbarem Namensschild | 2-Draht-BUS | 1 Klingeltaster | Maxior', line:'BUS-System', price:424.15, uvp:499.00, rating:5, reviews:2,
-      badge:SALE, showMeta:true, award:'Badge/reddot-award-badge.svg', colors:['anthrazit','weiss','grau','schwarz'], system:'bus', klingel:'1', tuer:[], type:'video', img:I83 },
+      badge:SALE, showMeta:true, award:'Badge/reddot-award-badge.svg', colors:['anthrazit','eisenglimmer','grau','schwarz','weiss','wunschfarbe'], system:'bus', klingel:'1', tuer:[], type:'video', img:I83 },
     { id:'sdm10x', name:'Türsprechanlage mit Kamera | Gesichtserkennung | Touch-Display | Live-HD-Video | Ein- & Mehrfamilien | SDM10X', line:'IP-System', price:1266.50, uvp:1490.00, rating:5, reviews:9,
       badge:SALE, showMeta:true, colors:['anthrazit','edelstahl','schwarz','weiss','grau'], system:'ip', klingel:'flex', tuer:['gesicht','rfid','pin'], material:'edelstahl', type:'video', img:I84 },
     { id:'colson1', name:'VDM10 2.0 Video-Türsprechanlage | 1 Klingeltaster | Colson', line:'IP-System', price:594.15, uvp:699.00, rating:5, reviews:63,
@@ -118,7 +118,7 @@
     { id:'kai2', name:'ADM10 Audio-Türsprechanlage | 2 Klingeltaster | Mit austauschbarem Namensschild | Kai', line:'IP-System', price:466.65, uvp:549.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit','weiss','grau'], system:'ip', klingel:'2', tuer:[], type:'audio', img:I83 },
     { id:'maxior2', name:'XDM10 Video-Türsprechanlage mit austauschbarem Namensschild | 2-Draht-BUS | 2 Klingeltaster | Maxior', line:'BUS-System', price:806.65, uvp:949.00, rating:5, reviews:null,
-      badge:SALE, colors:['anthrazit','edelstahl','schwarz'], system:'bus', klingel:'2', tuer:['rfid'], material:'edelstahl', type:'video', img:I87 },
+      badge:SALE, colors:['anthrazit','eisenglimmer','grau','schwarz','weiss','wunschfarbe'], system:'bus', klingel:'2', tuer:['rfid'], material:'edelstahl', type:'video', img:I87 },
     { id:'colson3', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 3 Klingeltaster | Colson', line:'IP-System', price:696.15, uvp:819.00, rating:5, reviews:5,
       badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'3', tuer:['rfid'], type:'video', img:I84 },
     { id:'kian3', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 3 Klingeltaster | Kian', line:'IP-System', price:679.15, uvp:799.00, rating:5, reviews:2,
@@ -130,7 +130,7 @@
     { id:'kai3', name:'ADM10 Audio-Türsprechanlage | 3 Klingeltaster | Mit austauschbarem Namensschild | Kai', line:'IP-System', price:509.15, uvp:599.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit','weiss','grau'], system:'ip', klingel:'3', tuer:[], type:'audio', img:I83 },
     { id:'maxior3', name:'XDM10 Video-Türsprechanlage mit austauschbarem Namensschild | 2-Draht-BUS | 3 Klingeltaster | Maxior', line:'BUS-System', price:849.15, uvp:999.00, rating:5, reviews:null,
-      badge:SALE, colors:['anthrazit','edelstahl','schwarz'], system:'bus', klingel:'3', tuer:['rfid'], material:'v2a', type:'video', img:I87 },
+      badge:SALE, colors:['anthrazit','eisenglimmer','grau','schwarz','weiss','wunschfarbe'], system:'bus', klingel:'3', tuer:['rfid'], material:'v2a', type:'video', img:I87 },
     { id:'colson4', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 4 Klingeltaster | Colson', line:'IP-System', price:798.15, uvp:939.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'4', tuer:['rfid'], type:'video', img:I87 }
   ];
@@ -640,7 +640,7 @@
         { label: 'Keine Zutrittsfunktion', sub: 'nur klingeln und sprechen', neutral: true }
       ]},
       { q: 'Welches Namensschild bevorzugen Sie?', opts: [
-        { label: 'Lasergravur',               sub: 'dauerhaft eingraviert',     group: 'namensschild', value: 'gravur',  chip: 'Gravur' },
+        { label: 'Lasergravur',               sub: 'dauerhaft eingraviert',     group: 'namensschild', value: 'gravur',  chip: 'Gravur', hideWhen: function () { return busChosen(); } },
         { label: 'Austauschbares Namensschild', sub: 'jederzeit wechselbar',    group: 'namensschild', value: 'wechsel', chip: 'Austauschbar' },
         { label: 'Display / digital',         sub: 'Namen am Touch-Display',    group: 'namensschild', value: 'display', chip: 'Display' },
         { label: 'Egal',                      sub: 'keine Präferenz',           neutral: true }
