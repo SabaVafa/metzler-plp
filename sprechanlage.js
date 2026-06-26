@@ -586,6 +586,38 @@
     var lead = { email: '', news: false };   /* optional e-mail capture (final step) */
     var STEPS = QUIZ.length;                  /* questions only — e-mail capture now lives on the result */
 
+    /* Resolve the system step (IP/BUS) and the Zutritt step by content, so the
+       skip logic survives any re-ordering of QUIZ. */
+    var IDX_SYSTEM = -1, IDX_ZUTRITT = -1;
+    QUIZ.forEach(function (s, i) {
+      (s.opts || []).forEach(function (o) {
+        if (o.group === 'system') IDX_SYSTEM = i;
+        if (o.group === 'tuer')   IDX_ZUTRITT = i;
+      });
+    });
+    /* The 2-Draht-BUS line (XDM10) does not offer the dedicated Zutritt features
+       (Fingerprint, Gesichtserkennung, PIN, QR …), so when BUS is chosen we hide
+       the Zutritt step entirely instead of showing options that don't apply. */
+    function busChosen() {
+      return (picks[IDX_SYSTEM] || []).some(function (o) { return o && o.value === 'bus'; });
+    }
+    function stepHidden(i) {
+      return i === IDX_ZUTRITT && IDX_ZUTRITT !== -1 && busChosen();
+    }
+    function visibleSteps() {
+      var a = [];
+      for (var i = 0; i < QUIZ.length; i++) if (!stepHidden(i)) a.push(i);
+      return a;
+    }
+    function nextVisible(from) {                 /* returns QUIZ.length to signal "finish" */
+      for (var i = from + 1; i < QUIZ.length; i++) if (!stepHidden(i)) return i;
+      return QUIZ.length;
+    }
+    function prevVisible(from) {                  /* returns -1 when already at the first visible step */
+      for (var i = from - 1; i >= 0; i--) if (!stepHidden(i)) return i;
+      return -1;
+    }
+
     function labelFor(group, key) {
       if (group === 'color') return (COLORS[key] && COLORS[key].label) || key;
       var items = (FACETS[group] && FACETS[group].items) || [];
@@ -598,7 +630,8 @@
     function applyPicks() {
       var priority = ['verwendung', 'klingel', 'type', 'system', 'tuer', 'namensschild', 'material', 'kombi', 'colorset', 'color']; /* later = dropped first */
       var sel = [], prefs = [];
-      picks.forEach(function (arr) {
+      picks.forEach(function (arr, idx) {
+        if (stepHidden(idx)) return;             /* skipped step (e.g. Zutritt when BUS) → its picks don't filter */
         (arr || []).forEach(function (o) {       /* picks[i] is an array (multi-select) */
           if (!o || !o.group) return;            /* neutral option → no filter */
           if (o.group === 'pref') prefs.push(o); /* Beschriftung → noted, not filterable */
@@ -723,18 +756,24 @@
           inner +
         '</button>';
       }).join('');
+      /* Progress reflects only the steps actually shown for this path (the Zutritt
+         step drops out for BUS), so the count stays honest as the flow changes. */
+      var vis = visibleSteps();
+      var pos = vis.indexOf(i);                 /* 0-based position within the visible sequence */
+      var total = vis.length;
+      var isLast = pos === total - 1;
       var dots = '';
-      for (var d = 0; d < STEPS; d++) dots += '<span class="' + (d < i ? 'is-done' : (d === i ? 'is-current' : '')) + '"></span>';
+      for (var d = 0; d < total; d++) dots += '<span class="' + (d < pos ? 'is-done' : (d === pos ? 'is-current' : '')) + '"></span>';
       return '<div class="advisor__step">' +
           '<div class="advisor__progress">' +
             '<span class="advisor__progress-dots">' + dots + '</span>' +
-            '<span class="advisor__progress-label">Schritt ' + (i + 1) + ' von ' + STEPS + '</span>' +
+            '<span class="advisor__progress-label">Schritt ' + (pos + 1) + ' von ' + total + '</span>' +
           '</div>' +
           '<h3 class="advisor__q">' + s.q + '</h3>' +
           '<div class="advisor__opts" role="group" aria-label="' + s.q + '">' + opts + '</div>' +
           '<div class="advisor__nav">' +
-            (i > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>') +
-            '<button type="button" class="advisor__forward' + (i === STEPS - 1 ? ' advisor__forward--cta' : '') + '" data-next>' + (i === STEPS - 1 ? 'Empfehlung anzeigen' : 'Weiter') + '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+            (pos > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>') +
+            '<button type="button" class="advisor__forward' + (isLast ? ' advisor__forward--cta' : '') + '" data-next>' + (isLast ? 'Empfehlung anzeigen' : 'Weiter') + '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
         '</div>';
     }
@@ -793,9 +832,9 @@
         });
       });
       var back = quizEl.querySelector('[data-back]');
-      if (back) back.addEventListener('click', function () { if (step > 0) go(function () { step--; renderStep(); }); });
-      var next = quizEl.querySelector('[data-next]');   /* Weiter advances; empty selection = skip */
-      if (next) next.addEventListener('click', function () { if (!Array.isArray(picks[step])) picks[step] = []; go(function () { step++; renderStep(); }); });
+      if (back) back.addEventListener('click', function () { var p = prevVisible(step); if (p >= 0) go(function () { step = p; renderStep(); }); });
+      var next = quizEl.querySelector('[data-next]');   /* Weiter advances; empty selection = skip; hidden steps are jumped */
+      if (next) next.addEventListener('click', function () { if (!Array.isArray(picks[step])) picks[step] = []; go(function () { step = nextVisible(step); renderStep(); }); });
     }
 
     /* Premium loader: pulsing geometric wave + shimmer skeleton cards. */
