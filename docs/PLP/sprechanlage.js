@@ -219,6 +219,7 @@
     var i = arr.indexOf(key);
     if (i === -1) arr.push(key); else arr.splice(i, 1);
     page = 1;
+    updateKlingelAvailability();
     syncControls();
     render();
   }
@@ -227,6 +228,7 @@
     advisorChips = false;
     Object.keys(active).forEach(function (g) { active[g] = []; });
     page = 1;
+    updateKlingelAvailability();
     syncControls();
     render();
   }
@@ -235,6 +237,24 @@
   function syncControls() {
     document.querySelectorAll('.fopt input').forEach(function (cb) {
       cb.checked = active[cb.getAttribute('data-group')].indexOf(cb.getAttribute('data-key')) !== -1;
+    });
+  }
+
+  /* The 2-Draht-BUS line (XDM10) is only built with 1–3 Klingeltastern. When BUS
+     is the active System filter (and IP is not), restrict the Klingeltaster facet
+     to those options and drop any now-invalid selection; otherwise show them all. */
+  var BUS_KLINGEL = ['1', '2', '3'];
+  function updateKlingelAvailability() {
+    var busOnly = active.system.indexOf('bus') !== -1 && active.system.indexOf('ip') === -1;
+    FACETS.klingel.items.forEach(function (it) {
+      var allowed = !busOnly || BUS_KLINGEL.indexOf(it.key) !== -1;
+      var input = document.getElementById('f-klingel-' + it.key);
+      var row = input && input.closest('.fopt');
+      if (row) row.hidden = !allowed;
+      if (!allowed) {
+        var i = active.klingel.indexOf(it.key);
+        if (i !== -1) active.klingel.splice(i, 1);
+      }
     });
   }
 
@@ -645,7 +665,7 @@
           else if (active[o.group] && active[o.group].indexOf(o.value) === -1) active[o.group].push(o.value);
         });
         advisorChips = true;   /* filters came from the KI → keep them out of the toolbar */
-        page = 1; syncControls(); render();
+        page = 1; updateKlingelAvailability(); syncControls(); render();
         return PRODUCTS.filter(matches).length;
       }
       var current = sel.slice(), dropped = [];
@@ -1096,6 +1116,7 @@
   buildFacetGroup('klingel');
   buildFacetGroup('tuer');
   buildColorGroup();
+  updateKlingelAvailability();
   wireDrawer();
   wireSubnav();
   wireFooterAccordions();
