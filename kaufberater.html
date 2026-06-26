@@ -297,7 +297,7 @@
           opts:[ {v:"video",label:"Mit Kamera (Video)",sub:"Live-HD-Bild der Besucher",chip:"Video",sat:p=>p.type==="video"}, {v:"audio",label:"Audio-only",sub:"nur sprechen, ohne Kamera",chip:"Audio",sat:p=>p.type==="audio"} ] },
         { key:"system", type:"single", match:satMatch,
           q:"Neubau oder Modernisierung Ihrer bestehenden Anlage?",
-          opts:[ {v:"ip",label:"IP-System",sub:"Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung",chip:"IP-System",sat:p=>p.system==="ip"}, {v:"bus",label:"BUS-System",sub:"Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung",chip:"2-Draht-BUS",sat:p=>p.system==="bus"}, {v:"weiss",label:"Weiß ich nicht",sub:"wir empfehlen passende Modelle für beide Systeme",neutral:true} ] },
+          opts:[ {v:"ip",label:"IP-System",sub:"Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung",chip:"IP-System",sat:p=>p.system==="ip"}, {v:"bus",label:"BUS-System",sub:"Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung",chip:"2-Draht-BUS",sat:p=>p.system==="bus",when:a=>a.verwendung!=="flexibel"}, {v:"weiss",label:"Weiß ich nicht",sub:"wir empfehlen passende Modelle für beide Systeme",neutral:true} ] },
         { key:"tuer", type:"multi", when:p=>p.system!=="bus",   /* 2-Draht-BUS line offers no dedicated Zutritt features → hide this step */
           q:"Wie möchten Sie Zutritt gewähren?", hint:"Mehrfachauswahl möglich.",
           opts:[ {v:"fingerprint",label:"Fingerabdrucksensor",sub:"schlüsselloser Zutritt",chip:"Fingerprint"}, {v:"rfid",label:"RFID-Chip",sub:"Transponder oder Karte",chip:"RFID"}, {v:"gesicht",label:"Gesichtserkennung",sub:"Tür öffnet beim Erkennen",chip:"Gesichtserkennung"}, {v:"pin",label:"PIN-Code",sub:"Zahlencode am Tastenfeld",chip:"PIN-Code"}, {v:"qr",label:"QR-Code",sub:"Zutritt per QR-Scan",chip:"QR-Code"} ],
@@ -553,9 +553,19 @@
     const activeSteps = () => STEPS.filter(s => !s.when || s.when(answers));
     const optById = (s, v) => s.opts.find(o => String(o.v) === String(v));
 
-    /* Drop answers for steps whose `when` no longer holds. */
+    /* Drop answers for steps whose `when` no longer holds, and clear any chosen
+       option whose own `when` no longer holds (e.g. BUS after Flexible Großanlage). */
     function pruneAnswers(){
-      STEPS.forEach(s=>{ if(s.when && !s.when(answers)) answers[s.key] = (s.type==="multi") ? new Set() : null; });
+      STEPS.forEach(s=>{
+        if(s.when && !s.when(answers)){ answers[s.key] = (s.type==="multi") ? new Set() : null; return; }
+        if(s.type==="multi"){
+          const set = answers[s.key];
+          s.opts.forEach(o=>{ if(o.when && !o.when(answers) && set.has(o.v)) set.delete(o.v); });
+        } else if(answers[s.key]!=null){
+          const opt = s.opts.find(o=>String(o.v)===String(answers[s.key]));
+          if(opt && opt.when && !opt.when(answers)) answers[s.key] = null;
+        }
+      });
     }
 
     /* ---- Step markup (shared by render + height probe) ---- */
@@ -572,7 +582,7 @@
       let dots = "";
       for(let d=0; d<steps.length; d++) dots += '<span class="' + (d<i?"is-done":(d===i?"is-current":"")) + '"></span>';
 
-      const opts = s.opts.map(o => {
+      const opts = s.opts.filter(o => !o.when || o.when(answers)).map(o => {
         const on = isPicked(s, o.v) ? " is-active" : "";
         const sw = o.sw ? '<span class="advisor__opt-sw" style="background:'+o.sw+'" aria-hidden="true"></span>' : "";
         const text = '<span class="advisor__opt-label">'+o.label+'</span>' + (o.sub ? '<span class="advisor__opt-sub">'+o.sub+'</span>' : "");

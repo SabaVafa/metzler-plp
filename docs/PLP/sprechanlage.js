@@ -628,7 +628,7 @@
       ]},
       { q: 'Neubau oder Modernisierung Ihrer bestehenden Anlage?', opts: [
         { label: 'IP-System',  sub: 'Ideal für Neubauten – nutzt LAN- oder 2-Draht-Sternverkabelung für maximale Flexibilität.', group: 'system', value: 'ip',  chip: 'IP-System' },
-        { label: 'BUS-System', sub: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung, kein Neuverlegen nötig.',  group: 'system', value: 'bus', chip: '2-Draht-BUS' },
+        { label: 'BUS-System', sub: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung, kein Neuverlegen nötig.',  group: 'system', value: 'bus', chip: '2-Draht-BUS', hideWhen: function () { return picked('verwendung', 'flexibel'); } },
         { label: 'Weiß ich nicht', sub: 'Kein Problem – wir empfehlen passende Modelle für beide Systeme.',                       neutral: true }
       ]},
       { q: 'Wie möchten Sie Zutritt gewähren?', sub: 'Mehrfachauswahl möglich', opts: [
@@ -670,6 +670,15 @@
         if (o.group === 'tuer')   IDX_ZUTRITT = i;
       });
     });
+    /* Has the shopper chosen option `value` for facet `group` anywhere so far?
+       Used by option-level hideWhen() guards (e.g. BUS is unavailable once a
+       Flexible Großanlage / 1–500 Taster is selected — the 2-Draht line tops out
+       at 3 Klingeltastern). */
+    function picked(group, value) {
+      return picks.some(function (arr) {
+        return (arr || []).some(function (o) { return o && o.group === group && o.value === value; });
+      });
+    }
     /* The 2-Draht-BUS line (XDM10) does not offer the dedicated Zutritt features
        (Fingerprint, Gesichtserkennung, PIN, QR …), so when BUS is chosen we hide
        the Zutritt step entirely instead of showing options that don't apply. */
@@ -820,6 +829,7 @@
       var s = QUIZ[i];
       var cur = Array.isArray(picks[i]) ? picks[i] : [];
       var opts = s.opts.map(function (o, k) {
+        if (o.hideWhen && o.hideWhen()) return '';   /* option not applicable to current picks → drop (keep index k stable) */
         var on = cur.some(function (p) { return p.label === o.label; }) ? ' is-active' : '';
         var swCss = o.swatch || (o.group === 'color' && COLORS[o.value] ? COLORS[o.value].css : null);
         var sw = swCss ? '<span class="advisor__opt-sw" style="background:' + swCss + '" aria-hidden="true"></span>' : '';
@@ -888,6 +898,11 @@
 
     function renderStep() {
       if (step >= QUIZ.length) { finish(); return; }   /* after the last question → result (with e-mail capture) */
+      /* Drop any pick that is no longer offered on this step (e.g. BUS picked
+         earlier, then the shopper switched to a Flexible Großanlage). */
+      if (Array.isArray(picks[step])) {
+        picks[step] = picks[step].filter(function (o) { return !(o.hideWhen && o.hideWhen()); });
+      }
       results.hidden = true; results.innerHTML = '';
       var s = QUIZ[step];
       quizEl.innerHTML = stepInnerHTML(step);
