@@ -313,7 +313,7 @@
         { key:"verwendung", type:"single", match:satMatch,
           q:"Für welche Wohnsituation suchen Sie eine Sprechanlage?",
           opts:[ {v:"einfamilien",label:"Einfamilienhaus",sub:"ein Haushalt, eine Klingeltaste",chip:"Einfamilienhaus",sat:p=>p.verwendung==="einfamilien"}, {v:"mehrfamilien",label:"Mehrfamilienhaus",sub:"mehrere Parteien & Klingeltasten",chip:"Mehrfamilienhaus",sat:p=>p.verwendung==="mehrfamilien"}, {v:"flexibel",label:"Flexible Großanlage",sub:"flexibel von 1–500 Tasten",chip:"Großanlage",sat:p=>p.verwendung==="flexibel"} ] },
-        { key:"type", type:"single", match:satMatch,
+        { key:"type", type:"single", match:satMatch, when:a=>a.verwendung!=="flexibel",   /* Flexible Großanlagen are video-only → skip the Video/Audio step */
           q:"Möchten Sie sehen, wer vor der Tür steht?",
           opts:[ {v:"video",label:"Mit Kamera (Video)",sub:"Live-HD-Bild der Besucher",chip:"Video",sat:p=>p.type==="video"}, {v:"audio",label:"Audio-only",sub:"nur sprechen, ohne Kamera",chip:"Audio",sat:p=>p.type==="audio",when:a=>a.verwendung!=="flexibel"} ] },
         { key:"system", type:"single", match:satMatch,

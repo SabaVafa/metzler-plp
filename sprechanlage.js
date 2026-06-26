@@ -663,11 +663,12 @@
 
     /* Resolve the system step (IP/BUS) and the Zutritt step by content, so the
        skip logic survives any re-ordering of QUIZ. */
-    var IDX_SYSTEM = -1, IDX_ZUTRITT = -1;
+    var IDX_SYSTEM = -1, IDX_ZUTRITT = -1, IDX_TYPE = -1;
     QUIZ.forEach(function (s, i) {
       (s.opts || []).forEach(function (o) {
         if (o.group === 'system') IDX_SYSTEM = i;
         if (o.group === 'tuer')   IDX_ZUTRITT = i;
+        if (o.group === 'type')    IDX_TYPE = i;
       });
     });
     /* Has the shopper chosen option `value` for facet `group` anywhere so far?
@@ -687,7 +688,10 @@
     }
     function stepHidden(i) {
       /* Zutritt features don't apply to BUS or to Audio-only models (no Türöffner). */
-      return i === IDX_ZUTRITT && IDX_ZUTRITT !== -1 && (busChosen() || picked('type', 'audio'));
+      if (i === IDX_ZUTRITT && IDX_ZUTRITT !== -1 && (busChosen() || picked('type', 'audio'))) return true;
+      /* Flexible Großanlagen are video-only, so the Video/Audio step has no choice → skip it. */
+      if (i === IDX_TYPE && IDX_TYPE !== -1 && picked('verwendung', 'flexibel')) return true;
+      return false;
     }
     function visibleSteps() {
       var a = [];
