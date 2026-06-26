@@ -224,6 +224,17 @@
      each option carries sat(product); chosen option satisfied → 1, else small partial. */
   const satMatch = (p, v, s) => { const o = s.opts.find(o => String(o.v) === String(v)); return (o && o.sat && o.sat(p)) ? 1 : 0.2; };
 
+  /* Mülltonnenbox option availability: once a tonne count is chosen, later steps
+     should only offer what boxes of that count actually provide (e.g. Pflanzdach,
+     Sichtstreifen and Holz-/Edelstahl-Optik only exist on the 3er boxes). Returns
+     true (don't constrain) when no box matches the count, so the quiz never
+     strands an empty step. Reads the live product list off CATS at call time. */
+  function mtbHas(answers, pred) {
+    const prods = CATS.muelltonnenboxen.products;
+    const set = answers.anzahl == null ? prods : prods.filter(p => p.anzahl === answers.anzahl);
+    return !set.length || set.some(pred);
+  }
+
   /* ──────────────────────────────────────────────────────────────
      Category configs. Add a category = add an entry here + an
      <section class="advisor" data-ai="<key>"> block above. Each step:
@@ -384,17 +395,17 @@
           match:(p,v)=>{ const d=Math.abs(p.anzahl-v); return d===0?1:d===1?0.4:0.1; } },
         { key:"material", type:"single",
           q:"Welches Material bevorzugen Sie?",
-          opts:[ {v:"stahl",label:"Pulverbeschichteter Stahl",sub:"robust & preiswert",chip:"Stahl"}, {v:"aluminium",label:"Aluminium",sub:"rostfrei & besonders langlebig"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Material egal"} ] },
+          opts:[ {v:"stahl",label:"Pulverbeschichteter Stahl",sub:"robust & preiswert",chip:"Stahl",when:a=>mtbHas(a,p=>p.material==="stahl")}, {v:"aluminium",label:"Aluminium",sub:"rostfrei & besonders langlebig",when:a=>mtbHas(a,p=>p.material==="aluminium")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Material egal"} ] },
         { key:"dach", type:"single",
           q:"Welche Dachoption möchten Sie?",
-          opts:[ {v:"pflanzdach",label:"Mit Pflanzdach",sub:"begrünbar",chip:"Pflanzdach"}, {v:"standard",label:"Standard-Ausführung",sub:"Flachdach",chip:"Standard-Dach"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Dach egal"} ] },
+          opts:[ {v:"pflanzdach",label:"Mit Pflanzdach",sub:"begrünbar",chip:"Pflanzdach",when:a=>mtbHas(a,p=>p.dach==="pflanzdach")}, {v:"standard",label:"Standard-Ausführung",sub:"Flachdach",chip:"Standard-Dach",when:a=>mtbHas(a,p=>p.dach==="standard")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Dach egal"} ] },
         { key:"sichtstreifen", type:"single",
           q:"Möchten Sie dekorative Sichtstreifen?",
-          opts:[ {v:"ja",label:"Mit Sichtstreifen",sub:"dekorative Akzentstreifen",chip:"Mit Sichtstreifen"}, {v:"nein",label:"Ohne Sichtstreifen",sub:"glatte, geschlossene Front",chip:"Ohne Sichtstreifen"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Sichtstreifen egal"} ],
+          opts:[ {v:"ja",label:"Mit Sichtstreifen",sub:"dekorative Akzentstreifen",chip:"Mit Sichtstreifen",when:a=>mtbHas(a,p=>p.sichtstreifen)}, {v:"nein",label:"Ohne Sichtstreifen",sub:"glatte, geschlossene Front",chip:"Ohne Sichtstreifen",when:a=>mtbHas(a,p=>!p.sichtstreifen)}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Sichtstreifen egal"} ],
           match:(p,v)=>(v==="ja"?p.sichtstreifen:!p.sichtstreifen)?1:0.2 },
         { key:"optik", type:"single",
           q:"Welche Optik passt zu Ihrem Zuhause?",
-          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Weiß, Grau oder Beige",sw:SW_KLASSISCH,colors:["anthrazit","weiss","grau","beige"]}, {v:"holzoptik",label:"Holzoptik",sub:"warme Lamellen-Optik",sw:SW_HOLZ,colors:["holzoptik"]}, {v:"edelstahl-akzente",label:"Edelstahl-Akzente",sub:"edle Metall-Details",sw:SW_EDELSTAHL,colors:["edelstahl-akzente"],chip:"Edelstahl-Akzente"} ],
+          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Weiß, Grau oder Beige",sw:SW_KLASSISCH,colors:["anthrazit","weiss","grau","beige"],when:a=>mtbHas(a,p=>["anthrazit","weiss","grau","beige"].indexOf(p.finish)!==-1)}, {v:"holzoptik",label:"Holzoptik",sub:"warme Lamellen-Optik",sw:SW_HOLZ,colors:["holzoptik"],when:a=>mtbHas(a,p=>p.finish==="holzoptik")}, {v:"edelstahl-akzente",label:"Edelstahl-Akzente",sub:"edle Metall-Details",sw:SW_EDELSTAHL,colors:["edelstahl-akzente"],chip:"Edelstahl-Akzente",when:a=>mtbHas(a,p=>p.finish==="edelstahl-akzente")} ],
           match:colorsetMatch("finish") },
       ],
       products: [
