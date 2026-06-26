@@ -82,7 +82,7 @@
       </button>
       <ul>
         <li class="hnav-item" data-mega-item>
-          <a href="#"
+          <a href="briefkasten.html"
              id="mm-trigger-briefkasten" data-mega-trigger
              aria-haspopup="true" aria-expanded="false" aria-controls="mm-panel-briefkasten">Briefkästen</a>
 
@@ -348,10 +348,10 @@
     </div>
     <nav>
       <ul>
-        <li><a href="#">Briefkästen</a></li>
+        <li><a href="briefkasten.html">Briefkästen</a></li>
         <li><a href="#">Paketboxen</a></li>
         <li><a href="#">Mülltonnenboxen</a></li>
-        <li><a href="#">Sprechanlagen</a></li>
+        <li><a href="sprechanlage.html">Sprechanlagen</a></li>
         <li><a href="#">Sicherheitstechnik</a></li>
         <li><a href="#">Türklingeln</a></li>
         <li><a href="#">Hausnummern</a></li>
@@ -756,9 +756,11 @@
         closeTimer = setTimeout(function(){ close(item); }, CLOSE_DELAY);
       });
 
-      /* Click / Enter / touch: toggle (Enter on the focused link fires click) */
+      /* Click / Enter / touch: a real href navigates (cross-page tab); else toggle */
       trig.addEventListener('click', function(e){
         if (!DESKTOP.matches) return;            /* mobile uses the slide-in nav */
+        var href = trig.getAttribute('href');
+        if (href && href !== '#') return;        /* follow the link to the other page */
         e.preventDefault();
         (current === item) ? close(item) : open(item);
       });

@@ -153,7 +153,65 @@
         </li>
         <li><a href="#">Paketboxen</a></li>
         <li><a href="#">Mülltonnenboxen</a></li>
-        <li><a href="#">Sprechanlagen</a></li>
+        <li class="hnav-item" data-mega-item>
+          <a href="sprechanlage.html"
+             id="mm-trigger-sprechanlagen" data-mega-trigger
+             aria-haspopup="true" aria-expanded="false" aria-controls="mm-panel-sprechanlagen">Sprechanlagen</a>
+
+          <!-- Drop-panel: subcategory grid (left) + XDM10 poster (right) -->
+          <div class="mega-panel" id="mm-panel-sprechanlagen" data-mega-panel
+               role="region" aria-label="Türsprechanlagen – Unterkategorien" aria-hidden="true">
+            <div class="container mega-layout">
+
+              <ul class="mega-grid">
+                <li><a class="mega-card" href="sprechanlage.html">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/video-station.png" alt="Video-Sprechanlagen" loading="lazy"></span>
+                  <span class="mega-card__label">Video-Sprechanlagen</span></a></li>
+
+                <li><a class="mega-card" href="sprechanlage.html">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/audio-station.png" alt="Audio-Sprechanlagen" loading="lazy"></span>
+                  <span class="mega-card__label">Audio-Sprechanlagen</span></a></li>
+
+                <li><a class="mega-card" href="sprechanlage.html">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/mehrfamilien-anlage.png" alt="Mehrfamilien-Anlagen" loading="lazy"></span>
+                  <span class="mega-card__label">Mehrfamilien-Anlagen</span></a></li>
+
+                <li><a class="mega-card" href="sprechanlage.html">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/touch-display-station.png" alt="Mit Gesichtserkennung" loading="lazy"></span>
+                  <span class="mega-card__label">Mit Gesichtserkennung</span></a></li>
+
+                <li><a class="mega-card" href="sprechanlage.html">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/briefkasten-paketbox.png" alt="Mit Briefkasten/Paketbox" loading="lazy"></span>
+                  <span class="mega-card__label">Mit Briefkasten/Paketbox</span></a></li>
+
+                <li><a class="mega-card" href="sprechanlage.html">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/innenstation.png" alt="Innenstationen" loading="lazy"></span>
+                  <span class="mega-card__label">Innenstationen</span></a></li>
+
+                <li><a class="mega-card" href="sprechanlage.html">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/bus-xdm10.png" alt="2-Draht-BUS (XDM10)" loading="lazy"></span>
+                  <span class="mega-card__label">2-Draht-BUS (XDM10)</span></a></li>
+
+                <li><a class="mega-card" href="sprechanlage.html">
+                  <span class="mega-card__media"><img src="Product%20Image/Sprechanlage/zubehoer.png" alt="Zubehör" loading="lazy"></span>
+                  <span class="mega-card__label">Zubehör</span></a></li>
+              </ul>
+
+              <aside class="mega-poster" aria-label="XDM10 Video-Türsprechanlage">
+                <div class="mega-poster__media">
+                  <img class="mega-poster__bg" src="Poster/poster-sprechanlage-xdm10.png" alt="XDM10 Video-Türsprechanlage – Red Dot Award Winner 2026" loading="lazy">
+                </div>
+                <div class="mega-poster__content">
+                  <span class="mega-poster__eyebrow">Video-Türsprechanlage</span>
+                  <h3 class="mega-poster__title">XDM10 – nachrüsten ohne neue Kabel</h3>
+                  <p class="mega-poster__features">2-Draht-BUS · App-Anbindung · HD-Video</p>
+                  <a class="mega-poster__cta" href="sprechanlage.html">Mehr erfahren</a>
+                </div>
+              </aside>
+
+            </div>
+          </div>
+        </li>
         <li><a href="#">Sicherheitstechnik</a></li>
         <li><a href="#">Türklingeln</a></li>
         <li><a href="#">Hausnummern</a></li>
@@ -174,10 +232,10 @@
     </div>
     <nav>
       <ul>
-        <li><a href="#">Briefkästen</a></li>
+        <li><a href="briefkasten.html">Briefkästen</a></li>
         <li><a href="#">Paketboxen</a></li>
         <li><a href="#">Mülltonnenboxen</a></li>
-        <li><a href="#">Sprechanlagen</a></li>
+        <li><a href="sprechanlage.html">Sprechanlagen</a></li>
         <li><a href="#">Sicherheitstechnik</a></li>
         <li><a href="#">Türklingeln</a></li>
         <li><a href="#">Hausnummern</a></li>
@@ -584,9 +642,11 @@
         closeTimer = setTimeout(function(){ close(item); }, CLOSE_DELAY);
       });
 
-      /* Click / Enter / touch: toggle (Enter on the focused link fires click) */
+      /* Click / Enter / touch: a real href navigates (cross-page tab); else toggle */
       trig.addEventListener('click', function(e){
         if (!DESKTOP.matches) return;            /* mobile uses the slide-in nav */
+        var href = trig.getAttribute('href');
+        if (href && href !== '#') return;        /* follow the link to the other page */
         e.preventDefault();
         (current === item) ? close(item) : open(item);
       });
