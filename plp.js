@@ -187,6 +187,7 @@
     var i = arr.indexOf(key);
     if (i === -1) arr.push(key); else arr.splice(i, 1);
     page = 1;
+    updateFacets(group);
     syncControls();
     render();
   }
@@ -195,6 +196,7 @@
     advisorChips = false;
     Object.keys(active).forEach(function (g) { active[g] = []; });
     page = 1;
+    updateFacets();
     syncControls();
     render();
   }
@@ -206,29 +208,101 @@
     });
   }
 
-  /* ---- Filtering ---- */
-  function matches(p) {
-    if (active.color.length && !active.color.some(function (c) { return p.colors.indexOf(c) !== -1; })) return false;
-    if (active.faecher.length) {
+  /* ---- Filtering ----
+     matchesWith(p, a) tests a product against an arbitrary active-selection
+     object; matches(p) uses the live one. The indirection lets the facet engine
+     compute per-option counts by overriding a single group. */
+  function matchesWith(p, a) {
+    if (a.color.length && !a.color.some(function (c) { return p.colors.indexOf(c) !== -1; })) return false;
+    if (a.faecher.length) {
       /* 'paketfach' is a separate attribute (parcel compartment), not a fach count —
          match it against p.paket; the count keys ('1'/'2'/'3') match p.faecher. */
-      var fOk = active.faecher.some(function (k) {
+      var fOk = a.faecher.some(function (k) {
         return k === 'paketfach' ? !!p.paket : p.faecher === k;
       });
       if (!fOk) return false;
     }
-    if (active.zeitung.length && active.zeitung.indexOf(p.zeitung) === -1) return false;
-    if (active.montage.length && active.montage.indexOf(p.montage) === -1) return false;
-    if (active.material && active.material.length && active.material.indexOf(p.material) === -1) return false;   /* advisor-only facet (Witterung/Optik/Sichtfenster) */
-    if (active.zusatz.length) {
+    if (a.zeitung.length && a.zeitung.indexOf(p.zeitung) === -1) return false;
+    if (a.montage.length && a.montage.indexOf(p.montage) === -1) return false;
+    if (a.material && a.material.length && a.material.indexOf(p.material) === -1) return false;   /* advisor-only facet (Witterung/Optik/Sichtfenster) */
+    if (a.zusatz.length) {
       /* Extra functions — boolean attributes on the product (p.klingel / p.sprech).
          OR within the group; a "klingel+sprech" key requires BOTH (combined unit). */
-      var zOk = active.zusatz.some(function (k) {
+      var zOk = a.zusatz.some(function (k) {
         return k.indexOf('+') !== -1 ? k.split('+').every(function (x) { return !!p[x]; }) : !!p[k];
       });
       if (!zOk) return false;
     }
     return true;
+  }
+  function matches(p) { return matchesWith(p, active); }
+
+  /* ---- Dynamic facets ------------------------------------------------------
+     When at least one filter is selected, every facet recomputes against the
+     current selection: each option shows the real number of matching products
+     and options with none are hidden (e.g. picking Unterputz leaves only the
+     colours actually available wall-recessed). With no filter active the curated
+     "live-mirror" counts are restored and all options shown. Only sidebar groups
+     participate (material is advisor-only, not rendered). */
+  var FACET_GROUPS = ['color', 'zeitung', 'faecher', 'montage', 'zusatz'];
+  function facetKeys(group) {
+    return group === 'color' ? Object.keys(COLORS) : FACETS[group].items.map(function (it) { return it.key; });
+  }
+  function curatedCount(group, key) {
+    if (group === 'color') return (COLORS[key] && COLORS[key].count) || 0;
+    var items = (FACETS[group] && FACETS[group].items) || [];
+    for (var i = 0; i < items.length; i++) if (items[i].key === key) return items[i].count;
+    return 0;
+  }
+  /* How many products match if this single option were the only choice in its
+     group (the group's own current selection is ignored — standard facet count). */
+  function optionCount(group, value) {
+    var a = {};
+    Object.keys(active).forEach(function (g) { a[g] = (g === group) ? [value] : active[g]; });
+    return PRODUCTS.filter(function (p) { return matchesWith(p, a); }).length;
+  }
+  function setFacetRow(group, key, n, hide) {
+    var input = document.getElementById('f-' + group + '-' + key);
+    var row = input && input.closest('.fopt');
+    if (!row) return;
+    var cnt = row.querySelector('.fopt__count');
+    if (cnt) cnt.textContent = '(' + n + ')';
+    row.hidden = hide;
+  }
+  /* Drop selections that became impossible in combination with the others.
+     keepGroup is the group the user just touched — its choice wins, so conflicts
+     are resolved by dropping the incompatible values from the OTHER groups. */
+  function pruneActive(keepGroup) {
+    for (var pass = 0; pass < 6; pass++) {
+      var changed = false;
+      FACET_GROUPS.forEach(function (group) {
+        if (group === keepGroup) return;
+        active[group].slice().forEach(function (key) {
+          if (optionCount(group, key) === 0) {
+            var i = active[group].indexOf(key);
+            if (i !== -1) { active[group].splice(i, 1); changed = true; }
+          }
+        });
+      });
+      if (!changed) break;
+    }
+  }
+  function refreshFacetDisplay() {
+    var dynamic = activeCount() > 0;
+    FACET_GROUPS.forEach(function (group) {
+      facetKeys(group).forEach(function (key) {
+        if (!dynamic) { setFacetRow(group, key, curatedCount(group, key), false); return; }
+        var n = optionCount(group, key);
+        var selected = active[group].indexOf(key) !== -1;
+        setFacetRow(group, key, n, n === 0 && !selected);
+      });
+    });
+  }
+  /* User-driven refresh (sidebar toggle / clear): prune impossible picks first.
+     keepGroup (the just-toggled group) is preserved during conflict resolution. */
+  function updateFacets(keepGroup) {
+    if (activeCount() > 0) pruneActive(keepGroup);
+    refreshFacetDisplay();
   }
 
   function activeCount() {
@@ -532,7 +606,7 @@
           else if (active[o.group] && active[o.group].indexOf(o.value) === -1) active[o.group].push(o.value);
         });
         advisorChips = true;   /* filters came from the KI → keep them out of the toolbar */
-        page = 1; syncControls(); render();
+        page = 1; refreshFacetDisplay(); syncControls(); render();
         return PRODUCTS.filter(matches).length;
       }
       var current = sel.slice(), dropped = [];
@@ -898,6 +972,7 @@
   buildFacetGroup('faecher');
   buildFacetGroup('montage');
   buildFacetGroup('zusatz');
+  updateFacets();
   wireDrawer();
   wireSubnav();
   wireFooterAccordions();

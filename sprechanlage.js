@@ -219,7 +219,7 @@
     var i = arr.indexOf(key);
     if (i === -1) arr.push(key); else arr.splice(i, 1);
     page = 1;
-    updateKlingelAvailability();
+    updateFacets(group);
     syncControls();
     render();
   }
@@ -228,7 +228,7 @@
     advisorChips = false;
     Object.keys(active).forEach(function (g) { active[g] = []; });
     page = 1;
-    updateKlingelAvailability();
+    updateFacets();
     syncControls();
     render();
   }
@@ -240,41 +240,96 @@
     });
   }
 
-  /* The 2-Draht-BUS line (XDM10) is only built with 1–3 Klingeltastern. When BUS
-     is the active System filter (and IP is not), restrict the Klingeltaster facet
-     to those options and drop any now-invalid selection; otherwise show them all. */
-  var BUS_KLINGEL = ['1', '2', '3'];
-  function updateKlingelAvailability() {
-    var busOnly = active.system.indexOf('bus') !== -1 && active.system.indexOf('ip') === -1;
-    FACETS.klingel.items.forEach(function (it) {
-      var allowed = !busOnly || BUS_KLINGEL.indexOf(it.key) !== -1;
-      var input = document.getElementById('f-klingel-' + it.key);
-      var row = input && input.closest('.fopt');
-      if (row) row.hidden = !allowed;
-      if (!allowed) {
-        var i = active.klingel.indexOf(it.key);
-        if (i !== -1) active.klingel.splice(i, 1);
-      }
+  /* ---- Dynamic facets ------------------------------------------------------
+     When the shopper has selected at least one filter, every facet recomputes
+     against the current selection: each option shows the real number of matching
+     products and options with none are hidden (e.g. picking BUS-System leaves
+     only the colours / Klingeltaster the 2-Draht line actually offers). With no
+     filter active the curated "live-mirror" counts are restored and all options
+     shown. Only the groups rendered in the sidebar participate. */
+  var FACET_GROUPS = ['system', 'klingel', 'tuer', 'color'];
+  function facetKeys(group) {
+    return group === 'color' ? Object.keys(COLORS) : FACETS[group].items.map(function (it) { return it.key; });
+  }
+  function curatedCount(group, key) {
+    if (group === 'color') return (COLORS[key] && COLORS[key].count) || 0;
+    var items = (FACETS[group] && FACETS[group].items) || [];
+    for (var i = 0; i < items.length; i++) if (items[i].key === key) return items[i].count;
+    return 0;
+  }
+  /* How many products match if this single option were the only choice in its
+     group (the group's own current selection is ignored — standard facet count). */
+  function optionCount(group, value) {
+    var a = {};
+    Object.keys(active).forEach(function (g) { a[g] = (g === group) ? [value] : active[g]; });
+    return PRODUCTS.filter(function (p) { return matchesWith(p, a); }).length;
+  }
+  function setFacetRow(group, key, n, hide) {
+    var input = document.getElementById('f-' + group + '-' + key);
+    var row = input && input.closest('.fopt');
+    if (!row) return;
+    var cnt = row.querySelector('.fopt__count');
+    if (cnt) cnt.textContent = '(' + n + ')';
+    row.hidden = hide;
+  }
+  /* Drop selections that became impossible in combination with the others, so a
+     stale pick (e.g. 4 Taster, then BUS) never strands the shopper on 0 results.
+     keepGroup is the group the user just touched — its choice wins, so conflicts
+     are resolved by dropping the incompatible values from the OTHER groups. */
+  function pruneActive(keepGroup) {
+    for (var pass = 0; pass < 6; pass++) {
+      var changed = false;
+      FACET_GROUPS.forEach(function (group) {
+        if (group === keepGroup) return;
+        active[group].slice().forEach(function (key) {
+          if (optionCount(group, key) === 0) {
+            var i = active[group].indexOf(key);
+            if (i !== -1) { active[group].splice(i, 1); changed = true; }
+          }
+        });
+      });
+      if (!changed) break;
+    }
+  }
+  function refreshFacetDisplay() {
+    var dynamic = activeCount() > 0;
+    FACET_GROUPS.forEach(function (group) {
+      facetKeys(group).forEach(function (key) {
+        if (!dynamic) { setFacetRow(group, key, curatedCount(group, key), false); return; }
+        var n = optionCount(group, key);
+        var selected = active[group].indexOf(key) !== -1;
+        setFacetRow(group, key, n, n === 0 && !selected);
+      });
     });
   }
+  /* User-driven refresh (sidebar toggle / clear): prune impossible picks first.
+     keepGroup (the just-toggled group) is preserved during conflict resolution. */
+  function updateFacets(keepGroup) {
+    if (activeCount() > 0) pruneActive(keepGroup);
+    refreshFacetDisplay();
+  }
 
-  /* ---- Filtering (mirrors the live Türsprechanlagen facets) ---- */
-  function matches(p) {
-    if (active.color.length && !active.color.some(function (c) { return p.colors.indexOf(c) !== -1; })) return false;
-    if (active.system.length && active.system.indexOf(p.system) === -1) return false;
-    if (active.klingel.length && active.klingel.indexOf(p.klingel) === -1) return false;   /* '1'..'7' or 'flex' */
-    if (active.type.length && active.type.indexOf(p.type) === -1) return false;            /* advisor-only: video / audio */
-    if (active.material.length && active.material.indexOf(p.material) === -1) return false;
-    if (active.verwendung.length && active.verwendung.indexOf(verwOf(p)) === -1) return false;     /* advisor-only: Verwendungszweck */
-    if (active.namensschild.length && active.namensschild.indexOf(nsOf(p)) === -1) return false;   /* advisor-only: Namensschildtyp */
-    if (active.kombi.length && !active.kombi.some(function (k) { return k === 'briefkasten' && !!p.briefkasten; })) return false;   /* advisor-only: Kombination */
-    if (active.tuer.length) {
+  /* ---- Filtering (mirrors the live Türsprechanlagen facets) ----
+     matchesWith(p, a) tests a product against an arbitrary active-selection
+     object; matches(p) uses the live one. The indirection lets the facet
+     engine compute per-option counts by overriding a single group. */
+  function matchesWith(p, a) {
+    if (a.color.length && !a.color.some(function (c) { return p.colors.indexOf(c) !== -1; })) return false;
+    if (a.system.length && a.system.indexOf(p.system) === -1) return false;
+    if (a.klingel.length && a.klingel.indexOf(p.klingel) === -1) return false;   /* '1'..'7' or 'flex' */
+    if (a.type.length && a.type.indexOf(p.type) === -1) return false;            /* advisor-only: video / audio */
+    if (a.material.length && a.material.indexOf(p.material) === -1) return false;
+    if (a.verwendung.length && a.verwendung.indexOf(verwOf(p)) === -1) return false;     /* advisor-only: Verwendungszweck */
+    if (a.namensschild.length && a.namensschild.indexOf(nsOf(p)) === -1) return false;   /* advisor-only: Namensschildtyp */
+    if (a.kombi.length && !a.kombi.some(function (k) { return k === 'briefkasten' && !!p.briefkasten; })) return false;   /* advisor-only: Kombination */
+    if (a.tuer.length) {
       /* Türöffner-Bedienung — array of access methods on the product. OR within the group. */
-      var tOk = active.tuer.some(function (k) { return (p.tuer || []).indexOf(k) !== -1; });
+      var tOk = a.tuer.some(function (k) { return (p.tuer || []).indexOf(k) !== -1; });
       if (!tOk) return false;
     }
     return true;
   }
+  function matches(p) { return matchesWith(p, active); }
 
   /* Derived advisor attributes (computed from existing data — no per-product field needed) */
   function verwOf(p) { return p.klingel === 'flex' ? 'flexibel' : (p.klingel === '1' ? 'einfamilien' : 'mehrfamilien'); }
@@ -665,7 +720,7 @@
           else if (active[o.group] && active[o.group].indexOf(o.value) === -1) active[o.group].push(o.value);
         });
         advisorChips = true;   /* filters came from the KI → keep them out of the toolbar */
-        page = 1; updateKlingelAvailability(); syncControls(); render();
+        page = 1; refreshFacetDisplay(); syncControls(); render();
         return PRODUCTS.filter(matches).length;
       }
       var current = sel.slice(), dropped = [];
@@ -1116,7 +1171,7 @@
   buildFacetGroup('klingel');
   buildFacetGroup('tuer');
   buildColorGroup();
-  updateKlingelAvailability();
+  updateFacets();
   wireDrawer();
   wireSubnav();
   wireFooterAccordions();
