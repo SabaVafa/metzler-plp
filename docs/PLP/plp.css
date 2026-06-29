@@ -1383,6 +1383,12 @@
 .advisor__chip-x svg { width: 10px; height: 10px; }
 .advisor__note { margin: 0; font-size: var(--text-body-sm); color: var(--ink-60); }   /* KI flow floor: 14px min */
 .advisor__note em { font-style: normal; font-weight: 600; color: var(--schwarz); }
+/* Trust strip on the result — brand social proof + USPs at the conversion moment */
+.advisor__trust { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: var(--sp-4) 0 0; padding-top: var(--sp-4); border-top: 1px solid rgba(0,0,0,.08); list-style: none; font-size: var(--text-body-sm); color: var(--ink-60); }
+.advisor__trust li { display: flex; align-items: center; gap: 6px; }
+.advisor__trust strong { color: var(--schwarz); font-weight: 700; }
+.advisor__trust a { color: var(--teal); text-decoration: underline; }
+.advisor__trust a:hover { color: var(--teal-700, var(--teal)); }
 /* Summary row: chips on the left, action buttons on the right — one horizontal line */
 .advisor__summary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-3) var(--sp-4); }
 .advisor__summary .advisor__chips { flex: 1 1 auto; }   /* fill the row so the buttons sit at the right edge */
