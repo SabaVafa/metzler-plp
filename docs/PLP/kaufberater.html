@@ -784,14 +784,6 @@
       const chips = buildChips().map(c=>'<span class="advisor__chip">'+c.text+'<button type="button" class="advisor__chip-x" data-chip="'+c.key+'" aria-label="Filter '+c.text+' entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button></span>').join("");
       const note = exact ? "" : '<p class="advisor__note">Kein exakter Treffer – wir zeigen Ihnen die besten Alternativen.</p>';
       const viewLabel = total===1 ? "Das Modell ansehen" : "Alle "+total+" Modelle ansehen";
-      /* Reassurance at the conversion moment — provable figures only, Garantie linked (Content-Briefing). */
-      const trust =
-        '<ul class="advisor__trust">'+
-          '<li><strong>4,72&#9733;</strong> aus über 33.500 Bewertungen</li>'+
-          '<li>Versandkostenfrei ab 99 €</li>'+
-          '<li><a href="https://edelstahl-tuerklingel.de/metzler-garantieerklaerung" target="_blank" rel="noopener">10 Jahre Metzler Garantie</a></li>'+
-          '<li>Kauf auf Rechnung</li>'+
-        '</ul>';
 
       const capture =
         '<div class="advisor__capture" data-result-capture>'+
@@ -820,7 +812,6 @@
       return '<div class="advisor__result">'+
         '<div class="advisor__result-head"><h3 class="advisor__result-title">Unsere Top-Empfehlungen für Sie</h3></div>'+
         '<div class="advisor__recs">'+cards+'</div>'+
-        trust+
         '<div class="advisor__aside">'+
           '<div class="advisor__summary">'+
             (chips ? '<div class="advisor__chips">'+chips+'</div>' : '<span></span>')+
