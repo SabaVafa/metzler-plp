@@ -90,11 +90,11 @@
     { id:'castor', name:'Unterputz-Briefkasten aus Edelstahl | Castor', line:'Edelstahl V2A', price:179.00, uvp:null, rating:5, reviews:21,
       badge:null, colors:['edelstahl','anthrazit'], faecher:'1', material:'edelstahl', zeitung:'optional', montage:'unterputz' },
     { id:'trias', name:'Mehrfamilien-Briefkastenanlage | 3 Parteien | Trias', line:null, price:349.00, uvp:399.00, rating:5, reviews:9,
-      badge:{type:'sale', text:'−12 %'}, colors:['anthrazit','grau','edelstahl'], faecher:'3', material:'stahl', zeitung:'ohne', montage:'stand', paket:true, klingel:true, sprech:true },
+      badge:{type:'sale', text:'−12 %'}, colors:['anthrazit','grau','edelstahl','eisenglimmer'], faecher:'3', material:'stahl', zeitung:'ohne', montage:'stand', paket:true, klingel:true, sprech:true },
     { id:'vossberg', name:'Briefkasten mit Klingel & Sprechanlage | Vossberg', line:'2-in-1', price:299.00, uvp:null, rating:4.5, reviews:27,
       badge:null, colors:['anthrazit','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand', paket:true, klingel:true, sprech:true },
     { id:'duo', name:'Doppel-Briefkasten | 2 Parteien | Duo', line:null, price:229.00, uvp:null, rating:5, reviews:15,
-      badge:null, colors:['anthrazit','weiss','grau'], faecher:'2', material:'stahl', zeitung:'integriert', montage:'wand' },
+      badge:null, colors:['anthrazit','weiss','grau','schwarz'], faecher:'2', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'klar', name:'Briefkasten mit Acrylglas-Front | Klar', line:null, price:139.00, uvp:null, rating:4.5, reviews:8,
       badge:null, colors:['schwarz','anthrazit'], faecher:'1', material:'acrylglas', zeitung:'ohne', montage:'wand' },
     { id:'anton2', name:'Briefkasten Holzoptik Eiche | personalisiert mit Gravur | Anton 2', line:null, price:99.99, uvp:null, rating:5, reviews:20,
@@ -104,7 +104,7 @@
     { id:'kompakt', name:'Kompakt-Briefkasten ohne Gravur | Basic', line:null, price:69.99, uvp:84.99, rating:4.5, reviews:96,
       badge:{type:'sale', text:'−18 %'}, colors:['weiss','anthrazit','grau','schwarz','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'ohne', montage:'wand' },
     { id:'quartett', name:'Briefkastenanlage | 4 Parteien | Quartett', line:null, price:459.00, uvp:null, rating:5, reviews:6,
-      badge:null, colors:['anthrazit','grau','edelstahl'], faecher:'3', material:'stahl', zeitung:'ohne', montage:'unterputz', paket:true, klingel:true }
+      badge:null, colors:['anthrazit','grau','schwarz','eisenglimmer'], faecher:'3', material:'stahl', zeitung:'ohne', montage:'unterputz', paket:true, klingel:true }
   ];
 
   var TOTAL = 80; // catalogue headline figure
