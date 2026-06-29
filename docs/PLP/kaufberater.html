@@ -293,7 +293,7 @@
           opts:[ {v:"wand",label:"An der Hauswand",sub:"klassische Wandmontage",chip:"Wandmontage",sat:p=>p.montage==="wand"}, {v:"stand",label:"Freistehend mit Standfuß",sub:"z. B. am Weg oder in der Einfahrt",chip:"Standmontage",sat:p=>p.montage==="stand"}, {v:"zaun",label:"Am Zaun",sub:"als Zaunbriefkasten",chip:"Zaunmontage",sat:p=>p.montage==="stand"}, {v:"unterputz",label:"In die Mauer integriert",sub:"Mauerdurchwurf oder Unterputz",chip:"Unterputz",sat:p=>p.montage==="unterputz"} ] },
         { key:"postaufkommen", type:"multi",
           q:"Was soll neben Briefpost noch hineinpassen?",
-          opts:[ {v:"paket",label:"Auch Pakete",sub:"sicheres Paketfach für DHL, Hermes & Co.",chip:"Paketfach"}, {v:"zeitung",label:"Zeitungen & viel Post",sub:"großes Fassungsvermögen mit Zeitungsfach",chip:"Zeitungsfach"}, {v:"nur",label:"Nur Briefkasten",sub:"reine Briefpost – kein Extra-Fach nötig",chip:"Nur Briefkasten",exclusive:true} ],
+          opts:[ {v:"paket",label:"Auch Pakete",sub:"sicheres Paketfach für DHL, Hermes & Co.",chip:"Paketfach"}, {v:"zeitung",label:"Zeitungen & Post",sub:"großes Fassungsvermögen mit Zeitungsfach",chip:"Zeitungsfach"}, {v:"nur",label:"Nur Briefkasten",sub:"reine Briefpost – kein Extra-Fach nötig",chip:"Nur Briefkasten",exclusive:true} ],
           match:(p,set)=>{ const need=[...set].filter(k=>k==="paket"||k==="zeitung"); if(!need.length) return 0.5; const ok=need.filter(k=> k==="paket" ? !!p.paket : p.zeitung==="integriert").length; return ok/need.length; } },
         { key:"zusatz", type:"single", match:satMatch,
           q:"Welche Zusatzfunktion wünschen Sie sich?",
