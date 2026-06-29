@@ -597,7 +597,11 @@
     STEPS.forEach(s=>{ answers[s.key] = (s.type==="multi") ? new Set() : null; });
     let step = 0;
 
-    const activeSteps = () => STEPS.filter(s => !s.when || s.when(answers));
+    const availOpts = (s) => s.opts.filter(o => !o.when || o.when(answers));
+    /* A step is shown only if it passes its `when` gate AND still offers a real
+       choice (more than one option). A step that filters down to a single option
+       is skipped — no point asking it. */
+    const activeSteps = () => STEPS.filter(s => (!s.when || s.when(answers)) && availOpts(s).length > 1);
     const optById = (s, v) => s.opts.find(o => String(o.v) === String(v));
 
     /* Drop answers for steps whose `when` no longer holds, and clear any chosen
@@ -612,6 +616,9 @@
           const opt = s.opts.find(o=>String(o.v)===String(answers[s.key]));
           if(opt && opt.when && !opt.when(answers)) answers[s.key] = null;
         }
+        /* Step skipped (no real choice left) → drop any lingering answer so it
+           doesn't show as a chip or affect scoring. */
+        if(availOpts(s).length <= 1) answers[s.key] = (s.type==="multi") ? new Set() : null;
       });
     }
 
