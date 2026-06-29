@@ -1160,6 +1160,9 @@
   box-shadow: var(--shadow-lg); border-color: rgba(1,82,83,0.25);
 }
 .advisor__opt:focus-visible { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-10); }   /* Teal 500 focus ring */
+/* When only one option is offered (others filtered out), don't stretch it
+   across the full row — cap it to a normal card width, left-aligned. */
+.advisor__opt:only-child { max-width: 380px; justify-self: start; }
 .advisor__opt.is-active { border-color: var(--teal); background: var(--teal-5); }   /* selected = whole tile (single 1px Teal 500 border + Teal 50 fill) */
 .advisor__opt-sw { flex: 0 0 auto; align-self: center; width: 18px; height: 18px; border-radius: var(--r-m); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.14); }   /* color swatch matches facet list */
 .advisor__opt-label { font-size: var(--text-body-sm); font-weight: 500; color: var(--schwarz); }   /* Body SM Medium */
