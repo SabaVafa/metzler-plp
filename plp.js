@@ -95,6 +95,8 @@
       badge:null, colors:['anthrazit','weiss','grau'], faecher:'2', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'klar', name:'Briefkasten mit Acrylglas-Front | Klar', line:null, price:139.00, uvp:null, rating:4.5, reviews:8,
       badge:null, colors:['schwarz','anthrazit'], faecher:'1', material:'acrylglas', zeitung:'ohne', montage:'wand' },
+    { id:'anton2', name:'Briefkasten Holzoptik Eiche | personalisiert mit Gravur | Anton 2', line:null, price:99.99, uvp:null, rating:5, reviews:20,
+      badge:null, colors:['anthrazit','braun'], faecher:'1', material:'holz', zeitung:'integriert', montage:'wand' },
     { id:'nordkap', name:'Edelstahl-Briefkasten V4A | Küste | Nordkap', line:'Salzwasserfest', price:219.00, uvp:null, rating:5, reviews:11,
       badge:null, colors:['edelstahl'], faecher:'1', material:'edelstahl', zeitung:'integriert', montage:'stand', paket:true },
     { id:'kompakt', name:'Kompakt-Briefkasten ohne Gravur | Basic', line:null, price:69.99, uvp:84.99, rating:4.5, reviews:96,
