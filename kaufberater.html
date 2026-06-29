@@ -278,7 +278,6 @@
           q:"Welche Zusatzfunktion wünschen Sie sich?",
           opts:[ {v:"klingel",label:"Funkklingel",sub:"kabellos und einfach nachrüstbar",chip:"Funkklingel",sat:p=>!!p.klingel}, {v:"klingel-sprech",label:"Klingel mit Sprechanlage",sub:"sehen und sprechen, wer vor der Tür steht",chip:"Klingel & Sprechanlage",sat:p=>!!p.klingel&&!!p.sprech}, {v:"sichtfenster",label:"Sichtfenster",sub:"Ihren Posteingang auf einen Blick erkennen",chip:"Sichtfenster",sat:p=>p.material==="acrylglas"}, {v:"blumenkasten",label:"Mit Blumenkasten",sub:"integrierter Pflanzkasten als Blickfang",chip:"Blumenkasten",sat:p=>!!p.blumenkasten}, {v:"keine",label:"Keine Zusatzfunktion",sub:"ein reiner Briefkasten",neutral:true} ] },
         { key:"witterung", type:"single", match:satMatch,
-          info:'<h4>Welches Material?</h4><p>Der <strong>Korpus</strong> besteht aus galvanisiertem, pulverbeschichtetem Stahl – robust und wetterfest für normale, geschützte Lagen.</p><p>Für raue, exponierte oder Küsten-Standorte bieten Modelle mit <strong>V4A-Edelstahlleisten</strong> (rostfrei, besonders salzwasserfest) zusätzlichen Schutz.</p>', infoLabel:'Welches Material?',
           q:"Wie stark ist der Standort der Witterung ausgesetzt?",
           opts:[ {v:"geschuetzt",label:"Übliche, geschützte Lage",sub:"pulverbeschichteter Stahl genügt",neutral:true}, {v:"exponiert",label:"Rau, exponiert oder in Küstennähe",sub:"mit rostfreien V4A-Edelstahlleisten, salzwasserfest",chip:"V4A-Edelstahl",sat:p=>p.material==="edelstahl"} ] },
         { key:"optik", type:"single", match:satMatch,
