@@ -696,14 +696,24 @@
 
     function selectSingle(key, v, btn){
       const before = activeSteps().length;
-      answers[key] = v;
+      /* Clicking the already-selected option clears it (toggle off); otherwise it
+         replaces the current choice. */
+      const wasSelected = String(answers[key]) === String(v);
       btn.parentNode.querySelectorAll(".advisor__opt").forEach(b=>{ b.classList.remove("is-active"); b.setAttribute("aria-pressed","false"); });
-      btn.classList.add("is-active"); btn.setAttribute("aria-pressed","true");
+      if(wasSelected){
+        answers[key] = null;
+      } else {
+        answers[key] = v;
+        btn.classList.add("is-active"); btn.setAttribute("aria-pressed","true");
+      }
       pruneAnswers();
-      /* If the selection unlocked more steps (a gating step like Produktart), re-render
-         so the progress bar + "Weiter" appear and reflect the now-known flow length. */
+      /* If the (de)selection changed which steps are unlocked, re-render so the
+         progress bar + "Weiter" reflect the now-known flow length. */
       if(activeSteps().length !== before){ renderStep(); return; }
-      const fwd = quiz.querySelector("[data-next]"); if(fwd) fwd.style.display = "";   /* reveal "Weiter" once a gating step is answered */
+      /* A lone gating step still needs a pick before "Weiter" shows. */
+      const cur = activeSteps()[step];
+      const picked = cur && (cur.type==="multi" ? (answers[cur.key] && answers[cur.key].size>0) : answers[cur.key]!=null);
+      const fwd = quiz.querySelector("[data-next]"); if(fwd) fwd.style.display = (activeSteps().length <= 1 && !picked) ? "none" : "";
     }
     function toggleMulti(key, v){
       const set = answers[key];
