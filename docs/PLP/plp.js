@@ -69,6 +69,8 @@
       badge:null, colors:['anthrazit','weiss','grau','schwarz'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'ebenhard', name:'Briefkasten mit austauschbarem Namensschild | Ebenhard', line:'Beliebt', price:89.99, uvp:null, rating:5, reviews:219,
       badge:null, colors:['anthrazit','weiss','grau'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
+    { id:'ebenhard-v2a', name:'Briefkasten mit gebürsteter V2A-Edelstahl-Front | Ebenhard', line:null, price:119.00, uvp:null, rating:5, reviews:64,
+      badge:null, colors:['anthrazit','weiss','grau','eisenglimmer','schwarz','edelstahl','wunschfarbe'], faecher:'1', material:'edelstahl', zeitung:'integriert', montage:'wand' },
     { id:'hermann', name:'Briefkasten mit Lasergravur | Hermann', line:null, price:99.99, uvp:117.99, rating:5, reviews:142,
       badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','weiss','grau','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'moris', name:'Briefkasten aus Edelstahl | personalisiert | Moris', line:'Edelstahl V4A', price:149.00, uvp:null, rating:4.5, reviews:25,
