@@ -98,7 +98,7 @@
     { id:'nordkap', name:'Edelstahl-Briefkasten V4A | Küste | Nordkap', line:'Salzwasserfest', price:219.00, uvp:null, rating:5, reviews:11,
       badge:null, colors:['edelstahl'], faecher:'1', material:'edelstahl', zeitung:'integriert', montage:'stand', paket:true },
     { id:'kompakt', name:'Kompakt-Briefkasten ohne Gravur | Basic', line:null, price:69.99, uvp:84.99, rating:4.5, reviews:96,
-      badge:{type:'sale', text:'−18 %'}, colors:['weiss','anthrazit','grau','schwarz','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'ohne', montage:'wand' },
+      badge:{type:'sale', text:'−18 %'}, colors:['weiss','anthrazit','grau','schwarz','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'ohne', montage:'wand' },
     { id:'quartett', name:'Briefkastenanlage | 4 Parteien | Quartett', line:null, price:459.00, uvp:null, rating:5, reviews:6,
       badge:null, colors:['anthrazit','grau','edelstahl'], faecher:'3', material:'stahl', zeitung:'ohne', montage:'unterputz', paket:true, klingel:true }
   ];
