@@ -97,6 +97,8 @@
       badge:null, colors:['anthrazit','weiss','grau','schwarz'], faecher:'2', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'hoffmann-edelstahl', name:'Edelstahl Standbriefkasten Mehrfamilienhaus | Stahlkorpus & gebürstete Edelstahl-Front | Hoffmann', line:null, price:359.00, uvp:null, rating:5, reviews:11,
       badge:null, colors:['anthrazit','edelstahl','eisenglimmer','grau','schwarz','weiss'], faecher:'2', material:'stahl', zeitung:'ohne', montage:'stand' },
+    { id:'vdm10-zf', name:'Standbriefkasten mit Video-Türsprechanlage für Zweifamilienhaus | VDM10 | Anthrazit RAL 7016', line:'Video-Türsprechanlage', price:1351.50, uvp:1590.00, rating:5, reviews:3,
+      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], faecher:'2', material:'stahl', zeitung:'ohne', montage:'stand', klingel:true, sprech:true },
     { id:'klar', name:'Briefkasten mit Acrylglas-Front | Klar', line:null, price:139.00, uvp:null, rating:4.5, reviews:8,
       badge:null, colors:['schwarz','anthrazit'], faecher:'1', material:'acrylglas', zeitung:'ohne', montage:'wand' },
     { id:'anton2', name:'Briefkasten Holzoptik Eiche | personalisiert mit Gravur | Anton 2', line:null, price:99.99, uvp:null, rating:5, reviews:20,
@@ -548,6 +550,7 @@
       ]},
       { q: 'Wo möchten Sie Ihren Briefkasten anbringen?',
         info: '<h4>Montagearten</h4><dl><dt>An der Hauswand</dt><dd>aufgeschraubt – die häufigste und einfachste Lösung</dd><dt>Freistehend</dt><dd>mit Standfuß, unabhängig von einer Wand (z. B. an der Grundstücksgrenze)</dd><dt>In die Mauer integriert</dt><dd>Unterputz oder Mauerdurchwurf: bündig eingelassen, die Post wird bequem von innen entnommen</dd></dl>', infoLabel: 'Montagearten erklärt',
+        hideWhen: function () { return wohnIs('2') || wohnIs('3'); },   /* Zwei-/Mehrfamilien only available freestanding → skip the Montage step */
         opts: [
         { label: 'An der Hauswand',          sub: 'klassische Wandmontage',         group: 'montage', value: 'wand',      chip: 'Wandmontage' },
         { label: 'Freistehend mit Standfuß', sub: 'z. B. am Weg oder in der Einfahrt', group: 'montage', value: 'stand',  chip: 'Standmontage' },
@@ -555,15 +558,17 @@
         { label: 'In die Mauer integriert',  sub: 'Mauerdurchwurf oder Unterputz',  group: 'montage', value: 'unterputz', chip: 'Unterputz' }
       ]},
       { q: 'Was soll neben Briefpost noch hineinpassen?', opts: [
-        { label: 'Auch Pakete',      sub: 'sicheres Paketfach für DHL, Hermes & Co.',           group: 'faecher', value: 'paketfach', chip: 'Paketfach' },
-        { label: 'Zeitungen & Post', sub: 'mit integriertem Zeitungsfach, beidseitig befüllbar', group: 'zeitung', value: 'integriert', chip: 'Zeitungsfach' },
+        { label: 'Auch Pakete',      sub: 'sicheres Paketfach für DHL, Hermes & Co.',           group: 'faecher', value: 'paketfach', chip: 'Paketfach', hideWhen: function () { return wohnIs('2') || wohnIs('3'); } },   /* Zwei-/Mehrfamilien models have no parcel-fach option */
+        { label: 'Zeitungen & Post', sub: 'mit integriertem Zeitungsfach, beidseitig befüllbar', group: 'zeitung', value: 'integriert', chip: 'Zeitungsfach', hideWhen: function () { return wohnIs('3'); } },   /* Mehrfamilien anlagen have no Zeitungsfach → step auto-skips */
         { label: 'Nur Briefkasten',  sub: 'reine Briefpost – kein Extra-Fach nötig',            neutral: true, exclusive: true }
       ]},
+      /* Zwei-/Mehrfamilien anlagen only offer the integrated Türsprechanlage — the
+         single-family extras (Funkklingel, Sichtfenster, Blumenkasten) are hidden for them. */
       { q: 'Welche Zusatzfunktion wünschen Sie sich?', opts: [
-        { label: 'Funkklingel',              sub: 'kabellos und einfach nachrüstbar',          group: 'zusatz',   value: 'klingel',        chip: 'Funkklingel' },
+        { label: 'Funkklingel',              sub: 'kabellos und einfach nachrüstbar',          group: 'zusatz',   value: 'klingel',        chip: 'Funkklingel', hideWhen: function () { return wohnIs('2') || wohnIs('3'); } },
         { label: 'Klingel mit Sprechanlage', sub: 'sehen und sprechen, wer vor der Tür steht', group: 'zusatz',   value: 'klingel+sprech', chip: 'Klingel & Sprechanlage' },
-        { label: 'Sichtfenster',             sub: 'Ihren Posteingang auf einen Blick erkennen', group: 'material', value: 'acrylglas',     chip: 'Sichtfenster' },
-        { label: 'Mit Blumenkasten',         sub: 'integrierter Pflanzkasten als Blickfang',   group: 'zusatz',   value: 'blumenkasten',   chip: 'Blumenkasten' },
+        { label: 'Sichtfenster',             sub: 'Ihren Posteingang auf einen Blick erkennen', group: 'material', value: 'acrylglas',     chip: 'Sichtfenster', hideWhen: function () { return wohnIs('2') || wohnIs('3'); } },
+        { label: 'Mit Blumenkasten',         sub: 'integrierter Pflanzkasten als Blickfang',   group: 'zusatz',   value: 'blumenkasten',   chip: 'Blumenkasten', hideWhen: function () { return wohnIs('2') || wohnIs('3'); } },
         { label: 'Keine Zusatzfunktion',     sub: 'ein reiner Briefkasten',                    neutral: true }
       ]},
       { q: 'Wie stark ist der Standort der Witterung ausgesetzt?', opts: [
@@ -574,6 +579,9 @@
          a look is offered only if a product matching that Wohnsituation comes in it
          (so 2-/Mehrfamilien drop Holz/Wunschfarbe). When a step is left with a single
          look (e.g. Mehrfamilien → only Klassische), the whole step is skipped. */
+      /* Optik options are gated per-look by Wohnsituation (optikHide): Zweifamilien
+         shows Klassische + Edelstahl-Optik; Mehrfamilien is left with one look and
+         the step auto-skips. */
       { q: 'Welche Optik passt zu Ihrem Zuhause?', opts: [
         { label: 'Klassische Farbe',     sub: 'z. B. Anthrazit, Schwarz, Weiß oder Grau',      group: 'colorset', values: ['anthrazit','braun','schwarz','eisenglimmer','weiss','grau'], chip: 'Klassische Farbe', swatch: 'linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)', hideWhen: optikHide },
         { label: 'Edelstahl-Optik',      sub: 'gebürstete Edelstahl-Elemente, zeitlos',         group: 'colorset', values: ['edelstahl'], chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)', hideWhen: optikHide },
@@ -612,8 +620,12 @@
     /* Optik option hideWhen — `this` is the option (called as o.hideWhen()). */
     function optikHide() { var o = this; return !gatingPool().some(function (p) { return sat(p, o); }); }
     function optVisible(o) { return !(o.hideWhen && o.hideWhen()); }
-    /* A step is skipped once it offers no real choice (a single visible option). */
+    /* Has the shopper chosen the given Wohnsituation (Fächer count)? */
+    function wohnIs(val) { return (picks[IDX_WOHN] || []).some(function (o) { return o.group === 'faecher' && o.value === val; }); }
+    /* A step is skipped when its own `hideWhen` holds OR it offers no real choice
+       (a single visible option). */
     function stepHidden(i) {
+      if (QUIZ[i].hideWhen && QUIZ[i].hideWhen()) return true;
       var n = 0;
       QUIZ[i].opts.forEach(function (o) { if (optVisible(o)) n++; });
       return n <= 1;
