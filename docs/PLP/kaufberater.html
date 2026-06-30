@@ -386,7 +386,9 @@
           match:(p,set)=>{ if(set.has("paketbox")) return (p.kombi.length===1 && p.kombi[0]==="paketbox")?1:0.2; const need=[...set]; return need.filter(k=>p.kombi.includes(k)).length/need.length; } },
         { key:"montage", type:"single",
           q:"Wie soll Ihre Paketbox montiert werden?",
-          opts:[ {v:"freistehend",label:"Freistehend",sub:"mit Standfuß / Füßen"}, {v:"wand",label:"Wandmontage",sub:"an der Hauswand befestigt"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Montage egal"} ] },
+          /* Paketboxen are freestanding only (no Wandmontage) → single option, so the
+             engine auto-skips this step (same single-option rule as the Optik step). */
+          opts:[ {v:"freistehend",label:"Freistehend",sub:"mit Standfuß / Füßen"} ] },
         { key:"groesse", type:"single", info:SIZE_TOOLTIP, infoLabel:"Größenratgeber",
           q:"Welche Paketgröße soll hineinpassen?",
           opts:[ {v:"S",label:"S — DHL Päckchen S",sub:"bis 35 × 25 × 10 cm",chip:"Größe S"}, {v:"M",label:"M — DHL Päckchen M",sub:"bis 37,5 × 13,5 × 30 cm",chip:"Größe M"}, {v:"XL",label:"XL — Großpaket",sub:"mehrere / sperrige Pakete",chip:"Größe XL"} ],
