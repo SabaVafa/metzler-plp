@@ -1355,8 +1355,8 @@
 .advisor__konfig { display: flex; align-items: center; gap: var(--sp-3); margin-top: var(--sp-4); padding: 14px 18px; border-radius: var(--r-l); border: 1px solid rgba(1,82,83,0.25); background: var(--teal-10, #E6EFEE); color: var(--schwarz); text-decoration: none; transition: box-shadow .22s ease, border-color .22s ease; }
 .advisor__konfig:hover { box-shadow: var(--shadow-md); border-color: var(--teal); }
 .advisor__konfig:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
-.advisor__konfig-icon { flex: 0 0 auto; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: #fff; color: var(--teal); }
-.advisor__konfig-icon svg { width: 22px; height: 22px; }
+.advisor__konfig-thumb { flex: 0 0 auto; width: 72px; height: 54px; border-radius: var(--r-m); overflow: hidden; background: #fff; }
+.advisor__konfig-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .advisor__konfig-txt { flex: 1; display: flex; flex-direction: column; gap: 1px; font-size: var(--text-body-sm); line-height: 1.4; color: var(--ink-60); }
 .advisor__konfig-txt strong { font-weight: 700; color: var(--schwarz); }
 .advisor__konfig-go { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; color: var(--teal-700); white-space: nowrap; }

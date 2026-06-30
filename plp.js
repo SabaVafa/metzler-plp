@@ -952,7 +952,7 @@
       /* Mehrfamilien → offer the Briefkastenanlagen-Konfigurator for custom / many-party setups */
       var konfig = wohnIs('3')
         ? '<a class="advisor__konfig" href="https://edelstahl-tuerklingel.de/briefkastenanlage" target="_blank" rel="noopener">' +
-            '<span class="advisor__konfig-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M9 3v18M15 3v18M4 9h16M4 15h16"/></svg></span>' +
+            '<span class="advisor__konfig-thumb"><img src="Product%20Image/Briefkastenanlage/image%206.png" alt=""></span>' +
             '<span class="advisor__konfig-txt"><strong>Mehr Parteien oder eine individuelle Anlage?</strong>Stellen Sie Ihre Mehrfamilien-Briefkastenanlage im Konfigurator zusammen.</span>' +
             '<span class="advisor__konfig-go">Konfigurator öffnen<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></span>' +
           '</a>'
