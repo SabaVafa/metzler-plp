@@ -86,7 +86,7 @@
     { id:'zaun', name:'Zaunbriefkasten | personalisiert mit Gravur', line:null, price:149.00, uvp:null, rating:5, reviews:18,
       badge:null, colors:['anthrazit','weiss','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'optional', montage:'wand' },
     { id:'flora', name:'Briefkasten mit Blumenkasten | personalisiert | Flora', line:null, price:159.00, uvp:null, rating:4.5, reviews:12,
-      badge:null, colors:['anthrazit','weiss','braun','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
+      badge:null, colors:['anthrazit','weiss','braun','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand', blumenkasten:true },
     { id:'castor', name:'Unterputz-Briefkasten aus Edelstahl | Castor', line:'Edelstahl V2A', price:179.00, uvp:null, rating:5, reviews:21,
       badge:null, colors:['edelstahl','anthrazit'], faecher:'1', material:'edelstahl', zeitung:'optional', montage:'unterputz' },
     { id:'trias', name:'Mehrfamilien-Briefkastenanlage | 3 Parteien | Trias', line:null, price:349.00, uvp:399.00, rating:5, reviews:9,
@@ -546,32 +546,39 @@
         { label: 'Zweifamilienhaus', sub: 'für zwei Haushalte',     group: 'faecher', value: '2', chip: 'Zweifamilienhaus' },
         { label: 'Mehrfamilienhaus', sub: 'für mehrere Parteien',   group: 'faecher', value: '3', chip: 'Mehrfamilienhaus' }
       ]},
-      { q: 'Wo möchten Sie Ihren Briefkasten anbringen?', opts: [
+      { q: 'Wo möchten Sie Ihren Briefkasten anbringen?',
+        info: '<h4>Montagearten</h4><dl><dt>An der Hauswand</dt><dd>aufgeschraubt – die häufigste und einfachste Lösung</dd><dt>Freistehend</dt><dd>mit Standfuß, unabhängig von einer Wand (z. B. an der Grundstücksgrenze)</dd><dt>In die Mauer integriert</dt><dd>Unterputz oder Mauerdurchwurf: bündig eingelassen, die Post wird bequem von innen entnommen</dd></dl>', infoLabel: 'Montagearten erklärt',
+        opts: [
         { label: 'An der Hauswand',          sub: 'klassische Wandmontage',         group: 'montage', value: 'wand',      chip: 'Wandmontage' },
         { label: 'Freistehend mit Standfuß', sub: 'z. B. am Weg oder in der Einfahrt', group: 'montage', value: 'stand',  chip: 'Standmontage' },
         { label: 'Am Zaun',                  sub: 'als Zaunbriefkasten',            group: 'montage', value: 'stand',      chip: 'Zaunmontage' },
         { label: 'In die Mauer integriert',  sub: 'Mauerdurchwurf oder Unterputz',  group: 'montage', value: 'unterputz', chip: 'Unterputz' }
       ]},
-      { q: 'Mit welchem Postaufkommen rechnen Sie?', opts: [
-        { label: 'Auch Pakete',             sub: 'mit sicherem Paketfach',                  group: 'faecher', value: 'paketfach', chip: 'Paketfach' },
-        { label: 'Viel Post und Zeitungen', sub: 'großes Fassungsvermögen mit Zeitungsfach', group: 'zeitung', value: 'integriert', chip: 'Zeitungsfach' },
-        { label: 'Überwiegend Briefpost',   sub: 'kompakte Größe genügt',                   neutral: true }
+      { q: 'Was soll neben Briefpost noch hineinpassen?', opts: [
+        { label: 'Auch Pakete',      sub: 'sicheres Paketfach für DHL, Hermes & Co.',           group: 'faecher', value: 'paketfach', chip: 'Paketfach' },
+        { label: 'Zeitungen & Post', sub: 'mit integriertem Zeitungsfach, beidseitig befüllbar', group: 'zeitung', value: 'integriert', chip: 'Zeitungsfach' },
+        { label: 'Nur Briefkasten',  sub: 'reine Briefpost – kein Extra-Fach nötig',            neutral: true, exclusive: true }
       ]},
       { q: 'Welche Zusatzfunktion wünschen Sie sich?', opts: [
         { label: 'Funkklingel',              sub: 'kabellos und einfach nachrüstbar',          group: 'zusatz',   value: 'klingel',        chip: 'Funkklingel' },
         { label: 'Klingel mit Sprechanlage', sub: 'sehen und sprechen, wer vor der Tür steht', group: 'zusatz',   value: 'klingel+sprech', chip: 'Klingel & Sprechanlage' },
         { label: 'Sichtfenster',             sub: 'Ihren Posteingang auf einen Blick erkennen', group: 'material', value: 'acrylglas',     chip: 'Sichtfenster' },
+        { label: 'Mit Blumenkasten',         sub: 'integrierter Pflanzkasten als Blickfang',   group: 'zusatz',   value: 'blumenkasten',   chip: 'Blumenkasten' },
         { label: 'Keine Zusatzfunktion',     sub: 'ein reiner Briefkasten',                    neutral: true }
       ]},
       { q: 'Wie stark ist der Standort der Witterung ausgesetzt?', opts: [
-        { label: 'Übliche, geschützte Lage',          sub: 'pulverbeschichteter Stahl',                neutral: true },
+        { label: 'Übliche, geschützte Lage',          sub: 'pulverbeschichteter Stahl genügt',         neutral: true },
         { label: 'Rau, exponiert oder in Küstennähe', sub: 'mit rostfreien V4A-Edelstahlleisten, salzwasserfest', group: 'material', value: 'edelstahl', chip: 'V4A-Edelstahl' }
       ]},
+      /* Optik options are gated by the chosen Wohnsituation (parity with kaufberater.html):
+         a look is offered only if a product matching that Wohnsituation comes in it
+         (so 2-/Mehrfamilien drop Holz/Wunschfarbe). When a step is left with a single
+         look (e.g. Mehrfamilien → only Klassische), the whole step is skipped. */
       { q: 'Welche Optik passt zu Ihrem Zuhause?', opts: [
-        { label: 'Klassische Farbe',     sub: 'z. B. Anthrazit, Schwarz, Weiß oder Grau',      group: 'colorset', values: ['anthrazit','braun','schwarz','eisenglimmer','weiss','grau'], chip: 'Klassische Farbe', swatch: 'linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)' },
-        { label: 'Edelstahl-Optik',      sub: 'gebürstete Edelstahl-Elemente, zeitlos',         group: 'material', value: 'edelstahl', chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)' },
-        { label: 'Natürliche Holzoptik', sub: 'Eiche oder Lärche',                             group: 'material', value: 'holz', chip: 'Holzoptik', swatch: 'linear-gradient(135deg,#b07b46,#7a5230)' },
-        { label: 'Wunschfarbe',          sub: 'individuell nach RAL',                          group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)' }
+        { label: 'Klassische Farbe',     sub: 'z. B. Anthrazit, Schwarz, Weiß oder Grau',      group: 'colorset', values: ['anthrazit','braun','schwarz','eisenglimmer','weiss','grau'], chip: 'Klassische Farbe', swatch: 'linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)', hideWhen: optikHide },
+        { label: 'Edelstahl-Optik',      sub: 'gebürstete Edelstahl-Elemente, zeitlos',         group: 'colorset', values: ['edelstahl'], chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)', hideWhen: optikHide },
+        { label: 'Natürliche Holzoptik', sub: 'Eiche oder Lärche',                             group: 'material', value: 'holz', chip: 'Holzoptik', swatch: 'linear-gradient(135deg,#b07b46,#7a5230)', hideWhen: optikHide },
+        { label: 'Wunschfarbe',          sub: 'individuell nach RAL',                          group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)', hideWhen: optikHide }
       ]},
       { q: 'Wie möchten Sie Ihren Briefkasten beschriften?', opts: [
         { label: 'Dauerhafte Lasergravur',       sub: 'UV- und witterungsbeständig, freie Schriftwahl', group: 'pref', value: 'Lasergravur' },
@@ -581,10 +588,49 @@
       ]}
     ];
 
-    var step = 0;
+    var step = 0;   /* raw QUIZ index of the current step; hidden steps are jumped */
     var picks = [];   /* picks[i] = array of chosen option objects for step i (multi-select; [] = skipped) */
     var lead = { email: '', news: false };   /* optional e-mail capture (final step) */
     var STEPS = QUIZ.length;                  /* questions only — e-mail capture now lives on the result */
+
+    /* ── Option availability + step skip (parity with kaufberater.html) ─────────
+       The Wohnsituation step (Fächer) is the gating reference for the Optik step.
+       An Optik look is offered only if a product matching the chosen Wohnsituation
+       comes in it; a step left with ≤1 real option is skipped entirely. */
+    var IDX_WOHN = 0;
+    QUIZ.forEach(function (q, i) {
+      if (q.opts.some(function (o) { return o.group === 'faecher' && o.value === '1'; })) IDX_WOHN = i;
+    });
+    /* Products consistent with the current Wohnsituation pick (else all). Falls back
+       to the full catalogue if nothing matches, so the quiz never strands a step. */
+    function gatingPool() {
+      var fa = picks[IDX_WOHN] || [];
+      if (!fa.length) return PRODUCTS;
+      var pool = PRODUCTS.filter(function (p) { return fa.some(function (o) { return sat(p, o); }); });
+      return pool.length ? pool : PRODUCTS;
+    }
+    /* Optik option hideWhen — `this` is the option (called as o.hideWhen()). */
+    function optikHide() { var o = this; return !gatingPool().some(function (p) { return sat(p, o); }); }
+    function optVisible(o) { return !(o.hideWhen && o.hideWhen()); }
+    /* A step is skipped once it offers no real choice (a single visible option). */
+    function stepHidden(i) {
+      var n = 0;
+      QUIZ[i].opts.forEach(function (o) { if (optVisible(o)) n++; });
+      return n <= 1;
+    }
+    function visibleSteps() {
+      var a = [];
+      for (var i = 0; i < QUIZ.length; i++) if (!stepHidden(i)) a.push(i);
+      return a;
+    }
+    function nextVisible(from) {                  /* returns QUIZ.length to signal "finish" */
+      for (var i = from + 1; i < QUIZ.length; i++) if (!stepHidden(i)) return i;
+      return QUIZ.length;
+    }
+    function prevVisible(from) {                  /* returns -1 when already at the first visible step */
+      for (var i = from - 1; i >= 0; i--) if (!stepHidden(i)) return i;
+      return -1;
+    }
 
     function labelFor(group, key) {
       if (group === 'color') return (COLORS[key] && COLORS[key].label) || key;
@@ -598,7 +644,8 @@
     function applyPicks() {
       var priority = ['faecher', 'zusatz', 'montage', 'zeitung', 'material', 'colorset', 'color']; /* later = dropped first */
       var sel = [], prefs = [];
-      picks.forEach(function (arr) {
+      picks.forEach(function (arr, idx) {
+        if (stepHidden(idx)) return;             /* skipped step (e.g. Optik on Mehrfamilien) → its picks don't filter */
         (arr || []).forEach(function (o) {       /* picks[i] is an array (multi-select) */
           if (!o || !o.group) return;            /* neutral option → no filter */
           if (o.group === 'pref') prefs.push(o); /* Beschriftung → noted, not filterable */
@@ -681,11 +728,14 @@
     }
 
 
-    /* Markup for one question step (i) — shared by renderStep and the height probe. */
+    /* Markup for one question step (i = raw QUIZ index) — shared by renderStep and
+       the height probe. Options gated out (hideWhen) are dropped but keep their
+       original index k stable so the click handler still resolves s.opts[k]. */
     function stepInnerHTML(i) {
       var s = QUIZ[i];
       var cur = Array.isArray(picks[i]) ? picks[i] : [];
       var opts = s.opts.map(function (o, k) {
+        if (o.hideWhen && o.hideWhen()) return '';   /* option not available for current picks → drop */
         var on = cur.some(function (p) { return p.label === o.label; }) ? ' is-active' : '';
         var swCss = o.swatch || (o.group === 'color' && COLORS[o.value] ? COLORS[o.value].css : null);
         var sw = swCss ? '<span class="advisor__opt-sw" style="background:' + swCss + '" aria-hidden="true"></span>' : '';
@@ -697,18 +747,32 @@
           inner +
         '</button>';
       }).join('');
+      /* Progress reflects only the steps actually shown for this path (the Optik
+         step drops out for Mehrfamilien), so the count stays honest as it changes. */
+      var vis = visibleSteps();
+      var pos = vis.indexOf(i);
+      var total = vis.length;
+      var isLast = pos === total - 1;
       var dots = '';
-      for (var d = 0; d < STEPS; d++) dots += '<span class="' + (d < i ? 'is-done' : (d === i ? 'is-current' : '')) + '"></span>';
+      for (var d = 0; d < total; d++) dots += '<span class="' + (d < pos ? 'is-done' : (d === pos ? 'is-current' : '')) + '"></span>';
+      var info = s.info ?
+        '<span class="advisor__info" data-info>' +
+          '<button type="button" class="advisor__info-btn" data-info-btn aria-label="' + (s.infoLabel || 'Mehr Infos') + '">i</button>' +
+          '<span class="advisor__info-pop">' + s.info + '</span>' +
+        '</span>' : '';
+      var qrow = info
+        ? '<div class="advisor__qrow"><h3 class="advisor__q">' + s.q + '</h3>' + info + '</div>'
+        : '<h3 class="advisor__q">' + s.q + '</h3>';
       return '<div class="advisor__step">' +
           '<div class="advisor__progress">' +
             '<span class="advisor__progress-dots">' + dots + '</span>' +
-            '<span class="advisor__progress-label">Schritt ' + (i + 1) + ' von ' + STEPS + '</span>' +
+            '<span class="advisor__progress-label">Schritt ' + (pos + 1) + ' von ' + total + '</span>' +
           '</div>' +
-          '<h3 class="advisor__q">' + s.q + '</h3>' +
+          qrow +
           '<div class="advisor__opts" role="group" aria-label="' + s.q + '">' + opts + '</div>' +
           '<div class="advisor__nav">' +
-            (i > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>') +
-            '<button type="button" class="advisor__forward' + (i === STEPS - 1 ? ' advisor__forward--cta' : '') + '" data-next>' + (i === STEPS - 1 ? 'Empfehlung anzeigen' : 'Weiter') + '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+            (pos > 0 ? '<button type="button" class="advisor__back" data-back><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg>Zurück</button>' : '<span></span>') +
+            '<button type="button" class="advisor__forward' + (isLast ? ' advisor__forward--cta' : '') + '" data-next>' + (isLast ? 'Empfehlung anzeigen' : 'Weiter') + '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
           '</div>' +
         '</div>';
     }
@@ -748,6 +812,11 @@
 
     function renderStep() {
       if (step >= QUIZ.length) { finish(); return; }   /* after the last question → result (with e-mail capture) */
+      /* Drop any pick that is no longer offered on this step (e.g. an Optik look
+         picked earlier, then the shopper switched to Mehrfamilien). */
+      if (Array.isArray(picks[step])) {
+        picks[step] = picks[step].filter(function (o) { return !(o.hideWhen && o.hideWhen()); });
+      }
       results.hidden = true; results.innerHTML = '';
       var s = QUIZ[step];
       quizEl.innerHTML = stepInnerHTML(step);
@@ -759,17 +828,40 @@
         btn.addEventListener('click', function () {
           var o = s.opts[+btn.getAttribute('data-opt')];
           if (!Array.isArray(picks[step])) picks[step] = [];
-          var arr = picks[step], ix = -1;
-          for (var j = 0; j < arr.length; j++) { if (arr[j].label === o.label) { ix = j; break; } }
-          if (ix === -1) arr.push(o); else arr.splice(ix, 1);   /* toggle — multi-select, no auto-advance */
-          var onNow = btn.classList.toggle('is-active');
-          btn.setAttribute('aria-pressed', onNow ? 'true' : 'false');
+          var arr = picks[step], j, ix = -1;
+          for (j = 0; j < arr.length; j++) { if (arr[j].label === o.label) { ix = j; break; } }
+          if (o.exclusive) {
+            /* Exclusive option (e.g. "Nur Briefkasten"): selecting it clears the rest;
+               clicking it again clears it. */
+            if (ix !== -1) arr.splice(ix, 1); else { arr.length = 0; arr.push(o); }
+          } else {
+            /* Selecting a normal option first removes any exclusive pick in this step. */
+            for (j = arr.length - 1; j >= 0; j--) { if (arr[j].exclusive) arr.splice(j, 1); }
+            ix = -1;
+            for (j = 0; j < arr.length; j++) { if (arr[j].label === o.label) { ix = j; break; } }
+            if (ix === -1) arr.push(o); else arr.splice(ix, 1);   /* toggle — multi-select, no auto-advance */
+          }
+          /* Re-sync every option button to the picks (exclusive toggles flip siblings). */
+          quizEl.querySelectorAll('[data-opt]').forEach(function (b) {
+            var bo = s.opts[+b.getAttribute('data-opt')];
+            var onx = arr.some(function (p) { return p.label === bo.label; });
+            b.classList.toggle('is-active', onx);
+            b.setAttribute('aria-pressed', onx ? 'true' : 'false');
+          });
         });
       });
       var back = quizEl.querySelector('[data-back]');
-      if (back) back.addEventListener('click', function () { if (step > 0) go(function () { step--; renderStep(); }); });
-      var next = quizEl.querySelector('[data-next]');   /* Weiter advances; empty selection = skip */
-      if (next) next.addEventListener('click', function () { if (!Array.isArray(picks[step])) picks[step] = []; go(function () { step++; renderStep(); }); });
+      if (back) back.addEventListener('click', function () { var p = prevVisible(step); if (p >= 0) go(function () { step = p; renderStep(); }); });
+      var next = quizEl.querySelector('[data-next]');   /* Weiter advances; empty selection = skip; hidden steps are jumped */
+      if (next) next.addEventListener('click', function () { if (!Array.isArray(picks[step])) picks[step] = []; go(function () { step = nextVisible(step); renderStep(); }); });
+
+      /* Montagearten info tooltip (only on steps with s.info). */
+      var infoBtn = quizEl.querySelector('[data-info-btn]');
+      if (infoBtn) {
+        var wrap = quizEl.querySelector('[data-info]');
+        infoBtn.addEventListener('click', function (e) { e.stopPropagation(); wrap.classList.toggle('is-open'); });
+        document.addEventListener('click', function () { wrap.classList.remove('is-open'); });
+      }
     }
 
     /* Premium loader: pulsing geometric wave + shimmer skeleton cards. */
