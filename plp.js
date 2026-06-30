@@ -22,16 +22,21 @@
 
   /* ---- Facet definitions (label + count). No price, no sort. ---- */
   var FACETS = {
+    material: { title: 'material', items: [
+      { key: 'edelstahl', label: 'Edelstahl', count: 47 },
+      { key: 'stahl',     label: 'Galvanisierter Stahl', count: 31 },
+      { key: 'acrylglas', label: 'Acrylglas-Front', count: 11 },
+      { key: 'holz',      label: 'Holzoptik', count: 2 }
+    ]},
     faecher: { title: 'faecher', items: [
       { key: '1', label: '1 Fach', count: 64 },
-      { key: '2', label: '2 Fächer', count: 9 },
-      { key: '3', label: '3+ Fächer', count: 7 },
-      { key: 'paketfach', label: 'Inkl. Paketfach', count: 6 }
+      { key: '2', label: '2 Fächer', count: 10 },
+      { key: '3', label: '3 Fächer', count: 6 }
     ]},
     zeitung: { title: 'zeitung', items: [
       { key: 'integriert', label: 'Mit Zeitungsfach', count: 63 },
-      { key: 'ohne', label: 'Nur Briefkasten', count: 8 },
-      { key: 'optional', label: 'Optionales Fach verfügbar', count: 9 }
+      { key: 'optional', label: 'Optional erhältlich', count: 9 },
+      { key: 'ohne', label: 'Ohne Zeitungsfach', count: 8 }
     ]},
     montage: { title: 'montage', items: [
       { key: 'wand', label: 'Wandmontage', count: 49 },
@@ -39,8 +44,10 @@
       { key: 'unterputz', label: 'Unterputzmontage', count: 12 }
     ]},
     zusatz: { title: 'zusatz', items: [
-      { key: 'klingel', label: 'Mit Klingel', count: 11 },
-      { key: 'sprech', label: 'Mit Sprechanlage', count: 7 }
+      { key: 'paket', label: 'Mit Paketfach', count: 9 },
+      { key: 'klingel', label: 'Mit Funkklingel', count: 11 },
+      { key: 'sprech', label: 'Mit Sprechanlage', count: 7 },
+      { key: 'blumenkasten', label: 'Mit Blumenkasten', count: 2 }
     ]}
   };
 
@@ -96,9 +103,9 @@
     { id:'duo', name:'Doppel-Briefkasten | 2 Parteien | Duo', line:null, price:229.00, uvp:null, rating:5, reviews:15,
       badge:null, colors:['anthrazit','weiss','grau','schwarz'], faecher:'2', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'hoffmann-edelstahl', name:'Edelstahl Standbriefkasten Mehrfamilienhaus | Stahlkorpus & gebürstete Edelstahl-Front | Hoffmann', line:null, price:359.00, uvp:null, rating:5, reviews:11,
-      badge:null, colors:['anthrazit','edelstahl','eisenglimmer','grau','schwarz','weiss'], faecher:'2', material:'stahl', zeitung:'ohne', montage:'stand' },
+      badge:null, colors:['anthrazit','edelstahl','eisenglimmer','grau','schwarz','weiss'], faecher:'2', material:'stahl', zeitung:'integriert', montage:'stand' },
     { id:'vdm10-zf', name:'Standbriefkasten mit Video-Türsprechanlage für Zweifamilienhaus | VDM10 | Anthrazit RAL 7016', line:'Video-Türsprechanlage', price:1351.50, uvp:1590.00, rating:5, reviews:3,
-      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], faecher:'2', material:'stahl', zeitung:'ohne', montage:'stand', klingel:true, sprech:true },
+      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], faecher:'2', material:'stahl', zeitung:'integriert', montage:'stand', klingel:true, sprech:true },
     { id:'klar', name:'Briefkasten mit Acrylglas-Front | Klar', line:null, price:139.00, uvp:null, rating:4.5, reviews:8,
       badge:null, colors:['schwarz','anthrazit'], faecher:'1', material:'acrylglas', zeitung:'ohne', montage:'wand' },
     { id:'anton2', name:'Briefkasten Holzoptik Eiche | personalisiert mit Gravur | Anton 2', line:null, price:99.99, uvp:null, rating:5, reviews:20,
@@ -232,7 +239,7 @@
     }
     if (a.zeitung.length && a.zeitung.indexOf(p.zeitung) === -1) return false;
     if (a.montage.length && a.montage.indexOf(p.montage) === -1) return false;
-    if (a.material && a.material.length && a.material.indexOf(p.material) === -1) return false;   /* advisor-only facet (Witterung/Optik/Sichtfenster) */
+    if (a.material && a.material.length && a.material.indexOf(p.material) === -1) return false;   /* sidebar Material facet + advisor (Witterung/Optik/Sichtfenster) */
     if (a.zusatz.length) {
       /* Extra functions — boolean attributes on the product (p.klingel / p.sprech).
          OR within the group; a "klingel+sprech" key requires BOTH (combined unit). */
@@ -252,7 +259,7 @@
      colours actually available wall-recessed). With no filter active the curated
      "live-mirror" counts are restored and all options shown. Only sidebar groups
      participate (material is advisor-only, not rendered). */
-  var FACET_GROUPS = ['color', 'zeitung', 'faecher', 'montage', 'zusatz'];
+  var FACET_GROUPS = ['color', 'material', 'zeitung', 'faecher', 'montage', 'zusatz'];
   function facetKeys(group) {
     return group === 'color' ? Object.keys(COLORS) : FACETS[group].items.map(function (it) { return it.key; });
   }
@@ -295,15 +302,27 @@
       if (!changed) break;
     }
   }
+  function facetContainer(group) {
+    var body = document.getElementById('facet-' + group);
+    return body ? body.closest('.facet') : null;
+  }
   function refreshFacetDisplay() {
     var dynamic = activeCount() > 0;
     FACET_GROUPS.forEach(function (group) {
+      var avail = 0, anySelected = false;
       facetKeys(group).forEach(function (key) {
-        if (!dynamic) { setFacetRow(group, key, curatedCount(group, key), false); return; }
-        var n = optionCount(group, key);
         var selected = active[group].indexOf(key) !== -1;
+        if (selected) anySelected = true;
+        if (!dynamic) { setFacetRow(group, key, curatedCount(group, key), false); avail++; return; }
+        var n = optionCount(group, key);
         setFacetRow(group, key, n, n === 0 && !selected);
+        if (n > 0 || selected) avail++;
       });
+      /* Redundant one-choice: a group offering ≤1 selectable option can't narrow
+         anything, so hide the whole facet — unless the user has a pick there (so
+         they can still see/clear it). */
+      var box = facetContainer(group);
+      if (box) box.hidden = (avail <= 1 && !anySelected);
     });
   }
   /* User-driven refresh (sidebar toggle / clear): prune impossible picks first.
@@ -559,8 +578,8 @@
       ]},
       { q: 'Was soll neben Briefpost noch hineinpassen?', opts: [
         { label: 'Auch Pakete',      sub: 'sicheres Paketfach für DHL, Hermes & Co.',           group: 'faecher', value: 'paketfach', chip: 'Paketfach', hideWhen: function () { return wohnIs('2') || wohnIs('3'); } },   /* Zwei-/Mehrfamilien models have no parcel-fach option */
-        { label: 'Zeitungen & Post', sub: 'mit integriertem Zeitungsfach, beidseitig befüllbar', group: 'zeitung', value: 'integriert', chip: 'Zeitungsfach', hideWhen: function () { return wohnIs('3'); } },   /* Mehrfamilien anlagen have no Zeitungsfach → step auto-skips */
-        { label: 'Nur Briefkasten',  sub: 'reine Briefpost – kein Extra-Fach nötig',            neutral: true, exclusive: true }
+        { label: 'Zeitungen & Post', sub: 'mit integriertem Zeitungsfach, beidseitig befüllbar', group: 'zeitung', value: 'integriert', chip: 'Zeitungsfach', hideWhen: function () { return wohnIs('3'); } },   /* hidden for Mehrfamilien only */
+        { label: 'Nur Briefkasten',  sub: 'reine Briefpost – kein Extra-Fach nötig',            neutral: true, exclusive: true, hideWhen: function () { return wohnIs('2'); } }   /* Zweifamilien models all include a Zeitungsfach → only "Zeitungen & Post" applies; the lone-option step then auto-skips */
       ]},
       /* Zwei-/Mehrfamilien anlagen only offer the integrated Türsprechanlage — the
          single-family extras (Funkklingel, Sichtfenster, Blumenkasten) are hidden for them. */
@@ -1078,6 +1097,7 @@
   /* ---- Init ---- */
   buildSubnav();
   buildColorGroup();
+  buildFacetGroup('material');
   buildFacetGroup('zeitung');
   buildFacetGroup('faecher');
   buildFacetGroup('montage');

@@ -291,15 +291,28 @@
       if (!changed) break;
     }
   }
+  function facetContainer(group) {
+    var body = document.getElementById('facet-' + group);
+    return body ? body.closest('.facet') : null;
+  }
   function refreshFacetDisplay() {
     var dynamic = activeCount() > 0;
     FACET_GROUPS.forEach(function (group) {
+      var avail = 0, anySelected = false;
       facetKeys(group).forEach(function (key) {
-        if (!dynamic) { setFacetRow(group, key, curatedCount(group, key), false); return; }
-        var n = optionCount(group, key);
         var selected = active[group].indexOf(key) !== -1;
+        if (selected) anySelected = true;
+        if (!dynamic) { setFacetRow(group, key, curatedCount(group, key), false); avail++; return; }
+        var n = optionCount(group, key);
         setFacetRow(group, key, n, n === 0 && !selected);
+        if (n > 0 || selected) avail++;
       });
+      /* Redundant one-choice: a group offering ≤1 selectable option can't narrow
+         anything, so hide the whole facet (e.g. Türöffner Bedienung disappears for
+         BUS / Audio, which carry no electronic-access options) — unless the user has
+         a pick there, so they can still see/clear it. */
+      var box = facetContainer(group);
+      if (box) box.hidden = (avail <= 1 && !anySelected);
     });
   }
   /* User-driven refresh (sidebar toggle / clear): prune impossible picks first.
