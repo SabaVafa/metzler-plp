@@ -6,7 +6,7 @@
 <title>Metzler Kaufberater — Vorschau</title>
 <!-- Same design system as Briefkasten / Sprechanlage -->
 <link rel="stylesheet" href="../Home/styles-v2.css?v=9" />
-<link rel="stylesheet" href="plp.css?v=238" />
+<link rel="stylesheet" href="plp.css?v=239" />
 <style>
   /* Showcase-only chrome (page head + category divider) + the size tooltip,
      all built from the SAME design-system tokens as plp.css. */
@@ -818,6 +818,14 @@
       const chips = buildChips().map(c=>'<span class="advisor__chip">'+c.text+'<button type="button" class="advisor__chip-x" data-chip="'+c.key+'" aria-label="Filter '+c.text+' entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button></span>').join("");
       const note = exact ? "" : '<p class="advisor__note">Kein exakter Treffer – wir zeigen Ihnen die besten Alternativen.</p>';
       const viewLabel = total===1 ? "Das Modell ansehen" : "Alle "+total+" Modelle ansehen";
+      /* Briefkasten + Mehrfamilien → offer the Briefkastenanlagen-Konfigurator */
+      const konfig = (root.getAttribute("data-ai")==="briefkasten" && answers.wohnsituation==="mf")
+        ? '<a class="advisor__konfig" href="https://edelstahl-tuerklingel.de/briefkastenanlage" target="_blank" rel="noopener">'+
+            '<span class="advisor__konfig-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M9 3v18M15 3v18M4 9h16M4 15h16"/></svg></span>'+
+            '<span class="advisor__konfig-txt"><strong>Mehr Parteien oder eine individuelle Anlage?</strong>Stellen Sie Ihre Mehrfamilien-Briefkastenanlage im Konfigurator zusammen.</span>'+
+            '<span class="advisor__konfig-go">Konfigurator öffnen<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></span>'+
+          '</a>'
+        : '';
 
       const capture =
         '<div class="advisor__capture" data-result-capture>'+
@@ -846,6 +854,7 @@
       return '<div class="advisor__result">'+
         '<div class="advisor__result-head"><h3 class="advisor__result-title">Unsere Top-Empfehlungen für Sie</h3></div>'+
         '<div class="advisor__recs">'+cards+'</div>'+
+        konfig+
         '<div class="advisor__aside">'+
           '<div class="advisor__summary">'+
             (chips ? '<div class="advisor__chips">'+chips+'</div>' : '<span></span>')+
