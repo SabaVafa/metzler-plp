@@ -89,7 +89,11 @@
   display: flex; gap: var(--sp-4);
   align-items: stretch;             /* all cards share the tallest card's height → uniform size */
   overflow-x: auto; scrollbar-width: none;
-  padding: 8px 4px;
+  /* overflow-x:auto forces overflow-y to clip too → the hover box-shadow was cut off.
+     Extra vertical padding gives the shadow room; the negative margin cancels it so the
+     strip's height and spacing stay exactly the same. */
+  padding: 16px 4px;
+  margin-block: -8px;
   scroll-snap-type: x proximity;
 }
 .subnav__track::-webkit-scrollbar { display: none; }
