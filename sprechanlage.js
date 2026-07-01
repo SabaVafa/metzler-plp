@@ -90,7 +90,7 @@
     { id:'dominik1', name:'XDM10 Video-Türsprechanlage mit austauschbarem Namensschild | 2-Draht-BUS | 1 Klingeltaster | Maxior', line:'BUS-System', price:424.15, uvp:499.00, rating:5, reviews:2,
       badge:SALE, showMeta:true, award:'Badge/reddot-award-badge.svg', colors:['anthrazit','eisenglimmer','grau','schwarz','weiss','wunschfarbe'], system:'bus', klingel:'1', tuer:[], type:'video', img:I83 },
     { id:'sdm10x', name:'Türsprechanlage mit Kamera | Gesichtserkennung | Touch-Display | Live-HD-Video | Ein- & Mehrfamilien | SDM10X', line:'IP-System', price:1266.50, uvp:1490.00, rating:5, reviews:9,
-      badge:SALE, showMeta:true, colors:['anthrazit','edelstahl','schwarz','weiss','grau'], system:'ip', klingel:'flex', tuer:['gesicht','rfid','pin'], material:'edelstahl', type:'video', img:I84 },
+      badge:SALE, showMeta:true, colors:['anthrazit','edelstahl','schwarz','weiss','grau'], system:'ip', klingel:'flex', tuer:['rfid','gesicht','pin','qr'], material:'edelstahl', type:'video', img:I84 },
     { id:'colson1', name:'VDM10 2.0 Video-Türsprechanlage | 1 Klingeltaster | Colson', line:'IP-System', price:594.15, uvp:699.00, rating:5, reviews:63,
       badge:SALE, showMeta:true, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','wunschfarbe'], system:'ip', klingel:'1', tuer:['rfid'], type:'video', img:I82 },
     { id:'horizon', name:'VDM10 2.0 modulare Video-Türsprechanlage | Ein- & Mehrfamilien | Horizon', line:'IP-System', price:849.15, uvp:999.00, rating:5, reviews:21,
@@ -370,7 +370,8 @@
       : '';
     var reviews = p.reviews ? '<span class="pcard__reviews">(' + p.reviews + ')</span>' : '';
     var sys = p.line ? '<span class="pcard__sys">' + p.line + '</span>' : '';   /* IP-System / BUS-System tag */
-    var tags = sys ? '<div class="pcard__tags">' + sys + '</div>' : '';
+    var feat = (p.tuer || []).map(function (k) { return '<span class="pcard__feat">' + (LABELS['tuer:' + k] || k) + '</span>'; }).join('');   /* Türöffner-Bedienung features (RFID, Gesichtserkennung, PIN-Code, QR-Code, Fingerprint) */
+    var tags = (sys || feat) ? '<div class="pcard__tags">' + sys + feat + '</div>' : '';
     /* Red Dot award: the full "reddot winner 2026" lockup sits on the product image
        itself (no longer a meta-row pill / seal). */
     var awardBadge = p.award ? '<img class="pcard__award-badge" src="Badge/reddot-award-badge.svg" alt="Red Dot Award winner 2026">' : '';

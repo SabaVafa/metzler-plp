@@ -297,6 +297,7 @@
 
 /* System tag (IP-System / BUS-System) — text-only pill per PILL RULE: Graphite 100 fill, Schwarz label */
 .pcard__sys { align-self: flex-start; padding: 2px 9px; border-radius: 999px; background: var(--graphite-100); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08); color: var(--schwarz); font-size: var(--text-caption); font-weight: 500; letter-spacing: .02em; }
+.pcard__feat { align-self: flex-start; padding: 2px 9px; border-radius: 999px; background: var(--teal); color: #fff; font-size: var(--text-caption); font-weight: 600; letter-spacing: .02em; }   /* Türöffner feature pill (teal) */
 
 /* Top row — brand left, rating right (matches the live website) */
 .pcard__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -815,7 +816,7 @@
 
   /* System pill — slightly tighter on the narrow card. (The Red Dot award is now a
      badge on the image, not a meta-row pill, so the tags row is just IP-System.) */
-  .pcard__sys { font-size: 11px; padding: 2px 8px; }
+  .pcard__sys, .pcard__feat { font-size: 11px; padding: 2px 8px; }
   .pcard__tags { gap: 6px; }
 
   .catalog__title { font-size: 17px; }
