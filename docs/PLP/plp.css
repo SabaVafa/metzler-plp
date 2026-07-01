@@ -277,7 +277,8 @@
 .pcard__badge--best { background: var(--teal-dark); }
 .pcard__badge--new  { background: var(--teal); }
 .pcard__badge--sale { background: #B23A18; }
-.pcard__tags { display: flex; align-items: center; flex-wrap: nowrap; gap: var(--sp-2); overflow: hidden; }   /* single line — JS trims overflow to a "+N" chip so the card height never grows */
+.pcard__tags { display: flex; align-items: center; flex-wrap: nowrap; gap: var(--sp-2); overflow-x: auto; scrollbar-width: none; }   /* single line; scrolls horizontally when the pills overflow, so the card height never grows */
+.pcard__tags::-webkit-scrollbar { display: none; }
 /* Red Dot award — the full "reddot winner 2026" lockup (seal upper-left + full-width
    wordmark along the bottom) sits low on the image: the seal overlaps the device while
    the wordmark line rests on the white card background just beneath the device. */
@@ -296,10 +297,8 @@
 .pcard__body { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5) var(--sp-5); flex: 1; }
 
 /* System tag (IP-System / BUS-System) — text-only pill per PILL RULE: Graphite 100 fill, Schwarz label */
-.pcard__sys { align-self: flex-start; padding: 2px 9px; border-radius: 999px; background: var(--graphite-100); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08); color: var(--schwarz); font-size: var(--text-caption); font-weight: 500; letter-spacing: .02em; }
-/* Türöffner feature pills — same quiet family as the System tag, kept to one line */
-.pcard__feat { flex: 0 0 auto; padding: 2px 9px; border-radius: 999px; background: var(--white); box-shadow: inset 0 0 0 1px var(--graphite-300); color: var(--ink-60); font-size: var(--text-caption); font-weight: 500; letter-spacing: .02em; white-space: nowrap; }
-.pcard__more { flex: 0 0 auto; padding: 2px 8px; border-radius: 999px; background: var(--graphite-100); color: var(--ink-60); font-size: var(--text-caption); font-weight: 600; white-space: nowrap; }
+/* System tag + Türöffner feature pills — identical style; the row scrolls when they overflow */
+.pcard__sys, .pcard__feat { flex: 0 0 auto; align-self: center; padding: 2px 9px; border-radius: 999px; background: var(--graphite-100); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08); color: var(--schwarz); font-size: var(--text-caption); font-weight: 500; letter-spacing: .02em; white-space: nowrap; }
 
 /* Top row — brand left, rating right (matches the live website) */
 .pcard__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -818,7 +817,7 @@
 
   /* System pill — slightly tighter on the narrow card. (The Red Dot award is now a
      badge on the image, not a meta-row pill, so the tags row is just IP-System.) */
-  .pcard__sys, .pcard__feat, .pcard__more { font-size: 11px; padding: 2px 8px; }
+  .pcard__sys, .pcard__feat { font-size: 11px; padding: 2px 8px; }
   .pcard__tags { gap: 6px; }
 
   .catalog__title { font-size: 17px; }

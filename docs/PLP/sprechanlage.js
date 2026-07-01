@@ -471,25 +471,6 @@
 
     renderPagination(totalPages);
     renderChips();
-
-    /* Keep each card's tag row to a single line: hide overflowing feature pills
-       and show a "+N" chip, so a card with many Türöffner features stays exactly
-       as tall as the others. */
-    if (!grid.hidden) [].forEach.call(grid.querySelectorAll('.pcard__tags'), trimTags);
-  }
-
-  function trimTags(tags) {
-    var more = tags.querySelector('.pcard__more'); if (more) more.remove();
-    var feats = [].slice.call(tags.querySelectorAll('.pcard__feat'));
-    feats.forEach(function (f) { f.hidden = false; });
-    if (tags.scrollWidth <= tags.clientWidth) return;   /* everything fits on one line */
-    var chip = el('span', 'pcard__more'); tags.appendChild(chip);
-    var hidden = 0;
-    for (var i = feats.length - 1; i >= 0; i--) {
-      feats[i].hidden = true; hidden++;
-      chip.textContent = '+' + hidden;
-      if (tags.scrollWidth <= tags.clientWidth) break;
-    }
   }
 
   /* ---- Pagination (live-style numbered pages + arrows) ---- */
