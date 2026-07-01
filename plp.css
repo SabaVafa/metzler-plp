@@ -1354,17 +1354,26 @@
 
 /* Curated recommendation cards — DS product-card treatment (radius-lg, Graphite 300) */
 .advisor__recs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-4); align-items: stretch; }   /* horizontal, equal-height cards */
-/* Single recommendation (e.g. Paketbox + Sprechanlage) → a full-width "hero" card
-   that fills the row with the product's key features, so one option doesn't leave
-   an empty, floating gap. */
+/* Single recommendation (e.g. Paketbox + Sprechanlage) → a composed "featured"
+   card: prominent image, a title/price header separated from a tidy two-column
+   check-list. Fills the row without the cluttered look of many bullet columns. */
 .advisor__recs--single { grid-template-columns: 1fr; }
-.advisor__rec--hero { align-items: flex-start; gap: var(--sp-4); }
-.advisor__rec--hero .advisor__rec-thumb { width: 128px; height: 164px; }
-.advisor__rec--hero .advisor__rec-name { font-size: var(--text-body); }
-.advisor__rec-features { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 5px 22px; }
-.advisor__rec-features li { position: relative; padding-left: 17px; font-size: var(--text-body-sm); line-height: 1.4; color: var(--ink-60); }
-.advisor__rec-features li::before { content: ""; position: absolute; left: 2px; top: .5em; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
+.advisor__rec--hero { align-items: flex-start; gap: var(--sp-5); padding: var(--sp-4); }
+.advisor__rec--hero .advisor__rec-thumb { width: 156px; height: 192px; flex: 0 0 auto; }
+.advisor__rec--hero .advisor__rec-info { gap: 4px; }
+.advisor__rec--hero .advisor__rec-name { font-size: var(--text-body); line-height: 1.4; }
+.advisor__rec-features {
+  list-style: none; margin: var(--sp-3) 0 0; padding: var(--sp-3) 0 0;
+  border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 32px;
+}
+.advisor__rec-features li { position: relative; padding-left: 26px; font-size: var(--text-body-sm); line-height: 1.45; color: var(--ink-60); }
+.advisor__rec-features li::before {   /* teal check mark */
+  content: ""; position: absolute; left: 6px; top: 3px; width: 6px; height: 11px;
+  border: solid var(--teal); border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
 .advisor__rec--hero .advisor__rec-go { align-self: center; }
+@media (max-width: 620px) { .advisor__rec-features { grid-template-columns: 1fr; } }
 
 /* Mehrfamilien CTA → Briefkastenanlagen-Konfigurator (shown on the Briefkasten result only) */
 .advisor__konfig { display: flex; align-items: center; gap: var(--sp-3); margin-top: var(--sp-4); padding: 14px 18px; border-radius: var(--r-l); border: 1px solid rgba(1,82,83,0.25); background: var(--teal-10, #E6EFEE); color: var(--schwarz); text-decoration: none; transition: box-shadow .22s ease, border-color .22s ease; }
