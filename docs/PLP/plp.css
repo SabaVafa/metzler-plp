@@ -1354,9 +1354,17 @@
 
 /* Curated recommendation cards — DS product-card treatment (radius-lg, Graphite 300) */
 .advisor__recs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-4); align-items: stretch; }   /* horizontal, equal-height cards */
-/* Single recommendation (e.g. Paketbox + Sprechanlage) → cap the width so the lone
-   card doesn't stretch across the whole result on wide screens. */
-.advisor__recs--single { grid-template-columns: minmax(0, 560px); }
+/* Single recommendation (e.g. Paketbox + Sprechanlage) → a full-width "hero" card
+   that fills the row with the product's key features, so one option doesn't leave
+   an empty, floating gap. */
+.advisor__recs--single { grid-template-columns: 1fr; }
+.advisor__rec--hero { align-items: flex-start; gap: var(--sp-4); }
+.advisor__rec--hero .advisor__rec-thumb { width: 128px; height: 164px; }
+.advisor__rec--hero .advisor__rec-name { font-size: var(--text-body); }
+.advisor__rec-features { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 5px 22px; }
+.advisor__rec-features li { position: relative; padding-left: 17px; font-size: var(--text-body-sm); line-height: 1.4; color: var(--ink-60); }
+.advisor__rec-features li::before { content: ""; position: absolute; left: 2px; top: .5em; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
+.advisor__rec--hero .advisor__rec-go { align-self: center; }
 
 /* Mehrfamilien CTA → Briefkastenanlagen-Konfigurator (shown on the Briefkasten result only) */
 .advisor__konfig { display: flex; align-items: center; gap: var(--sp-3); margin-top: var(--sp-4); padding: 14px 18px; border-radius: var(--r-l); border: 1px solid rgba(1,82,83,0.25); background: var(--teal-10, #E6EFEE); color: var(--schwarz); text-decoration: none; transition: box-shadow .22s ease, border-color .22s ease; }
