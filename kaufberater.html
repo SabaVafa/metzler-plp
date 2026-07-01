@@ -397,7 +397,7 @@
           q:"Wie viele Brieffächer benötigen Sie?",
           opts:[ {v:1,label:"1 Fach",sub:"für 1 Haushalt",chip:"1 Brieffach"}, {v:2,label:"2 Fächer",sub:"für 2 Haushalte",chip:"2 Brieffächer"}, {v:3,label:"3 Fächer",sub:"für 3 Haushalte",chip:"3 Brieffächer"}, {v:4,label:"4 Fächer",sub:"für 4 Haushalte",chip:"4 Brieffächer"}, {v:5,label:"5 Fächer",sub:"für 5 Haushalte",chip:"5 Brieffächer"} ],
           match:(p,v)=>p.faecher===v?1:(p.faecher?0.4:0) },
-        { key:"klingeltaster", type:"single", when:a=>a.kombi.has("klingel")||a.kombi.has("sprechanlage"),
+        { key:"klingeltaster", type:"single", when:a=>a.kombi.has("klingel"),   /* taster count matters only for Klingel — the Sprechanlage paketbox is a single product */
           q:"Wie viele Klingeltaster benötigen Sie?",
           opts:[ {v:1,label:"1 Taster",sub:"für 1 Partei",chip:"1 Klingeltaster"}, {v:2,label:"2 Taster",sub:"für 2 Parteien",chip:"2 Klingeltaster"}, {v:3,label:"3 Taster",sub:"für 3 Parteien",chip:"3 Klingeltaster"} ],
           match:(p,v)=>p.klingeltaster===v?1:(p.klingeltaster?0.4:0) },
@@ -425,6 +425,7 @@
         {name:"Bispo 2 LED — Paketbox mit Briefkasten & Gravur", price:369, reviews:36, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"grau", gravur:"lasergravur", led:true},
         {name:"Bispo 2 SF — Briefkasten, Sichtfenster, Anthrazit", price:349, reviews:5, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"anthrazit", gravur:"lasergravur", led:true},
         {name:"Bispo Funk — Funk-Paketbox mit Klingel & Briefkasten", price:379, reviews:16, kombi:["briefkasten","klingel"], montage:"wand", groesse:"M", faecher:1, klingeltaster:1, farbe:"anthrazit", gravur:"lasergravur"},
+        {name:"Video-Türsprechanlage mit Paketbox | Anthrazit RAL 7016 | personalisiert mit Gravur", price:1199, reviews:5, kombi:["briefkasten","sprechanlage"], montage:"wand", groesse:"M", faecher:1, klingeltaster:1, farbe:"anthrazit", gravur:"lasergravur"},
         {name:"Zivo 2 Renz LED — Paketbox, austauschbares Schild, Anthrazit", price:349, reviews:4, kombi:["paketbox"], montage:"wand", groesse:"M", farbe:"anthrazit", gravur:"namensschild", led:true, entnahme:"rueckseite"},
         {name:"Ben — Paketbox XXL, höhenverstellbare Füße, Anthrazit", price:699, reviews:6, kombi:["paketbox"], montage:"freistehend", groesse:"XL", farbe:"anthrazit", gravur:"namensschild"},
         {name:"Bispo Max 2 — Paketbox XL mit Briefkasten & Gravur", price:549, reviews:26, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"eisenglimmer", gravur:"lasergravur"},
