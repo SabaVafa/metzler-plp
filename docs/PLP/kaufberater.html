@@ -382,7 +382,7 @@
         { key:"kombi", type:"multi",
           q:"Womit möchten Sie Ihre Paketbox kombinieren?",
           hint:"Mehrfachauswahl möglich · „Nur Paketbox“ schließt die anderen aus.",
-          opts:[ {v:"briefkasten",label:"Briefkasten"}, {v:"klingel",label:"Klingel"}, {v:"sprechanlage",label:"Sprechanlage"}, {v:"paketbox",label:"Nur Paketbox",exclusive:true} ],
+          opts:[ {v:"briefkasten",label:"Briefkasten"}, {v:"klingel",label:"Klingel & Briefkasten"}, {v:"sprechanlage",label:"Sprechanlage"}, {v:"paketbox",label:"Nur Paketbox",exclusive:true} ],
           match:(p,set)=>{ if(set.has("paketbox")) return (p.kombi.length===1 && p.kombi[0]==="paketbox")?1:0.2; const need=[...set]; return need.filter(k=>p.kombi.includes(k)).length/need.length; } },
         { key:"montage", type:"single",
           q:"Wie soll Ihre Paketbox montiert werden?",
