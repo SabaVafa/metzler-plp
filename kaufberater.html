@@ -405,7 +405,7 @@
           q:"Soll die Paketbox beleuchtet sein?",
           opts:[ {v:"ja",label:"Mit LED-Beleuchtung",sub:"beleuchtetes Namensschild",chip:"Mit LED"}, {v:"nein",label:"Ohne Beleuchtung",chip:"Ohne LED"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"LED egal"} ],
           match:(p,v)=>(v==="ja"?!!p.led:!p.led)?1:0.2 },
-        { key:"entnahme", type:"single", when:a=>!a.kombi.has("sprechanlage"),
+        { key:"entnahme", type:"single", when:a=>!a.kombi.has("sprechanlage")&&!a.kombi.has("klingel"),   /* Klingel/Sprechanlage lines have no rear-entnahme variant */
           q:"Von welcher Seite möchten Sie Ihre Sendungen entnehmen?",
           opts:[ {v:"vorne",label:"Von der Vorderseite",sub:"Standard – Entnahme an der Front",chip:"Entnahme vorne"}, {v:"rueckseite",label:"Von der Rückseite",sub:"bequem von innen, z. B. durch die Wand",chip:"Rückentnahme"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Entnahme egal"} ],
           match:(p,v)=>(p.entnahme||"vorne")===v?1:0.3 },
