@@ -425,7 +425,7 @@
         {name:"Bispo 2 LED — Paketbox mit Briefkasten & Gravur", price:369, reviews:36, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"grau", gravur:"lasergravur", led:true},
         {name:"Bispo 2 SF — Briefkasten, Sichtfenster, Anthrazit", price:349, reviews:5, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"anthrazit", gravur:"lasergravur", led:true},
         {name:"Bispo Funk — Funk-Paketbox mit Klingel & Briefkasten", price:379, reviews:16, kombi:["briefkasten","klingel"], montage:"wand", groesse:"M", faecher:1, klingeltaster:1, farbe:"anthrazit", gravur:"lasergravur"},
-        {name:"Video-Türsprechanlage mit Paketbox | Anthrazit RAL 7016 | personalisiert mit Gravur", price:1199, reviews:5, kombi:["briefkasten","sprechanlage"], montage:"wand", groesse:"M", faecher:1, klingeltaster:1, farbe:"anthrazit", gravur:"lasergravur"},
+        {name:"Video-Türsprechanlage mit Paketbox | Anthrazit RAL 7016 | personalisiert mit Gravur", price:1199, reviews:5, kombi:["briefkasten","sprechanlage"], montage:"wand", groesse:"M", faecher:1, klingeltaster:1, farbe:"anthrazit", gravur:"lasergravur", img:"Kaufbrater/metzler-video-tuersprechanlage-mit-paketbox-anthrazit-ral-7016-personalisiert-mit-gravur-edelstahl-namensschild.webp"},
         {name:"Zivo 2 Renz LED — Paketbox, austauschbares Schild, Anthrazit", price:349, reviews:4, kombi:["paketbox"], montage:"wand", groesse:"M", farbe:"anthrazit", gravur:"namensschild", led:true, entnahme:"rueckseite"},
         {name:"Ben — Paketbox XXL, höhenverstellbare Füße, Anthrazit", price:699, reviews:6, kombi:["paketbox"], montage:"freistehend", groesse:"XL", farbe:"anthrazit", gravur:"namensschild"},
         {name:"Bispo Max 2 — Paketbox XL mit Briefkasten & Gravur", price:549, reviews:26, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"eisenglimmer", gravur:"lasergravur"},
@@ -791,7 +791,7 @@
 
     function recCardHTML(p){
       return '<a class="advisor__rec" href="#" data-details>'+
-        '<span class="advisor__rec-thumb"><img src="'+cfg.img+'" alt="'+p.name+'" loading="lazy"></span>'+
+        '<span class="advisor__rec-thumb"><img src="'+(p.img||cfg.img)+'" alt="'+p.name+'" loading="lazy"></span>'+
         '<span class="advisor__rec-info">'+
           '<span class="advisor__rec-name">'+p.name+'</span>'+
           '<span class="advisor__rec-price">'+fmtPrice(p.price)+'</span>'+
@@ -818,8 +818,10 @@
 
     function resultHTML(){
       const ranked = PRODUCTS.map(p=>({p, s:score(p)})).sort((a,b)=>b.s-a.s || (b.p.reviews||0)-(a.p.reviews||0));
-      const top = ranked.slice(0,2);
-      const total = Math.max(top.length, ranked.filter(r=>r.s>=0.5).length);
+      /* Paketbox + Sprechanlage = a single fixed product → show just that one recommendation, no alternative. */
+      const single = root.getAttribute("data-ai")==="paketboxen" && answers.kombi && answers.kombi.has && answers.kombi.has("sprechanlage");
+      const top = ranked.slice(0, single ? 1 : 2);
+      const total = single ? 1 : Math.max(top.length, ranked.filter(r=>r.s>=0.5).length);
       const exact = ranked.length && ranked[0].s>=0.999;
       const cards = top.map(({p})=>recCardHTML(p)).join("");
       const chips = buildChips().map(c=>'<span class="advisor__chip">'+c.text+'<button type="button" class="advisor__chip-x" data-chip="'+c.key+'" aria-label="Filter '+c.text+' entfernen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button></span>').join("");
