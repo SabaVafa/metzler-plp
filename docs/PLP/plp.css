@@ -1354,6 +1354,9 @@
 
 /* Curated recommendation cards — DS product-card treatment (radius-lg, Graphite 300) */
 .advisor__recs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-4); align-items: stretch; }   /* horizontal, equal-height cards */
+/* Single recommendation (e.g. Paketbox + Sprechanlage) → cap the width so the lone
+   card doesn't stretch across the whole result on wide screens. */
+.advisor__recs--single { grid-template-columns: minmax(0, 560px); }
 
 /* Mehrfamilien CTA → Briefkastenanlagen-Konfigurator (shown on the Briefkasten result only) */
 .advisor__konfig { display: flex; align-items: center; gap: var(--sp-3); margin-top: var(--sp-4); padding: 14px 18px; border-radius: var(--r-l); border: 1px solid rgba(1,82,83,0.25); background: var(--teal-10, #E6EFEE); color: var(--schwarz); text-decoration: none; transition: box-shadow .22s ease, border-color .22s ease; }
