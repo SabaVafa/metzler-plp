@@ -374,7 +374,8 @@
     var tags = (sys || feat)
       ? '<div class="pcard__tagswrap">' +
           '<div class="pcard__tags">' + sys + feat + '</div>' +
-          '<button type="button" class="pcard__tags-cue" aria-label="Weitere Merkmale anzeigen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+          '<button type="button" class="pcard__tags-cue pcard__tags-cue--prev" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
+          '<button type="button" class="pcard__tags-cue pcard__tags-cue--next" aria-label="Weitere Merkmale anzeigen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
         '</div>'
       : '';
     /* Red Dot award: the full "reddot winner 2026" lockup sits on the product image
@@ -481,19 +482,23 @@
        edge fade) that shows while there are more pills and scrolls them on click. */
     [].forEach.call(grid.querySelectorAll('.pcard__tagswrap'), function (wrap) {
       var t = wrap.querySelector('.pcard__tags');
-      var cue = wrap.querySelector('.pcard__tags-cue');
+      var prev = wrap.querySelector('.pcard__tags-cue--prev');
+      var next = wrap.querySelector('.pcard__tags-cue--next');
       if (!t) return;
       var upd = function () {
-        var max = t.scrollWidth - t.clientWidth;
-        t.classList.toggle('is-scroll', max > 1);
-        t.classList.toggle('is-end', max > 1 && t.scrollLeft >= max - 1);
+        var max = t.scrollWidth - t.clientWidth, on = max > 1;
+        t.classList.toggle('is-scroll', on);
+        t.classList.toggle('at-start', !on || t.scrollLeft <= 1);
+        t.classList.toggle('at-end', !on || t.scrollLeft >= max - 1);
       };
       upd();
       t.addEventListener('scroll', upd, { passive: true });
-      if (cue) cue.addEventListener('click', function (e) {
+      var step = function (dir) { return function (e) {
         e.preventDefault(); e.stopPropagation();
-        t.scrollBy({ left: Math.max(90, Math.round(t.clientWidth * 0.7)), behavior: 'smooth' });
-      });
+        t.scrollBy({ left: dir * Math.max(90, Math.round(t.clientWidth * 0.7)), behavior: 'smooth' });
+      }; };
+      if (next) next.addEventListener('click', step(1));
+      if (prev) prev.addEventListener('click', step(-1));
     });
   }
 

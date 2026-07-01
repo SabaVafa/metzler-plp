@@ -279,30 +279,36 @@
 .pcard__badge--sale { background: #B23A18; }
 .pcard__tags { display: flex; align-items: center; flex-wrap: nowrap; gap: var(--sp-2); overflow-x: auto; scrollbar-width: none; }   /* single line; scrolls horizontally when the pills overflow, so the card height never grows */
 .pcard__tags::-webkit-scrollbar { display: none; }
-/* Scroll affordance: fade the right edge while there are more pills to scroll to
-   (toggled by JS; removed once scrolled to the end). */
-.pcard__tags.is-scroll { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); }
-.pcard__tags.is-scroll.is-end { -webkit-mask-image: none; mask-image: none; }
-/* Trailing spacer so the last pill can scroll clear of the arrow button + fade
-   (otherwise the final option stays partly hidden under them at the end). */
+/* Scroll affordance: fade each edge only when there are more pills that way
+   (widths driven by JS-toggled at-start / at-end classes). */
+.pcard__tags.is-scroll {
+  --fadeL: 0px; --fadeR: 26px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--fadeL), #000 calc(100% - var(--fadeR)), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 var(--fadeL), #000 calc(100% - var(--fadeR)), transparent);
+}
+.pcard__tags.is-scroll:not(.at-start) { --fadeL: 26px; }
+.pcard__tags.is-scroll.at-end { --fadeR: 0px; }
+/* Leading / trailing spacers so the first and last pills clear the arrow buttons + fade. */
 .pcard__tags.is-scroll::after { content: ""; flex: 0 0 26px; }
-/* Interactive scroll cue — a round arrow button pinned to the right edge (same
-   family as the subcategory-rail arrows). Click scrolls the pills; it fades in
-   while there is more to scroll and out once at the end. */
+/* Interactive scroll cues — round arrow buttons (same family as the rail arrows).
+   Next (right) shows while more remain; Prev (left) shows once scrolled. */
 .pcard__tagswrap { position: relative; }
 .pcard__tags-cue {
-  position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 2;
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
   width: 22px; height: 22px; padding: 0; display: grid; place-items: center;
   border: 1px solid var(--graphite-300); border-radius: 50%; background: #fff; color: var(--teal);
   box-shadow: 0 1px 3px rgba(0,0,0,.14); cursor: pointer;
   opacity: 0; pointer-events: none;
   transition: opacity .2s ease, background .15s ease, color .15s ease, border-color .15s ease;
 }
+.pcard__tags-cue--next { right: 0; }
+.pcard__tags-cue--prev { left: 0; }
+.pcard__tags-cue--prev svg { transform: rotate(180deg); }
 .pcard__tags-cue svg { width: 13px; height: 13px; }
 .pcard__tags-cue:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
 .pcard__tags-cue:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--teal-10); }
-.pcard__tags.is-scroll ~ .pcard__tags-cue { opacity: 1; pointer-events: auto; }
-.pcard__tags.is-scroll.is-end ~ .pcard__tags-cue { opacity: 0; pointer-events: none; }
+.pcard__tags.is-scroll:not(.at-end) ~ .pcard__tags-cue--next { opacity: 1; pointer-events: auto; }
+.pcard__tags.is-scroll:not(.at-start) ~ .pcard__tags-cue--prev { opacity: 1; pointer-events: auto; }
 /* Red Dot award — the full "reddot winner 2026" lockup (seal upper-left + full-width
    wordmark along the bottom) sits low on the image: the seal overlaps the device while
    the wordmark line rests on the white card background just beneath the device. */
