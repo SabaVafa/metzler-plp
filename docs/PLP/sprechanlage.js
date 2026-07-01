@@ -471,6 +471,18 @@
 
     renderPagination(totalPages);
     renderChips();
+
+    /* Scroll affordance for the feature-pill row: fade the right edge while more
+       pills are scrollable, drop it once scrolled to the end. */
+    [].forEach.call(grid.querySelectorAll('.pcard__tags'), function (t) {
+      var upd = function () {
+        var max = t.scrollWidth - t.clientWidth;
+        t.classList.toggle('is-scroll', max > 1);
+        t.classList.toggle('is-end', max > 1 && t.scrollLeft >= max - 1);
+      };
+      upd();
+      t.addEventListener('scroll', upd, { passive: true });
+    });
   }
 
   /* ---- Pagination (live-style numbered pages + arrows) ---- */

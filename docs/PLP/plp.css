@@ -279,6 +279,10 @@
 .pcard__badge--sale { background: #B23A18; }
 .pcard__tags { display: flex; align-items: center; flex-wrap: nowrap; gap: var(--sp-2); overflow-x: auto; scrollbar-width: none; }   /* single line; scrolls horizontally when the pills overflow, so the card height never grows */
 .pcard__tags::-webkit-scrollbar { display: none; }
+/* Scroll affordance: fade the right edge while there are more pills to scroll to
+   (toggled by JS; removed once scrolled to the end). */
+.pcard__tags.is-scroll { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); }
+.pcard__tags.is-scroll.is-end { -webkit-mask-image: none; mask-image: none; }
 /* Red Dot award — the full "reddot winner 2026" lockup (seal upper-left + full-width
    wordmark along the bottom) sits low on the image: the seal overlaps the device while
    the wordmark line rests on the white card background just beneath the device. */
