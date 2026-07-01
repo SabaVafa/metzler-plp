@@ -371,7 +371,12 @@
     var reviews = p.reviews ? '<span class="pcard__reviews">(' + p.reviews + ')</span>' : '';
     var sys = p.line ? '<span class="pcard__sys">' + p.line + '</span>' : '';   /* IP-System / BUS-System tag */
     var feat = (p.tuer || []).map(function (k) { return '<span class="pcard__feat">' + (LABELS['tuer:' + k] || k) + '</span>'; }).join('');   /* Türöffner-Bedienung features (RFID, Gesichtserkennung, PIN-Code, QR-Code, Fingerprint) */
-    var tags = (sys || feat) ? '<div class="pcard__tags">' + sys + feat + '</div>' : '';
+    var tags = (sys || feat)
+      ? '<div class="pcard__tagswrap">' +
+          '<div class="pcard__tags">' + sys + feat + '</div>' +
+          '<span class="pcard__tags-cue" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-chevron-right"/></svg></span>' +
+        '</div>'
+      : '';
     /* Red Dot award: the full "reddot winner 2026" lockup sits on the product image
        itself (no longer a meta-row pill / seal). */
     var awardBadge = p.award ? '<img class="pcard__award-badge" src="Badge/reddot-award-badge.svg" alt="Red Dot Award winner 2026">' : '';
