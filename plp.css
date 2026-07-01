@@ -690,6 +690,7 @@
 .sprech .seo__text:not(.is-open) p + p { margin-top: 0; }
 .seo__toggle {
   margin-top: var(--sp-4);
+  padding: 0; border: 0; background: none; cursor: pointer;   /* reset UA button inset so the label aligns flush-left with the text above */
   font-size: var(--text-body); font-weight: 600; color: var(--teal);
   text-decoration: underline; text-underline-offset: 3px;
 }
