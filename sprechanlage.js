@@ -374,7 +374,7 @@
     var tags = (sys || feat)
       ? '<div class="pcard__tagswrap">' +
           '<div class="pcard__tags">' + sys + feat + '</div>' +
-          '<span class="pcard__tags-cue" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-chevron-right"/></svg></span>' +
+          '<button type="button" class="pcard__tags-cue" aria-label="Weitere Merkmale anzeigen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
         '</div>'
       : '';
     /* Red Dot award: the full "reddot winner 2026" lockup sits on the product image
@@ -477,9 +477,12 @@
     renderPagination(totalPages);
     renderChips();
 
-    /* Scroll affordance for the feature-pill row: fade the right edge while more
-       pills are scrollable, drop it once scrolled to the end. */
-    [].forEach.call(grid.querySelectorAll('.pcard__tags'), function (t) {
+    /* Scroll affordance for the feature-pill row: a round arrow button (with an
+       edge fade) that shows while there are more pills and scrolls them on click. */
+    [].forEach.call(grid.querySelectorAll('.pcard__tagswrap'), function (wrap) {
+      var t = wrap.querySelector('.pcard__tags');
+      var cue = wrap.querySelector('.pcard__tags-cue');
+      if (!t) return;
       var upd = function () {
         var max = t.scrollWidth - t.clientWidth;
         t.classList.toggle('is-scroll', max > 1);
@@ -487,6 +490,10 @@
       };
       upd();
       t.addEventListener('scroll', upd, { passive: true });
+      if (cue) cue.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        t.scrollBy({ left: Math.max(90, Math.round(t.clientWidth * 0.7)), behavior: 'smooth' });
+      });
     });
   }
 

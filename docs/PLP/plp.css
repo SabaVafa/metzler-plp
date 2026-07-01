@@ -283,12 +283,23 @@
    (toggled by JS; removed once scrolled to the end). */
 .pcard__tags.is-scroll { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); }
 .pcard__tags.is-scroll.is-end { -webkit-mask-image: none; mask-image: none; }
-/* Chevron cue pinned to the right edge — sits over the fade, appears with it */
+/* Interactive scroll cue — a round arrow button pinned to the right edge (same
+   family as the subcategory-rail arrows). Click scrolls the pills; it fades in
+   while there is more to scroll and out once at the end. */
 .pcard__tagswrap { position: relative; }
-.pcard__tags-cue { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 16px; height: 16px; color: var(--ink-60); opacity: 0; transition: opacity .2s ease; pointer-events: none; }
-.pcard__tags-cue svg { width: 14px; height: 14px; }
-.pcard__tags.is-scroll ~ .pcard__tags-cue { opacity: 1; }
-.pcard__tags.is-scroll.is-end ~ .pcard__tags-cue { opacity: 0; }
+.pcard__tags-cue {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 2;
+  width: 22px; height: 22px; padding: 0; display: grid; place-items: center;
+  border: 1px solid var(--graphite-300); border-radius: 50%; background: #fff; color: var(--teal);
+  box-shadow: 0 1px 3px rgba(0,0,0,.14); cursor: pointer;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s ease, background .15s ease, color .15s ease, border-color .15s ease;
+}
+.pcard__tags-cue svg { width: 13px; height: 13px; }
+.pcard__tags-cue:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
+.pcard__tags-cue:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--teal-10); }
+.pcard__tags.is-scroll ~ .pcard__tags-cue { opacity: 1; pointer-events: auto; }
+.pcard__tags.is-scroll.is-end ~ .pcard__tags-cue { opacity: 0; pointer-events: none; }
 /* Red Dot award — the full "reddot winner 2026" lockup (seal upper-left + full-width
    wordmark along the bottom) sits low on the image: the seal overlaps the device while
    the wordmark line rests on the white card background just beneath the device. */
