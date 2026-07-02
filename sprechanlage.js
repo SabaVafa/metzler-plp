@@ -372,11 +372,7 @@
     var sys = p.line ? '<span class="pcard__sys">' + p.line + '</span>' : '';   /* IP-System / BUS-System tag */
     var feat = (p.tuer || []).map(function (k) { return '<span class="pcard__feat">' + (LABELS['tuer:' + k] || k) + '</span>'; }).join('');   /* Türöffner-Bedienung features (RFID, Gesichtserkennung, PIN-Code, QR-Code, Fingerprint) */
     var tags = (sys || feat)
-      ? '<div class="pcard__tagswrap">' +
-          '<div class="pcard__tags">' + sys + feat + '</div>' +
-          '<button type="button" class="pcard__tags-cue pcard__tags-cue--prev" aria-label="Zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
-          '<button type="button" class="pcard__tags-cue pcard__tags-cue--next" aria-label="Weitere Merkmale anzeigen"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>' +
-        '</div>'
+      ? '<div class="pcard__tags">' + sys + feat + '</div>'
       : '';
     /* Red Dot award: the full "reddot winner 2026" lockup sits on the product image
        itself (no longer a meta-row pill / seal). */
@@ -478,13 +474,9 @@
     renderPagination(totalPages);
     renderChips();
 
-    /* Scroll affordance for the feature-pill row: a round arrow button (with an
-       edge fade) that shows while there are more pills and scrolls them on click. */
-    [].forEach.call(grid.querySelectorAll('.pcard__tagswrap'), function (wrap) {
-      var t = wrap.querySelector('.pcard__tags');
-      var prev = wrap.querySelector('.pcard__tags-cue--prev');
-      var next = wrap.querySelector('.pcard__tags-cue--next');
-      if (!t) return;
+    /* Scroll affordance for the feature-pill row: an edge fade that appears on
+       whichever side has more pills. Toggle the state classes the fade mask keys off. */
+    [].forEach.call(grid.querySelectorAll('.pcard__tags'), function (t) {
       var upd = function () {
         var max = t.scrollWidth - t.clientWidth, on = max > 1;
         t.classList.toggle('is-scroll', on);
@@ -493,12 +485,11 @@
       };
       upd();
       t.addEventListener('scroll', upd, { passive: true });
-      var step = function (dir) { return function (e) {
-        e.preventDefault(); e.stopPropagation();
-        t.scrollBy({ left: dir * Math.max(90, Math.round(t.clientWidth * 0.7)), behavior: 'smooth' });
-      }; };
-      if (next) next.addEventListener('click', step(1));
-      if (prev) prev.addEventListener('click', step(-1));
+      /* Re-evaluate when the row's box changes (viewport/card resize) and once web
+         fonts finish loading — pills measured before the font swap are wider, which
+         would otherwise leave a stale fade on a row that actually fits. */
+      if (window.ResizeObserver) new ResizeObserver(upd).observe(t);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(upd);
     });
   }
 
