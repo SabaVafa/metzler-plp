@@ -132,7 +132,14 @@
     { id:'maxior3', name:'XDM10 Video-Türsprechanlage mit austauschbarem Namensschild | 2-Draht-BUS | 3 Klingeltaster | Maxior', line:'BUS-System', price:849.15, uvp:999.00, rating:5, reviews:null,
       badge:SALE, colors:['anthrazit','eisenglimmer','grau','schwarz','weiss','wunschfarbe'], system:'bus', klingel:'3', tuer:['rfid'], material:'v2a', type:'video', img:I87 },
     { id:'colson4', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 4 Klingeltaster | Colson', line:'IP-System', price:798.15, uvp:939.00, rating:5, reviews:2,
-      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'4', tuer:['rfid'], type:'video', img:I87 }
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'4', tuer:['rfid'], type:'video', img:I87 },
+    /* Briefkasten/Paketbox-Kombis (live /sprechanlage-briefkasten, 9 Artikel: Fächer 1–2,
+       Taster 1/2/Flexibel, alle IP) — flagged briefkasten:true so the advisor's Kombi
+       step is dataset-backed instead of silently skipping. */
+    { id:'vdm10-pb', name:'Video-Türsprechanlage mit Paketbox | personalisiert mit Gravur | VDM10', line:'IP-System', price:1019.15, uvp:1199.00, rating:5, reviews:5,
+      badge:SALE, colors:['anthrazit'], system:'ip', klingel:'1', tuer:['rfid','fingerprint'], type:'video', briefkasten:true, img:SP+'briefkasten-paketbox.png' },
+    { id:'vdm10-zf-bk', name:'Standbriefkasten mit Video-Türsprechanlage für Zweifamilienhaus | VDM10', line:'IP-System', price:1351.50, uvp:1590.00, rating:5, reviews:3,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'2', tuer:['rfid'], type:'video', briefkasten:true, img:SP+'briefkasten-paketbox.png' }
   ];
 
   var TOTAL = 38; // catalogue headline figure (live total)
@@ -656,37 +663,44 @@
         { label: 'Mehrfamilienhaus',    sub: 'mehrere Parteien & Klingeltasten', group: 'verwendung', value: 'mehrfamilien', chip: 'Mehrfamilienhaus' },
         { label: 'Flexible Großanlage', sub: 'flexibel von 1–500 Tasten',        group: 'verwendung', value: 'flexibel',     chip: 'Großanlage' }
       ]},
+      /* Facet options are dataset-gated via gateHide (live-shop parity): e.g. no
+         Audio-Großanlage exists → "Audio-only" vanishes for Flexibel and the step
+         auto-skips; the BUS line stops at Video-Ein-/Mehrfamilien → "BUS-System"
+         vanishes for Großanlagen & Audio. */
       { q: 'Möchten Sie sehen, wer vor der Tür steht?', opts: [
-        { label: 'Mit Kamera (Video)', sub: 'Live-HD-Bild der Besucher', group: 'type', value: 'video', chip: 'Video' },
-        { label: 'Audio-only',         sub: 'nur sprechen, ohne Kamera',  group: 'type', value: 'audio', chip: 'Audio', hideWhen: function () { return picked('verwendung', 'flexibel'); } }
+        { label: 'Mit Kamera (Video)', sub: 'Live-HD-Bild der Besucher', group: 'type', value: 'video', chip: 'Video', hideWhen: gateHide },
+        { label: 'Audio-only',         sub: 'nur sprechen, ohne Kamera',  group: 'type', value: 'audio', chip: 'Audio', hideWhen: gateHide }
       ]},
       { q: 'Neubau oder Modernisierung Ihrer bestehenden Anlage?', opts: [
-        { label: 'IP-System',  sub: 'Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung', group: 'system', value: 'ip',  chip: 'IP-System' },
-        { label: 'BUS-System', sub: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung',  group: 'system', value: 'bus', chip: '2-Draht-BUS', hideWhen: function () { return picked('verwendung', 'flexibel') || picked('type', 'audio'); } },
+        { label: 'IP-System',  sub: 'Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung', group: 'system', value: 'ip',  chip: 'IP-System', hideWhen: gateHide },
+        { label: 'BUS-System', sub: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung',  group: 'system', value: 'bus', chip: '2-Draht-BUS', hideWhen: gateHide },
         { label: 'Weiß ich nicht', sub: 'wir empfehlen passende Modelle für beide Systeme',             neutral: true }
       ]},
+      /* Zutritt methods are gated per option: only the methods a product consistent
+         with the answers so far actually carries are offered (Türöffner Bedienung is
+         a multi-value attribute on the live shop — premium devices carry several). */
       { q: 'Wie möchten Sie Zutritt gewähren?', sub: 'Mehrfachauswahl möglich', opts: [
-        { label: 'Fingerabdrucksensor', sub: 'schlüsselloser Zutritt',   group: 'tuer', value: 'fingerprint', chip: 'Fingerprint' },
-        { label: 'RFID-Chip',           sub: 'Transponder oder Karte',   group: 'tuer', value: 'rfid',        chip: 'RFID' },
-        { label: 'Gesichtserkennung',   sub: 'Tür öffnet beim Erkennen', group: 'tuer', value: 'gesicht',     chip: 'Gesichtserkennung' },
-        { label: 'PIN-Code',            sub: 'Zahlencode am Tastenfeld', group: 'tuer', value: 'pin',         chip: 'PIN-Code' },
-        { label: 'QR-Code',             sub: 'Zutritt per QR-Scan',      group: 'tuer', value: 'qr',          chip: 'QR-Code' },
+        { label: 'Fingerabdrucksensor', sub: 'schlüsselloser Zutritt',   group: 'tuer', value: 'fingerprint', chip: 'Fingerprint', hideWhen: gateHide },
+        { label: 'RFID-Chip',           sub: 'Transponder oder Karte',   group: 'tuer', value: 'rfid',        chip: 'RFID', hideWhen: gateHide },
+        { label: 'Gesichtserkennung',   sub: 'Tür öffnet beim Erkennen', group: 'tuer', value: 'gesicht',     chip: 'Gesichtserkennung', hideWhen: gateHide },
+        { label: 'PIN-Code',            sub: 'Zahlencode am Tastenfeld', group: 'tuer', value: 'pin',         chip: 'PIN-Code', hideWhen: gateHide },
+        { label: 'QR-Code',             sub: 'Zutritt per QR-Scan',      group: 'tuer', value: 'qr',          chip: 'QR-Code', hideWhen: gateHide },
         { label: 'Keine Zutrittsfunktion', sub: 'nur klingeln und sprechen', neutral: true }
       ]},
       { q: 'Welches Namensschild bevorzugen Sie?', opts: [
-        { label: 'Lasergravur',               sub: 'dauerhaft eingraviert',     group: 'namensschild', value: 'gravur',  chip: 'Gravur', hideWhen: function () { return busChosen(); } },
-        { label: 'Austauschbares Namensschild', sub: 'jederzeit wechselbar',    group: 'namensschild', value: 'wechsel', chip: 'Austauschbar' },
-        { label: 'Display / digital',         sub: 'Namen am Touch-Display',    group: 'namensschild', value: 'display', chip: 'Display', hideWhen: function () { return picked('type', 'audio'); } },
+        { label: 'Lasergravur',               sub: 'dauerhaft eingraviert',     group: 'namensschild', value: 'gravur',  chip: 'Gravur', hideWhen: gateHide },
+        { label: 'Austauschbares Namensschild', sub: 'jederzeit wechselbar',    group: 'namensschild', value: 'wechsel', chip: 'Austauschbar', hideWhen: gateHide },
+        { label: 'Display / digital',         sub: 'Namen am Touch-Display',    group: 'namensschild', value: 'display', chip: 'Display', hideWhen: gateHide },
         { label: 'Egal',                      sub: 'keine Präferenz',           neutral: true }
       ]},
       { q: 'Soll die Anlage mit einem Briefkasten kombiniert sein?', opts: [
         { label: 'Nur Türstation',            sub: 'klassische Außenstation',          neutral: true },
-        { label: 'Mit Briefkasten & Paketbox', sub: 'integrierte Brief-/Paketbox',     group: 'kombi', value: 'briefkasten', chip: 'Mit Briefkasten' }
+        { label: 'Mit Briefkasten & Paketbox', sub: 'integrierte Brief-/Paketbox',     group: 'kombi', value: 'briefkasten', chip: 'Mit Briefkasten', hideWhen: gateHide }
       ]},
       { q: 'Welche Optik passt zu Ihrem Eingang?', opts: [
-        { label: 'Klassische Farbe', sub: 'z. B. Anthrazit, Schwarz, Weiß oder Grau', group: 'colorset', values: ['anthrazit','braun','schwarz','eisenglimmer','weiss','grau'], chip: 'Klassische Farbe', swatch: 'linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)' },
-        { label: 'Edelstahl',        sub: 'rostfrei und zeitlos',                     group: 'material', value: 'edelstahl', chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)' },
-        { label: 'Wunschfarbe',      sub: 'individuell nach RAL',                     group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)' }
+        { label: 'Klassische Farbe', sub: 'z. B. Anthrazit, Schwarz, Weiß oder Grau', group: 'colorset', values: ['anthrazit','braun','schwarz','eisenglimmer','weiss','grau'], chip: 'Klassische Farbe', swatch: 'linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)', hideWhen: gateHide },
+        { label: 'Edelstahl',        sub: 'rostfrei und zeitlos',                     group: 'material', value: 'edelstahl', chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)', hideWhen: gateHide },
+        { label: 'Wunschfarbe',      sub: 'individuell nach RAL',                     group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)', hideWhen: gateHide }
       ]}
     ];
 
@@ -706,9 +720,7 @@
       });
     });
     /* Has the shopper chosen option `value` for facet `group` anywhere so far?
-       Used by option-level hideWhen() guards (e.g. BUS is unavailable once a
-       Flexible Großanlage / 1–500 Taster is selected — the 2-Draht line tops out
-       at 3 Klingeltastern). */
+       Used by option-level hideWhen() guards. */
     function picked(group, value) {
       return picks.some(function (arr) {
         return (arr || []).some(function (o) { return o && o.group === group && o.value === value; });
@@ -720,12 +732,44 @@
     function busChosen() {
       return (picks[IDX_SYSTEM] || []).some(function (o) { return o && o.value === 'bus'; });
     }
+    /* ── Dataset-driven option availability (live-shop parity, edelstahl-
+       tuerklingel.de/tuersprechanlagen): an option is offered only while ≥1
+       product consistent with the answers on EARLIER steps satisfies it —
+       zero-result options disappear (never greyed out). This encodes the live
+       couplings (BUS ⇒ kein Türöffner & max 3 Taster, Audio & Großanlagen ⇒
+       IP-only, Gesichtserkennung ⇒ IP …) from the data instead of by hand. */
+    function stepOfOpt(o) {
+      for (var i = 0; i < QUIZ.length; i++) if (QUIZ[i].opts.indexOf(o) !== -1) return i;
+      return QUIZ.length;
+    }
+    /* Products consistent with every facet answer on steps < limit (within a
+       step: OR; across steps: AND; neutral picks add no constraint). Falls back
+       to the full catalogue so the quiz never strands a step. */
+    function poolBefore(limit) {
+      var pool = PRODUCTS.filter(function (p) {
+        for (var j = 0; j < limit; j++) {
+          var facet = (picks[j] || []).filter(function (o) { return o && o.group; });
+          if (facet.length && !facet.some(function (o) { return sat(p, o); })) return false;
+        }
+        return true;
+      });
+      return pool.length ? pool : PRODUCTS;
+    }
+    /* Option hideWhen — `this` is the option (called as o.hideWhen()). */
+    function gateHide() { var o = this; return !poolBefore(stepOfOpt(o)).some(function (p) { return sat(p, o); }); }
+    function optVisible(o) { return !(o.hideWhen && o.hideWhen()); }
     function stepHidden(i) {
-      /* Zutritt features don't apply to BUS or to Audio-only models (no Türöffner). */
+      /* Zutritt features don't apply to BUS or to Audio-only models (no Türöffner) —
+         verified on the live shop: the BUS-Serie & Audio categories carry no
+         "Türöffner Bedienung" facet at all. */
       if (i === IDX_ZUTRITT && IDX_ZUTRITT !== -1 && (busChosen() || picked('type', 'audio'))) return true;
       /* Flexible Großanlagen are video-only, so the Video/Audio step has no choice → skip it. */
       if (i === IDX_TYPE && IDX_TYPE !== -1 && picked('verwendung', 'flexibel')) return true;
-      return false;
+      /* Generic rule (live-shop parity): a step left with ≤1 real option offers
+         no choice → skip it. */
+      var n = 0;
+      QUIZ[i].opts.forEach(function (o) { if (optVisible(o)) n++; });
+      return n <= 1;
     }
     function visibleSteps() {
       var a = [];

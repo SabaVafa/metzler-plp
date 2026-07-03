@@ -245,26 +245,38 @@
     return !set.length || set.some(pred);
   }
 
-  /* Briefkasten Optik availability: a look (Edelstahl / Holz / Wunschfarbe …)
-     is only offered if a product consistent with the answers so far provides it.
-     So choosing Zwei-/Mehrfamilien (2/2+ Fächer) drops looks the multi-family
-     models don't come in (e.g. Wunschfarbe). Falls back to "show" when nothing
-     matches, so the quiz never strands an empty step. */
-  function bkConsistent(p, a) {
-    /* Constrain the Optik looks by the chosen Wohnsituation (Fächer): multi-family
-       models don't come in Wunschfarbe/Holz/Edelstahl, so those drop out for 2/2+. */
-    const v = a.wohnsituation;
-    if (v == null) return true;
-    const st = CATS.briefkasten.steps.find(s => s.key === 'wohnsituation');
-    const o = st && st.opts.find(x => String(x.v) === String(v));
-    return !(o && o.sat && !o.sat(p));
+  /* Option availability — live-shop parity (edelstahl-tuerklingel.de research):
+     an option is offered only while ≥1 product consistent with the answers to
+     all EARLIER steps satisfies it. Zero-result options disappear (never greyed
+     out) and a step left with ≤1 real option is skipped by activeSteps().
+     catPool(cat, a, uptoKey) = products matching every sat-mapped answer before
+     that step (multi steps OR within, AND across); falls back to the full
+     catalogue so the quiz never strands an empty step. Options without `sat`
+     (neutral / "egal" / preference-only) are never gated. */
+  function catPool(cat, a, uptoKey) {
+    const steps = CATS[cat].steps;
+    const upto = steps.findIndex(s => s.key === uptoKey);
+    const set = CATS[cat].products.filter(p =>
+      steps.slice(0, upto < 0 ? steps.length : upto).every(s => {
+        const v = a[s.key];
+        if (v == null) return true;
+        if (s.type === "multi") {
+          const chosen = [...v].map(k => s.opts.find(o => o.v === k)).filter(o => o && o.sat);
+          return !chosen.length || chosen.some(o => o.sat(p));
+        }
+        const o = s.opts.find(x => String(x.v) === String(v));
+        return !(o && o.sat && !o.sat(p));
+      }));
+    return set.length ? set : CATS[cat].products;
   }
-  function bkHas(answers, optikValue) {
-    const opt = CATS.briefkasten.steps.find(s => s.key === 'optik').opts.find(o => o.v === optikValue);
-    const sat = opt && opt.sat;
-    const set = CATS.briefkasten.products.filter(p => bkConsistent(p, answers));
-    return !set.length || (sat ? set.some(sat) : true);
+  function catAvail(cat, a, stepKey, optV) {
+    const st = CATS[cat].steps.find(s => s.key === stepKey);
+    const o = st.opts.find(x => x.v === optV);
+    return !o.sat || catPool(cat, a, stepKey).some(o.sat);
   }
+  const bkAvail = (a, stepKey, optV) => catAvail("briefkasten", a, stepKey, optV);
+  const pbAvail = (a, stepKey, optV) => catAvail("paketboxen", a, stepKey, optV);
+  const spAvail = (a, stepKey, optV) => catAvail("sprechanlage", a, stepKey, optV);
 
   /* ──────────────────────────────────────────────────────────────
      Category configs. Add a category = add an entry here + an
@@ -287,23 +299,39 @@
         { key:"wohnsituation", type:"single", match:satMatch,
           q:"Für welche Wohnsituation suchen Sie einen Briefkasten?",
           opts:[ {v:"ef",label:"Einfamilienhaus",sub:"für einen Haushalt",chip:"Einfamilienhaus",sat:p=>p.faecher==="1"}, {v:"zf",label:"Zweifamilienhaus",sub:"für zwei Haushalte",chip:"Zweifamilienhaus",sat:p=>p.faecher==="2"}, {v:"mf",label:"Mehrfamilienhaus",sub:"für mehrere Parteien",chip:"Mehrfamilienhaus",sat:p=>p.faecher==="3"} ] },
-        { key:"montage", type:"single", match:satMatch, when:a=>a.wohnsituation!=="zf"&&a.wohnsituation!=="mf",
+        /* Montage options are dataset-gated (bkAvail): Zweifamilien keeps Wand (Duo)
+           + Stand, Mehrfamilien keeps Stand (Trias) + Unterputz (Quartett) — mirrors
+           the live shop where multi-family anlagen genuinely split freistehend vs
+           Unterputz. Only "Am Zaun" stays curated to single-family. */
+        { key:"montage", type:"single", match:satMatch,
           info:'<h4>Montagearten</h4><dl><dt>An der Hauswand</dt><dd>aufgeschraubt – die häufigste und einfachste Lösung</dd><dt>Freistehend</dt><dd>mit Standfuß, unabhängig von einer Wand (z. B. an der Grundstücksgrenze)</dd><dt>In die Mauer integriert</dt><dd>Unterputz oder Mauerdurchwurf: bündig eingelassen, die Post wird bequem von innen entnommen</dd></dl>', infoLabel:'Montagearten erklärt',
           q:"Wo möchten Sie Ihren Briefkasten anbringen?",
-          opts:[ {v:"wand",label:"An der Hauswand",sub:"klassische Wandmontage",chip:"Wandmontage",sat:p=>p.montage==="wand"}, {v:"stand",label:"Freistehend mit Standfuß",sub:"z. B. am Weg oder in der Einfahrt",chip:"Standmontage",sat:p=>p.montage==="stand"}, {v:"zaun",label:"Am Zaun",sub:"als Zaunbriefkasten",chip:"Zaunmontage",sat:p=>p.montage==="stand"}, {v:"unterputz",label:"In die Mauer integriert",sub:"Mauerdurchwurf oder Unterputz",chip:"Unterputz",sat:p=>p.montage==="unterputz"} ] },
+          opts:[ {v:"wand",label:"An der Hauswand",sub:"klassische Wandmontage",chip:"Wandmontage",sat:p=>p.montage==="wand",when:a=>bkAvail(a,"montage","wand")}, {v:"stand",label:"Freistehend mit Standfuß",sub:"z. B. am Weg oder in der Einfahrt",chip:"Standmontage",sat:p=>p.montage==="stand",when:a=>bkAvail(a,"montage","stand")}, {v:"zaun",label:"Am Zaun",sub:"als Zaunbriefkasten",chip:"Zaunmontage",sat:p=>p.montage==="stand",when:a=>a.wohnsituation!=="zf"&&a.wohnsituation!=="mf"&&bkAvail(a,"montage","zaun")}, {v:"unterputz",label:"In die Mauer integriert",sub:"Mauerdurchwurf oder Unterputz",chip:"Unterputz",sat:p=>p.montage==="unterputz",when:a=>bkAvail(a,"montage","unterputz")} ] },
+        /* Paketfach/Zeitungsfach are dataset-gated: Mehrfamilien keeps "Auch Pakete"
+           (Trias/Quartett anlagen have one) but loses "Zeitungen & Post"; after
+           Unterputz the step collapses and auto-skips — like the live shop's facets.
+           "Nur Briefkasten" is valid everywhere (the live shop sells zf models ohne
+           Zeitungsfach, e.g. BK212). */
         { key:"postaufkommen", type:"multi",
           q:"Was soll neben Briefpost noch hineinpassen?",
-          opts:[ {v:"paket",label:"Auch Pakete",sub:"sicheres Paketfach für DHL, Hermes & Co.",chip:"Paketfach",when:a=>a.wohnsituation!=="zf"&&a.wohnsituation!=="mf"}, {v:"zeitung",label:"Zeitungen & Post",sub:"mit integriertem Zeitungsfach, beidseitig befüllbar",chip:"Zeitungsfach",when:a=>a.wohnsituation!=="mf"}, {v:"nur",label:"Nur Briefkasten",sub:"reine Briefpost – kein Extra-Fach nötig",chip:"Nur Briefkasten",exclusive:true,when:a=>a.wohnsituation!=="zf"} ],
+          opts:[ {v:"paket",label:"Auch Pakete",sub:"sicheres Paketfach für DHL, Hermes & Co.",chip:"Paketfach",sat:p=>!!p.paket,when:a=>bkAvail(a,"postaufkommen","paket")}, {v:"zeitung",label:"Zeitungen & Post",sub:"mit integriertem Zeitungsfach, beidseitig befüllbar",chip:"Zeitungsfach",sat:p=>p.zeitung==="integriert",when:a=>bkAvail(a,"postaufkommen","zeitung")}, {v:"nur",label:"Nur Briefkasten",sub:"reine Briefpost – kein Extra-Fach nötig",chip:"Nur Briefkasten",exclusive:true} ],
           match:(p,set)=>{ const need=[...set].filter(k=>k==="paket"||k==="zeitung"); if(!need.length) return 0.5; const ok=need.filter(k=> k==="paket" ? !!p.paket : p.zeitung==="integriert").length; return ok/need.length; } },
+        /* Every Zusatz is dataset-gated (live-shop "intercom facets only where such
+           products exist"): Klingel options survive for Zwei-/Mehrfamilien via the
+           anlagen (VDM10/Trias/Quartett); Sichtfenster & Blumenkasten drop out there
+           automatically because only 1er models carry them. */
         { key:"zusatz", type:"single", match:satMatch,
           q:"Welche Zusatzfunktion wünschen Sie sich?",
-          opts:[ {v:"klingel",label:"Funkklingel",sub:"kabellos und einfach nachrüstbar",chip:"Funkklingel",sat:p=>!!p.klingel,when:a=>a.wohnsituation!=="zf"&&a.wohnsituation!=="mf"}, {v:"klingel-sprech",label:"Klingel mit Sprechanlage",sub:"sehen und sprechen, wer vor der Tür steht",chip:"Klingel & Sprechanlage",sat:p=>!!p.klingel&&!!p.sprech}, {v:"sichtfenster",label:"Sichtfenster",sub:"Ihren Posteingang auf einen Blick erkennen",chip:"Sichtfenster",sat:p=>p.material==="acrylglas",when:a=>a.wohnsituation!=="zf"&&a.wohnsituation!=="mf"}, {v:"blumenkasten",label:"Mit Blumenkasten",sub:"integrierter Pflanzkasten als Blickfang",chip:"Blumenkasten",sat:p=>!!p.blumenkasten,when:a=>a.wohnsituation!=="zf"&&a.wohnsituation!=="mf"}, {v:"keine",label:"Keine Zusatzfunktion",sub:"ein reiner Briefkasten",neutral:true} ] },
+          opts:[ {v:"klingel",label:"Funkklingel",sub:"kabellos und einfach nachrüstbar",chip:"Funkklingel",sat:p=>!!p.klingel,when:a=>bkAvail(a,"zusatz","klingel")}, {v:"klingel-sprech",label:"Klingel mit Sprechanlage",sub:"sehen und sprechen, wer vor der Tür steht",chip:"Klingel & Sprechanlage",sat:p=>!!p.klingel&&!!p.sprech,when:a=>bkAvail(a,"zusatz","klingel-sprech")}, {v:"sichtfenster",label:"Sichtfenster",sub:"Ihren Posteingang auf einen Blick erkennen",chip:"Sichtfenster",sat:p=>p.material==="acrylglas",when:a=>bkAvail(a,"zusatz","sichtfenster")}, {v:"blumenkasten",label:"Mit Blumenkasten",sub:"integrierter Pflanzkasten als Blickfang",chip:"Blumenkasten",sat:p=>!!p.blumenkasten,when:a=>bkAvail(a,"zusatz","blumenkasten")}, {v:"keine",label:"Keine Zusatzfunktion",sub:"ein reiner Briefkasten",neutral:true} ] },
+        /* V4A is dataset-gated too: with no rust-free model consistent with the
+           answers (e.g. Mehrfamilien anlagen), only the neutral option remains and
+           the step auto-skips — no dead-end answers. */
         { key:"witterung", type:"single", match:satMatch,
           q:"Wie stark ist der Standort der Witterung ausgesetzt?",
-          opts:[ {v:"geschuetzt",label:"Übliche, geschützte Lage",sub:"pulverbeschichteter Stahl genügt",neutral:true}, {v:"exponiert",label:"Rau, exponiert oder in Küstennähe",sub:"mit rostfreien V4A-Edelstahlleisten, salzwasserfest",chip:"V4A-Edelstahl",sat:p=>p.material==="edelstahl"} ] },
+          opts:[ {v:"geschuetzt",label:"Übliche, geschützte Lage",sub:"pulverbeschichteter Stahl genügt",neutral:true}, {v:"exponiert",label:"Rau, exponiert oder in Küstennähe",sub:"mit rostfreien V4A-Edelstahlleisten, salzwasserfest",chip:"V4A-Edelstahl",sat:p=>p.material==="edelstahl",when:a=>bkAvail(a,"witterung","exponiert")} ] },
         { key:"optik", type:"single", match:satMatch,
           q:"Welche Optik passt zu Ihrem Zuhause?",
-          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Schwarz, Weiß oder Grau",sw:SW_KLASSISCH,chip:"Klassische Farbe",sat:p=>["anthrazit","braun","schwarz","eisenglimmer","weiss","grau"].some(c=>p.colors.includes(c)),when:a=>bkHas(a,"klassisch")}, {v:"edelstahl",label:"Edelstahl-Optik",sub:"gebürstete Edelstahl-Elemente, zeitlos",sw:SW_EDELSTAHL,chip:"Edelstahl-Optik",sat:p=>p.material==="edelstahl"||(p.colors||[]).includes("edelstahl"),when:a=>bkHas(a,"edelstahl")}, {v:"holz",label:"Natürliche Holzoptik",sub:"Eiche oder Lärche",sw:SW_HOLZ,chip:"Holzoptik",sat:p=>p.material==="holz",when:a=>bkHas(a,"holz")}, {v:"wunsch",label:"Wunschfarbe",sub:"individuell nach RAL",sw:SW_CONIC,chip:"Wunschfarbe",sat:p=>p.colors.includes("wunschfarbe"),when:a=>bkHas(a,"wunsch")} ] },
+          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Schwarz, Weiß oder Grau",sw:SW_KLASSISCH,chip:"Klassische Farbe",sat:p=>["anthrazit","braun","schwarz","eisenglimmer","weiss","grau"].some(c=>p.colors.includes(c)),when:a=>bkAvail(a,"optik","klassisch")}, {v:"edelstahl",label:"Edelstahl-Optik",sub:"gebürstete Edelstahl-Elemente, zeitlos",sw:SW_EDELSTAHL,chip:"Edelstahl-Optik",sat:p=>p.material==="edelstahl"||(p.colors||[]).includes("edelstahl"),when:a=>bkAvail(a,"optik","edelstahl")}, {v:"holz",label:"Natürliche Holzoptik",sub:"Eiche oder Lärche",sw:SW_HOLZ,chip:"Holzoptik",sat:p=>p.material==="holz",when:a=>bkAvail(a,"optik","holz")}, {v:"wunsch",label:"Wunschfarbe",sub:"individuell nach RAL",sw:SW_CONIC,chip:"Wunschfarbe",sat:p=>p.colors.includes("wunschfarbe"),when:a=>bkAvail(a,"optik","wunsch")} ] },
         { key:"beschriftung", type:"single", match:satMatch,
           q:"Wie möchten Sie Ihren Briefkasten beschriften?",
           opts:[ {v:"laser",label:"Dauerhafte Lasergravur",sub:"UV- und witterungsbeständig, freie Schriftwahl",chip:"Lasergravur",noScore:true}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Wechselschild",noScore:true}, {v:"edelstahl-schild",label:"Edelstahl-Namensschild",sub:"hochwertig graviert",chip:"Edelstahl-Schild",noScore:true}, {v:"ohne",label:"Ohne Beschriftung",sub:"neutral",neutral:true} ] },
@@ -326,6 +354,11 @@
         {name:"Standbriefkasten mit Video-Türsprechanlage für Zweifamilienhaus | VDM10 | Anthrazit RAL 7016", price:1351.50, reviews:3, faecher:"2", montage:"stand", zeitung:"integriert", material:"stahl", colors:["anthrazit","weiss","grau","schwarz","eisenglimmer"], klingel:true, sprech:true},
         {name:"Briefkasten mit Klingel & Sprechanlage | Vossberg", price:299, reviews:27, faecher:"1", montage:"wand", zeitung:"integriert", material:"stahl", colors:["anthrazit","eisenglimmer"], paket:true, klingel:true, sprech:true},
         {name:"Doppel-Briefkasten | 2 Parteien | Duo", price:229, reviews:15, faecher:"2", montage:"wand", zeitung:"integriert", material:"stahl", colors:["anthrazit","weiss","grau"]},
+        /* Zweifamilien depth (live /briefkasten-zweifamilienhaus__2 = 17 Artikel): wall-mount
+           ohne Zeitungsfach, Sichtfenster (Acrylglas) and V4A-Edelstahl all exist for 2 Fächer. */
+        {name:"Zweifach Briefkasten | austauschbare Namensschilder | BK212 vertikal", price:179, reviews:17, faecher:"2", montage:"wand", zeitung:"ohne", material:"stahl", colors:["anthrazit"]},
+        {name:"Standbriefkasten Mehrfamilienhaus mit Sichtfenster | Cube", price:289, reviews:2, faecher:"2", montage:"stand", zeitung:"integriert", material:"acrylglas", colors:["anthrazit"]},
+        {name:"Edelstahl Standbriefkasten Mehrfamilienhaus | Stencil", price:299, reviews:1, faecher:"2", montage:"stand", zeitung:"integriert", material:"edelstahl", colors:["anthrazit","edelstahl"]},
         {name:"Briefkasten mit Acrylglas-Front | Klar", price:139, reviews:8, faecher:"1", montage:"wand", zeitung:"ohne", material:"acrylglas", colors:["schwarz","anthrazit"]},
         {name:"Briefkasten Holzoptik Eiche | personalisiert mit Gravur | Anton 2", price:99.99, reviews:20, faecher:"1", montage:"wand", zeitung:"integriert", material:"holz", colors:["anthrazit","braun"]},
         {name:"Edelstahl-Briefkasten V4A | Küste | Nordkap", price:219, reviews:11, faecher:"1", montage:"stand", zeitung:"integriert", material:"edelstahl", colors:["edelstahl"], paket:true},
@@ -340,25 +373,34 @@
         { key:"verwendung", type:"single", match:satMatch,
           q:"Für welche Wohnsituation suchen Sie eine Sprechanlage?",
           opts:[ {v:"einfamilien",label:"Einfamilienhaus",sub:"ein Haushalt, eine Klingeltaste",chip:"Einfamilienhaus",sat:p=>p.verwendung==="einfamilien"}, {v:"mehrfamilien",label:"Mehrfamilienhaus",sub:"mehrere Parteien & Klingeltasten",chip:"Mehrfamilienhaus",sat:p=>p.verwendung==="mehrfamilien"}, {v:"flexibel",label:"Flexible Großanlage",sub:"flexibel von 1–500 Tasten",chip:"Großanlage",sat:p=>p.verwendung==="flexibel"} ] },
-        { key:"type", type:"single", match:satMatch, when:a=>a.verwendung!=="flexibel",   /* Flexible Großanlagen are video-only → skip the Video/Audio step */
+        /* Live-shop parity (edelstahl-tuerklingel.de/tuersprechanlagen): facet
+           options are dataset-gated via spAvail — no Audio-Großanlage exists, so
+           "Audio-only" vanishes for Flexibel (step auto-skips); the BUS line stops
+           at Video-Ein-/Mehrfamilien, so "BUS-System" vanishes for Großanlagen and
+           Audio. Zero-result options disappear, never greyed out. */
+        { key:"type", type:"single", match:satMatch,
           q:"Möchten Sie sehen, wer vor der Tür steht?",
-          opts:[ {v:"video",label:"Mit Kamera (Video)",sub:"Live-HD-Bild der Besucher",chip:"Video",sat:p=>p.type==="video"}, {v:"audio",label:"Audio-only",sub:"nur sprechen, ohne Kamera",chip:"Audio",sat:p=>p.type==="audio",when:a=>a.verwendung!=="flexibel"} ] },
+          opts:[ {v:"video",label:"Mit Kamera (Video)",sub:"Live-HD-Bild der Besucher",chip:"Video",sat:p=>p.type==="video",when:a=>spAvail(a,"type","video")}, {v:"audio",label:"Audio-only",sub:"nur sprechen, ohne Kamera",chip:"Audio",sat:p=>p.type==="audio",when:a=>spAvail(a,"type","audio")} ] },
         { key:"system", type:"single", match:satMatch,
           q:"Neubau oder Modernisierung Ihrer bestehenden Anlage?",
-          opts:[ {v:"ip",label:"IP-System",sub:"Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung",chip:"IP-System",sat:p=>p.system==="ip"}, {v:"bus",label:"BUS-System",sub:"Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung",chip:"2-Draht-BUS",sat:p=>p.system==="bus",when:a=>a.verwendung!=="flexibel"&&a.type!=="audio"}, {v:"weiss",label:"Weiß ich nicht",sub:"wir empfehlen passende Modelle für beide Systeme",neutral:true} ] },
-        { key:"tuer", type:"multi", when:a=>a.system!=="bus"&&a.type!=="audio",   /* no dedicated Zutritt features on the 2-Draht-BUS line or Audio-only models → hide this step */
+          opts:[ {v:"ip",label:"IP-System",sub:"Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung",chip:"IP-System",sat:p=>p.system==="ip",when:a=>spAvail(a,"system","ip")}, {v:"bus",label:"BUS-System",sub:"Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung",chip:"2-Draht-BUS",sat:p=>p.system==="bus",when:a=>spAvail(a,"system","bus")}, {v:"weiss",label:"Weiß ich nicht",sub:"wir empfehlen passende Modelle für beide Systeme",neutral:true} ] },
+        /* Step-level rule straight from the live shop: the BUS-Serie and Audio
+           categories carry no "Türöffner Bedienung" facet at all → the whole
+           Zutritt step disappears for them. Within the step each method is gated
+           to what the consistent products actually offer (multi-value attribute). */
+        { key:"tuer", type:"multi", when:a=>a.system!=="bus"&&a.type!=="audio",
           q:"Wie möchten Sie Zutritt gewähren?", hint:"Mehrfachauswahl möglich.",
-          opts:[ {v:"fingerprint",label:"Fingerabdrucksensor",sub:"schlüsselloser Zutritt",chip:"Fingerprint"}, {v:"rfid",label:"RFID-Chip",sub:"Transponder oder Karte",chip:"RFID"}, {v:"gesicht",label:"Gesichtserkennung",sub:"Tür öffnet beim Erkennen",chip:"Gesichtserkennung"}, {v:"pin",label:"PIN-Code",sub:"Zahlencode am Tastenfeld",chip:"PIN-Code"}, {v:"qr",label:"QR-Code",sub:"Zutritt per QR-Scan",chip:"QR-Code"} ],
+          opts:[ {v:"fingerprint",label:"Fingerabdrucksensor",sub:"schlüsselloser Zutritt",chip:"Fingerprint",sat:p=>p.tuer.includes("fingerprint"),when:a=>spAvail(a,"tuer","fingerprint")}, {v:"rfid",label:"RFID-Chip",sub:"Transponder oder Karte",chip:"RFID",sat:p=>p.tuer.includes("rfid"),when:a=>spAvail(a,"tuer","rfid")}, {v:"gesicht",label:"Gesichtserkennung",sub:"Tür öffnet beim Erkennen",chip:"Gesichtserkennung",sat:p=>p.tuer.includes("gesicht"),when:a=>spAvail(a,"tuer","gesicht")}, {v:"pin",label:"PIN-Code",sub:"Zahlencode am Tastenfeld",chip:"PIN-Code",sat:p=>p.tuer.includes("pin"),when:a=>spAvail(a,"tuer","pin")}, {v:"qr",label:"QR-Code",sub:"Zutritt per QR-Scan",chip:"QR-Code",sat:p=>p.tuer.includes("qr"),when:a=>spAvail(a,"tuer","qr")} ],
           match:(p,set)=>{ const need=[...set]; return need.filter(k=>p.tuer.includes(k)).length/need.length; } },
         { key:"namensschild", type:"single", match:satMatch,
           q:"Welches Namensschild bevorzugen Sie?",
-          opts:[ {v:"gravur",label:"Lasergravur",sub:"dauerhaft eingraviert",chip:"Gravur",sat:p=>p.ns==="gravur",when:a=>a.system!=="bus"}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Austauschbar",sat:p=>p.ns==="wechsel"}, {v:"display",label:"Display / digital",sub:"Namen am Touch-Display",chip:"Display",sat:p=>p.ns==="display",when:a=>a.type!=="audio"}, {v:"egal",label:"Egal",sub:"keine Präferenz",neutral:true} ] },
+          opts:[ {v:"gravur",label:"Lasergravur",sub:"dauerhaft eingraviert",chip:"Gravur",sat:p=>p.ns==="gravur",when:a=>spAvail(a,"namensschild","gravur")}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Austauschbar",sat:p=>p.ns==="wechsel",when:a=>spAvail(a,"namensschild","wechsel")}, {v:"display",label:"Display / digital",sub:"Namen am Touch-Display",chip:"Display",sat:p=>p.ns==="display",when:a=>spAvail(a,"namensschild","display")}, {v:"egal",label:"Egal",sub:"keine Präferenz",neutral:true} ] },
         { key:"kombi", type:"single", match:satMatch,
           q:"Soll die Anlage mit einem Briefkasten kombiniert sein?",
-          opts:[ {v:"nur",label:"Nur Türstation",sub:"klassische Außenstation",neutral:true}, {v:"briefkasten",label:"Mit Briefkasten & Paketbox",sub:"integrierte Brief-/Paketbox",chip:"Mit Briefkasten",sat:p=>!!p.kombi} ] },
+          opts:[ {v:"nur",label:"Nur Türstation",sub:"klassische Außenstation",neutral:true}, {v:"briefkasten",label:"Mit Briefkasten & Paketbox",sub:"integrierte Brief-/Paketbox",chip:"Mit Briefkasten",sat:p=>!!p.kombi,when:a=>spAvail(a,"kombi","briefkasten")} ] },
         { key:"optik", type:"single", match:satMatch,
           q:"Welche Optik passt zu Ihrem Eingang?",
-          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Schwarz, Weiß oder Grau",sw:SW_KLASSISCH,chip:"Klassische Farbe",sat:p=>["anthrazit","braun","schwarz","eisenglimmer","weiss","grau"].some(c=>p.colors.includes(c))}, {v:"edelstahl",label:"Edelstahl",sub:"rostfrei und zeitlos",sw:SW_EDELSTAHL,chip:"Edelstahl-Optik",sat:p=>p.material==="edelstahl"||p.material==="v2a"}, {v:"wunsch",label:"Wunschfarbe",sub:"individuell nach RAL",sw:SW_CONIC,chip:"Wunschfarbe",sat:p=>p.colors.includes("wunschfarbe")} ] },
+          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Schwarz, Weiß oder Grau",sw:SW_KLASSISCH,chip:"Klassische Farbe",sat:p=>["anthrazit","braun","schwarz","eisenglimmer","weiss","grau"].some(c=>p.colors.includes(c)),when:a=>spAvail(a,"optik","klassisch")}, {v:"edelstahl",label:"Edelstahl",sub:"rostfrei und zeitlos",sw:SW_EDELSTAHL,chip:"Edelstahl-Optik",sat:p=>p.material==="edelstahl"||p.material==="v2a",when:a=>spAvail(a,"optik","edelstahl")}, {v:"wunsch",label:"Wunschfarbe",sub:"individuell nach RAL",sw:SW_CONIC,chip:"Wunschfarbe",sat:p=>p.colors.includes("wunschfarbe"),when:a=>spAvail(a,"optik","wunsch")} ] },
       ],
       products: [
         {name:"VDM10 2.0 Video-Türsprechanlage | 1 Klingeltaster | Colson", price:594.15, reviews:63, verwendung:"einfamilien", type:"video", system:"ip", tuer:["rfid"], ns:"gravur", colors:["anthrazit","weiss","grau","schwarz","eisenglimmer","wunschfarbe"]},
@@ -373,16 +415,27 @@
         {name:"VDM10 2.0 mit Fingerprint | 3 Klingeltaster | Niko", price:892.50, reviews:2, verwendung:"mehrfamilien", type:"video", system:"ip", tuer:["fingerprint","rfid"], ns:"gravur", colors:["anthrazit","weiss","grau","schwarz"]},
         {name:"XDM10 Video-Türsprechanlage | 2-Draht-BUS | 2 Klingeltaster | Maxior", price:806.65, reviews:0, verwendung:"mehrfamilien", type:"video", system:"bus", tuer:["rfid"], ns:"wechsel", material:"edelstahl", colors:["anthrazit","edelstahl","schwarz"]},
         {name:"Video-Türsprechsäule | Klingelstele mit Gesichtserkennung | SDM10S", price:2209.15, reviews:0, verwendung:"flexibel", type:"video", system:"ip", tuer:["gesicht","rfid","pin"], ns:"display", material:"v2a", colors:["anthrazit","edelstahl","schwarz","wunschfarbe"]},
+        /* Slice-sweep additions (live parity): Briefkasten/Paketbox-Kombis exist
+           (/sprechanlage-briefkasten, 9 Artikel — the Kombi step must not vanish)
+           and Audio-Anlagen come with 1–6 Klingeltastern, also für Mehrfamilien. */
+        {name:"Video-Türsprechanlage mit Paketbox | personalisiert mit Gravur | VDM10", price:1019.15, reviews:5, verwendung:"einfamilien", type:"video", system:"ip", tuer:["rfid","fingerprint"], ns:"gravur", kombi:true, colors:["anthrazit"]},
+        {name:"Standbriefkasten mit Video-Türsprechanlage für Zweifamilienhaus | VDM10", price:1351.50, reviews:3, verwendung:"mehrfamilien", type:"video", system:"ip", tuer:["rfid"], ns:"gravur", kombi:true, colors:["anthrazit","weiss","grau","schwarz","eisenglimmer"]},
+        {name:"ADM10 Audio-Türsprechanlage | 2 Klingeltaster | Kai", price:466.65, reviews:1, verwendung:"mehrfamilien", type:"audio", system:"ip", tuer:[], ns:"wechsel", colors:["anthrazit","weiss","grau"]},
       ],
     },
 
     paketboxen: {
       img: "Kaufbrater/Paketbox.png",
       steps: [
+        /* Live-shop parity (see the briefkasten gates): every facet-mapped option is
+           dataset-gated via pbAvail — zero-result options disappear and a step left
+           with ≤1 real option auto-skips. The Fächer↔Klingeltaster 1:1 coupling the
+           live shop shows (Fächer=3 ⇒ nur "3 Taster") emerges from the cascade
+           automatically once both steps carry sat maps. */
         { key:"kombi", type:"multi",
           q:"Womit möchten Sie Ihre Paketbox kombinieren?",
           hint:"Mehrfachauswahl möglich · „Nur Paketbox“ schließt die anderen aus.",
-          opts:[ {v:"briefkasten",label:"Briefkasten"}, {v:"klingel",label:"Klingel & Briefkasten"}, {v:"sprechanlage",label:"Sprechanlage"}, {v:"paketbox",label:"Nur Paketbox",exclusive:true} ],
+          opts:[ {v:"briefkasten",label:"Briefkasten",sat:p=>p.kombi.includes("briefkasten")}, {v:"klingel",label:"Klingel & Briefkasten",sat:p=>p.kombi.includes("klingel")}, {v:"sprechanlage",label:"Sprechanlage",sat:p=>p.kombi.includes("sprechanlage")}, {v:"paketbox",label:"Nur Paketbox",exclusive:true,sat:p=>p.kombi.length===1&&p.kombi[0]==="paketbox"} ],
           match:(p,set)=>{ if(set.has("paketbox")) return (p.kombi.length===1 && p.kombi[0]==="paketbox")?1:0.2; const need=[...set]; return need.filter(k=>p.kombi.includes(k)).length/need.length; } },
         { key:"montage", type:"single",
           q:"Wie soll Ihre Paketbox montiert werden?",
@@ -391,31 +444,41 @@
           opts:[ {v:"freistehend",label:"Freistehend",sub:"mit Standfuß / Füßen"} ] },
         { key:"groesse", type:"single", info:SIZE_TOOLTIP, infoLabel:"Größenratgeber", when:a=>!a.kombi.has("sprechanlage")&&!a.kombi.has("klingel"),   /* Sprechanlage = one fixed product; Klingel (Bispo Funk) is always size M → skip Größe */
           q:"Welche Paketgröße soll hineinpassen?",
-          opts:[ {v:"S",label:"S — DHL Päckchen S",sub:"bis 35 × 25 × 10 cm",chip:"Größe S"}, {v:"M",label:"M — DHL Päckchen M",sub:"bis 37,5 × 13,5 × 30 cm",chip:"Größe M"}, {v:"XL",label:"XL — Großpaket",sub:"mehrere / sperrige Pakete",chip:"Größe XL"} ],
+          opts:[ {v:"S",label:"S — DHL Päckchen S",sub:"bis 35 × 25 × 10 cm",chip:"Größe S",sat:p=>p.groesse==="S",when:a=>pbAvail(a,"groesse","S")}, {v:"M",label:"M — DHL Päckchen M",sub:"bis 37,5 × 13,5 × 30 cm",chip:"Größe M",sat:p=>p.groesse==="M",when:a=>pbAvail(a,"groesse","M")}, {v:"XL",label:"XL — Großpaket",sub:"mehrere / sperrige Pakete",chip:"Größe XL",sat:p=>p.groesse==="XL",when:a=>pbAvail(a,"groesse","XL")} ],
           match:(p,v)=>{ const ord=["S","M","XL"]; const d=Math.abs(ord.indexOf(p.groesse)-ord.indexOf(v)); return d===0?1:d===1?0.5:0.1; } },
         { key:"faecher", type:"single", when:a=>a.kombi.has("briefkasten")&&!a.kombi.has("sprechanlage"),
           q:"Wie viele Brieffächer benötigen Sie?",
-          opts:[ {v:1,label:"1 Fach",sub:"für 1 Haushalt",chip:"1 Brieffach"}, {v:2,label:"2 Fächer",sub:"für 2 Haushalte",chip:"2 Brieffächer"}, {v:3,label:"3 Fächer",sub:"für 3 Haushalte",chip:"3 Brieffächer"}, {v:4,label:"4 Fächer",sub:"für 4 Haushalte",chip:"4 Brieffächer"}, {v:5,label:"5 Fächer",sub:"für 5 Haushalte",chip:"5 Brieffächer"} ],
+          opts:[ {v:1,label:"1 Fach",sub:"für 1 Haushalt",chip:"1 Brieffach",sat:p=>p.faecher===1,when:a=>pbAvail(a,"faecher",1)}, {v:2,label:"2 Fächer",sub:"für 2 Haushalte",chip:"2 Brieffächer",sat:p=>p.faecher===2,when:a=>pbAvail(a,"faecher",2)}, {v:3,label:"3 Fächer",sub:"für 3 Haushalte",chip:"3 Brieffächer",sat:p=>p.faecher===3,when:a=>pbAvail(a,"faecher",3)}, {v:4,label:"4 Fächer",sub:"für 4 Haushalte",chip:"4 Brieffächer",sat:p=>p.faecher===4,when:a=>pbAvail(a,"faecher",4)}, {v:5,label:"5 Fächer",sub:"für 5 Haushalte",chip:"5 Brieffächer",sat:p=>p.faecher===5,when:a=>pbAvail(a,"faecher",5)} ],
           match:(p,v)=>p.faecher===v?1:(p.faecher?0.4:0) },
+        /* Taster options are gated by the answers so far, so the live shop's
+           Fächer↔Taster coupling holds: after "2 Fächer" only "2 Taster" models
+           remain and the step collapses/auto-skips instead of offering dead ends. */
         { key:"klingeltaster", type:"single", when:a=>a.kombi.has("klingel")&&!a.kombi.has("sprechanlage"),   /* taster count matters only for Klingel — the Sprechanlage paketbox is a single product */
           q:"Wie viele Klingeltaster benötigen Sie?",
-          opts:[ {v:1,label:"1 Taster",sub:"für 1 Partei",chip:"1 Klingeltaster"}, {v:2,label:"2 Taster",sub:"für 2 Parteien",chip:"2 Klingeltaster"}, {v:3,label:"3 Taster",sub:"für 3 Parteien",chip:"3 Klingeltaster"} ],
+          opts:[ {v:1,label:"1 Taster",sub:"für 1 Partei",chip:"1 Klingeltaster",sat:p=>p.klingeltaster===1,when:a=>pbAvail(a,"klingeltaster",1)}, {v:2,label:"2 Taster",sub:"für 2 Parteien",chip:"2 Klingeltaster",sat:p=>p.klingeltaster===2,when:a=>pbAvail(a,"klingeltaster",2)}, {v:3,label:"3 Taster",sub:"für 3 Parteien",chip:"3 Klingeltaster",sat:p=>p.klingeltaster===3,when:a=>pbAvail(a,"klingeltaster",3)} ],
           match:(p,v)=>p.klingeltaster===v?1:(p.klingeltaster?0.4:0) },
+        /* LED = the live shop's "Paketboxen beleuchtet" subcategory — a real
+           differentiator, dataset-gated per direction ("Egal" is never gated). */
         { key:"led", type:"single", when:a=>!a.kombi.has("sprechanlage"),
           q:"Soll die Paketbox beleuchtet sein?",
-          opts:[ {v:"ja",label:"Mit LED-Beleuchtung",sub:"beleuchtetes Namensschild",chip:"Mit LED"}, {v:"nein",label:"Ohne Beleuchtung",chip:"Ohne LED"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"LED egal"} ],
+          opts:[ {v:"ja",label:"Mit LED-Beleuchtung",sub:"beleuchtetes Namensschild",chip:"Mit LED",sat:p=>!!p.led,when:a=>pbAvail(a,"led","ja")}, {v:"nein",label:"Ohne Beleuchtung",chip:"Ohne LED",sat:p=>!p.led,when:a=>pbAvail(a,"led","nein")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"LED egal"} ],
           match:(p,v)=>(v==="ja"?!!p.led:!p.led)?1:0.2 },
         { key:"entnahme", type:"single", when:a=>!a.kombi.has("sprechanlage")&&!a.kombi.has("klingel"),   /* Klingel/Sprechanlage lines have no rear-entnahme variant */
           q:"Von welcher Seite möchten Sie Ihre Sendungen entnehmen?",
-          opts:[ {v:"vorne",label:"Von der Vorderseite",sub:"Standard – Entnahme an der Front",chip:"Entnahme vorne"}, {v:"rueckseite",label:"Von der Rückseite",sub:"bequem von innen, z. B. durch die Wand",chip:"Rückentnahme"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Entnahme egal"} ],
+          opts:[ {v:"vorne",label:"Von der Vorderseite",sub:"Standard – Entnahme an der Front",chip:"Entnahme vorne",sat:p=>(p.entnahme||"vorne")==="vorne",when:a=>pbAvail(a,"entnahme","vorne")}, {v:"rueckseite",label:"Von der Rückseite",sub:"bequem von innen, z. B. durch die Wand",chip:"Rückentnahme",sat:p=>p.entnahme==="rueckseite",when:a=>pbAvail(a,"entnahme","rueckseite")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Entnahme egal"} ],
           match:(p,v)=>(p.entnahme||"vorne")===v?1:0.3 },
         { key:"optik", type:"single",
           q:"Welche Optik passt zu Ihrem Zuhause?",
           opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Grau, Schwarz oder Weiß",sw:SW_KLASSISCH,colors:["anthrazit","eisenglimmer","grau","schwarz","weiss"]} ],
           match:colorsetMatch("farbe") },
+        /* Gravur mirrors the live shop's mit-/ohne-Gravur split. Lasergravur and
+           Wechselschild are dataset-gated; "Ohne Beschriftung" stays ungated — the
+           live shop sells a whole "Paketboxen ohne Gravur" subcategory, the demo
+           catalogue just doesn't carry one yet (the gate would silently erase a
+           legitimate preference). */
         { key:"gravur", type:"single", when:a=>!a.kombi.has("sprechanlage"),
           q:"Wie möchten Sie Ihre Box beschriften?",
-          opts:[ {v:"lasergravur",label:"Lasergravur",sub:"individuell, dauerhaft"}, {v:"namensschild",label:"Austauschbares Schild",sub:"flexibel wechselbar",chip:"Wechselschild"}, {v:"ohne",label:"Ohne Beschriftung",chip:"Ohne Gravur"} ] },
+          opts:[ {v:"lasergravur",label:"Lasergravur",sub:"individuell, dauerhaft",sat:p=>p.gravur==="lasergravur",when:a=>pbAvail(a,"gravur","lasergravur")}, {v:"namensschild",label:"Austauschbares Schild",sub:"flexibel wechselbar",chip:"Wechselschild",sat:p=>p.gravur==="namensschild",when:a=>pbAvail(a,"gravur","namensschild")}, {v:"ohne",label:"Ohne Beschriftung",chip:"Ohne Gravur"} ] },
       ],
       products: [
         {name:"Bispo 2 — Paketbox mit Briefkasten & Gravur", price:329, reviews:173, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"anthrazit", gravur:"lasergravur"},
@@ -431,6 +494,15 @@
         {name:"Bispo Max 2 — Paketbox XL mit Briefkasten & Gravur", price:549, reviews:26, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"eisenglimmer", gravur:"lasergravur"},
         {name:"Bispo Max 2 — XL mit Briefkasten, LED, Anthrazit", price:589, reviews:5, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:2, farbe:"anthrazit", gravur:"lasergravur", led:true},
         {name:"Bispo 3 — Paketbox mit Briefkasten, Sichtfenster & Gravur", price:419, reviews:8, kombi:["briefkasten"], montage:"wand", groesse:"XL", faecher:1, farbe:"schwarz", gravur:"lasergravur"},
+        /* Slice-sweep additions (live parity, /paketboxen__3/__4/__5 + mit-klingel
+           category): 3er-Türme sind ein großes Segment (14 Artikel), 4er/5er existieren,
+           und Funk-Paketboxen gibt es mit 2 & 3 Klingeltastern (Taster = Parteien). */
+        {name:"Paketbox mit 3 Briefkästen | personalisiert mit Gravur | Bispo 2", price:439, reviews:12, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:3, farbe:"anthrazit", gravur:"lasergravur"},
+        {name:"Paketbox XL mit 3 Briefkästen | LED | RAL 7016 Anthrazit | Bispo Max 2", price:719, reviews:3, kombi:["briefkasten"], montage:"freistehend", groesse:"XL", faecher:3, farbe:"anthrazit", gravur:"lasergravur", led:true},
+        {name:"Paketbox mit 4 Briefkästen | personalisiert mit Gravur | Bispo RE", price:519, reviews:1, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:4, farbe:"anthrazit", gravur:"lasergravur"},
+        {name:"Paketbox mit 5 Briefkästen | personalisiert mit Gravur | Bispo RE", price:569, reviews:1, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:5, farbe:"anthrazit", gravur:"lasergravur"},
+        {name:"Funk-Paketbox mit Klingel & 2 Briefkästen | Bispo Funk", price:519, reviews:2, kombi:["briefkasten","klingel"], montage:"wand", groesse:"M", faecher:2, klingeltaster:2, farbe:"anthrazit", gravur:"lasergravur"},
+        {name:"Funk-Paketbox mit Klingel & 3 Briefkästen | personalisiert mit Gravur | Bispo Funk", price:619, reviews:2, kombi:["briefkasten","klingel"], montage:"wand", groesse:"M", faecher:3, klingeltaster:3, farbe:"anthrazit", gravur:"lasergravur"},
       ],
     },
 
