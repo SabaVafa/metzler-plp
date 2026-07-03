@@ -1162,15 +1162,63 @@
 /* Question row with an info tooltip (e.g. Briefkasten "Montagearten erklärt") */
 .advisor__qrow { display: flex; align-items: center; gap: 8px; margin: 0 0 var(--sp-4); }   /* restores the gap the .advisor__q margin gave before it was zeroed */
 .advisor__qrow .advisor__q { margin: 0; }
+/* ---- Info popover: the "i" button + its explainer card. Styled as a premium
+   tooltip — hairline-tinted card on a layered shadow, a caret pointing back at the
+   button, stacked term/description rows separated by hairlines (the old two-column
+   grid cramped long terms like "In die Mauer integriert"), and a soft pop-in. ---- */
 .advisor__info { position: relative; flex: 0 0 auto; }
-.advisor__info-btn { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--teal); background: transparent; color: var(--teal); cursor: pointer; padding: 0; display: grid; place-items: center; font-size: 12px; font-weight: 700; line-height: 1; transition: background .15s ease, color .15s ease; }
-.advisor__info-btn:hover, .advisor__info.is-open .advisor__info-btn { background: var(--teal); color: #fff; }
-.advisor__info-pop { display: none; position: absolute; left: 0; top: 30px; z-index: 20; width: min(330px, 78vw); padding: 14px 16px; border-radius: var(--r-xl); background: #fff; color: var(--schwarz); box-shadow: var(--shadow-lg); border: 1px solid var(--graphite-300); font-size: var(--text-body-sm); line-height: 1.5; }
-.advisor__info.is-open .advisor__info-pop { display: block; }
-.advisor__info-pop h4 { margin: 0 0 8px; font-size: var(--text-body-sm); font-weight: 700; }
-.advisor__info-pop dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; }
-.advisor__info-pop dt { font-weight: 700; color: var(--teal-700); }
-.advisor__info-pop dd { margin: 0; color: var(--ink-60); }
+.advisor__info-btn {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1px solid var(--teal); background: #fff; color: var(--teal);
+  cursor: pointer; padding: 0; display: grid; place-items: center;
+  font-size: 12px; font-weight: 700; line-height: 1;
+  transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+}
+.advisor__info-btn:hover,
+.advisor__info.is-open .advisor__info-btn { background: var(--teal); color: #fff; box-shadow: 0 2px 8px rgba(1,82,83,0.28); }
+.advisor__info-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--teal-10); }
+
+.advisor__info-pop {
+  display: none; position: absolute; left: -8px; top: 32px; z-index: 20;
+  width: min(340px, 82vw); padding: 15px 17px 16px;
+  border-radius: var(--r-xl); background: #fff; color: var(--schwarz);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(26,23,27,0.06), 0 20px 44px -14px rgba(1,41,42,0.30);
+  font-size: var(--text-body-sm); line-height: 1.55;
+}
+.advisor__info.is-open .advisor__info-pop { display: block; animation: advisorPopIn .22s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes advisorPopIn { from { opacity: 0; transform: translateY(-6px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .advisor__info.is-open .advisor__info-pop { animation: none; } }
+/* caret pointing up toward the "i" button */
+.advisor__info-pop::before {
+  content: ""; position: absolute; top: -6px; left: 15px; width: 11px; height: 11px;
+  background: #fff; border-left: 1px solid var(--border); border-top: 1px solid var(--border);
+  border-radius: 3px 0 0 0; transform: rotate(45deg);
+}
+/* header: title led by a slim teal accent bar, over a hairline rule */
+.advisor__info-pop h4 {
+  display: flex; align-items: center; gap: 9px;
+  margin: 0 0 13px; padding: 0 0 11px;
+  font-size: 13.5px; font-weight: 700; letter-spacing: .02em; color: var(--schwarz);
+  border-bottom: 1px solid var(--graphite-100);
+}
+.advisor__info-pop h4::before {
+  content: ""; flex: 0 0 auto; width: 3px; height: 14px; border-radius: 2px;
+  background: linear-gradient(var(--teal), var(--teal-dark));
+}
+/* definition list: each mounting type is a dot-led term with its description
+   aligned beneath it; rows are parted by a hairline for an even vertical rhythm */
+.advisor__info-pop dl { margin: 0; display: flex; flex-direction: column; }   /* force vertical stacking — never a two-column grid */
+.advisor__info-pop dt {
+  display: flex; align-items: baseline; gap: 9px;
+  font-size: 13.5px; font-weight: 600; letter-spacing: .005em; color: var(--teal);
+}
+.advisor__info-pop dt::before {
+  content: ""; flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal); transform: translateY(-1px);
+}
+.advisor__info-pop dd { margin: 4px 0 0 15px; color: var(--ink-72); }
+.advisor__info-pop dd + dt { margin-top: 13px; padding-top: 13px; border-top: 1px solid var(--graphite-100); }
 
 .advisor__opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--sp-3); }
 .advisor__opt {
