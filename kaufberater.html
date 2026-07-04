@@ -224,27 +224,6 @@
      each option carries sat(product); chosen option satisfied → 1, else small partial. */
   const satMatch = (p, v, s) => { const o = s.opts.find(o => String(o.v) === String(v)); return (o && o.sat && o.sat(p)) ? 1 : 0.2; };
 
-  /* Mülltonnenbox option availability: a later-step option is only offered if some
-     box consistent with every OTHER answer so far provides it. This both narrows
-     by tonne count (e.g. a 4er box only comes in Stahl / Standard-Dach / Anthrazit)
-     and enforces cross-option rules (e.g. Edelstahl-Akzente isn't offered with a
-     Pflanzdach). exceptKey is the group being evaluated — its own answer is ignored
-     so siblings stay switchable. Returns true (don't constrain) when nothing
-     matches, so the quiz never strands an empty step. Reads CATS at call time. */
-  const MTB_OPTIK = { klassisch:["anthrazit","weiss","grau","beige"], holzoptik:["holzoptik"], "edelstahl-akzente":["edelstahl-akzente"] };
-  function mtbConsistent(p, a, exceptKey) {
-    if (exceptKey!=="anzahl"        && a.anzahl!=null                         && p.anzahl!==a.anzahl) return false;
-    if (exceptKey!=="material"      && a.material && a.material!=="egal"       && p.material!==a.material) return false;
-    if (exceptKey!=="dach"          && a.dach && a.dach!=="egal"              && p.dach!==a.dach) return false;
-    if (exceptKey!=="sichtstreifen" && a.sichtstreifen && a.sichtstreifen!=="egal" && p.sichtstreifen!==(a.sichtstreifen==="ja")) return false;
-    if (exceptKey!=="optik"         && a.optik) { const cols = MTB_OPTIK[a.optik] || [a.optik]; if (cols.indexOf(p.finish)===-1) return false; }
-    return true;
-  }
-  function mtbHas(answers, exceptKey, pred) {
-    const set = CATS.muelltonnenboxen.products.filter(p => mtbConsistent(p, answers, exceptKey));
-    return !set.length || set.some(pred);
-  }
-
   /* Option availability — live-shop parity (edelstahl-tuerklingel.de research):
      an option is offered only while ≥1 product consistent with the answers to
      all EARLIER steps satisfies it. Zero-result options disappear (never greyed
@@ -277,6 +256,7 @@
   const bkAvail = (a, stepKey, optV) => catAvail("briefkasten", a, stepKey, optV);
   const pbAvail = (a, stepKey, optV) => catAvail("paketboxen", a, stepKey, optV);
   const spAvail = (a, stepKey, optV) => catAvail("sprechanlage", a, stepKey, optV);
+  const mtbAvail = (a, stepKey, optV) => catAvail("muelltonnenboxen", a, stepKey, optV);
 
   /* ──────────────────────────────────────────────────────────────
      Category configs. Add a category = add an entry here + an
@@ -509,42 +489,95 @@
     muelltonnenboxen: {
       img: "Kaufbrater/Mülltonnenboxen.png",
       steps: [
+        /* Live-shop parity (edelstahl-tuerklingel.de/muelltonnenbox, für-1..5-Tonnen
+           slices): options are dataset-gated via mtbAvail. The size drives everything —
+           the 5er line is classic Stahl only (kein Fußpedal/Rauputz/Design/Aluminium/
+           Edelstahl-Akzente), the Paketbox-Kombi exists for 2–4 Tonnen, everything
+           else for 1–4. The anzahl options carry sat maps so the cascade filters
+           every later step by the chosen size. */
         { key:"anzahl", type:"single",
           q:"Für wie viele Mülltonnen?",
-          opts:[ {v:1,label:"1 Mülltonne",chip:"1 Tonne"}, {v:2,label:"2 Mülltonnen",chip:"2 Tonnen"}, {v:3,label:"3 Mülltonnen",chip:"3 Tonnen"}, {v:4,label:"4 Mülltonnen",chip:"4 Tonnen"}, {v:5,label:"5 Mülltonnen",chip:"5 Tonnen"} ],
+          opts:[ {v:1,label:"1 Mülltonne",chip:"1 Tonne",sat:p=>p.anzahl===1}, {v:2,label:"2 Mülltonnen",chip:"2 Tonnen",sat:p=>p.anzahl===2}, {v:3,label:"3 Mülltonnen",chip:"3 Tonnen",sat:p=>p.anzahl===3}, {v:4,label:"4 Mülltonnen",chip:"4 Tonnen",sat:p=>p.anzahl===4}, {v:5,label:"5 Mülltonnen",chip:"5 Tonnen",sat:p=>p.anzahl===5} ],
           match:(p,v)=>{ const d=Math.abs(p.anzahl-v); return d===0?1:d===1?0.4:0.1; } },
         { key:"material", type:"single",
           q:"Welches Material bevorzugen Sie?",
-          opts:[ {v:"stahl",label:"Pulverbeschichteter Stahl",sub:"robust & wetterfest",chip:"Stahl",when:a=>mtbHas(a,"material",p=>p.material==="stahl")}, {v:"aluminium",label:"Aluminium",sub:"rostfrei & besonders langlebig",when:a=>mtbHas(a,"material",p=>p.material==="aluminium")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Material egal"} ] },
+          opts:[ {v:"stahl",label:"Pulverbeschichteter Stahl",sub:"robust & wetterfest",chip:"Stahl",sat:p=>p.material==="stahl",when:a=>mtbAvail(a,"material","stahl")}, {v:"aluminium",label:"Aluminium",sub:"rostfrei & besonders langlebig",chip:"Aluminium",sat:p=>p.material==="aluminium",when:a=>mtbAvail(a,"material","aluminium")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Material egal"} ] },
         { key:"dach", type:"single",
           q:"Welche Dachoption möchten Sie?",
-          opts:[ {v:"pflanzdach",label:"Mit Pflanzdach",sub:"begrünbar",chip:"Pflanzdach",when:a=>mtbHas(a,"dach",p=>p.dach==="pflanzdach")}, {v:"standard",label:"Standard-Ausführung",sub:"Flachdach",chip:"Standard-Dach",when:a=>mtbHas(a,"dach",p=>p.dach==="standard")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Dach egal"} ] },
+          opts:[ {v:"pflanzdach",label:"Mit Pflanzdach",sub:"begrünbar",chip:"Pflanzdach",sat:p=>p.dach==="pflanzdach",when:a=>mtbAvail(a,"dach","pflanzdach")}, {v:"standard",label:"Standard-Ausführung",sub:"Flachdach",chip:"Standard-Dach",sat:p=>p.dach==="standard",when:a=>mtbAvail(a,"dach","standard")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Dach egal"} ] },
         { key:"sichtstreifen", type:"single",
           q:"Möchten Sie dekorative Sichtstreifen?",
-          opts:[ {v:"ja",label:"Mit Sichtstreifen",sub:"dekorative Akzentstreifen",chip:"Mit Sichtstreifen",when:a=>mtbHas(a,"sichtstreifen",p=>p.sichtstreifen)}, {v:"nein",label:"Ohne Sichtstreifen",sub:"glatte, geschlossene Front",chip:"Ohne Sichtstreifen",when:a=>mtbHas(a,"sichtstreifen",p=>!p.sichtstreifen)}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Sichtstreifen egal"} ],
+          opts:[ {v:"ja",label:"Mit Sichtstreifen",sub:"dekorative Akzentstreifen",chip:"Mit Sichtstreifen",sat:p=>!!p.sichtstreifen,when:a=>mtbAvail(a,"sichtstreifen","ja")}, {v:"nein",label:"Ohne Sichtstreifen",sub:"glatte, geschlossene Front",chip:"Ohne Sichtstreifen",sat:p=>!p.sichtstreifen,when:a=>mtbAvail(a,"sichtstreifen","nein")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Sichtstreifen egal"} ],
           match:(p,v)=>(v==="ja"?p.sichtstreifen:!p.sichtstreifen)?1:0.2 },
+        /* Extras from the live category (SEO copy sells them explicitly): freihändiges
+           Fußpedal (1–4er) and the Mülltonnenbox-Paketbox-Kombi (2–4er, Aluminium).
+           For a 5er both gate out and the step auto-skips. */
+        { key:"extras", type:"multi",
+          q:"Welche Extras wünschen Sie sich?", hint:"Mehrfachauswahl möglich.",
+          opts:[ {v:"fusspedal",label:"Freihändige Bedienung",sub:"Deckel öffnet per Fußpedal",chip:"Fußpedal",sat:p=>!!p.fusspedal,when:a=>mtbAvail(a,"extras","fusspedal")}, {v:"paketbox",label:"Integrierte Paketbox",sub:"Müllbox & Paketempfang in einem",chip:"Mit Paketbox",sat:p=>!!p.paketbox,when:a=>mtbAvail(a,"extras","paketbox")}, {v:"keine",label:"Keine Extras",sub:"klassische Ausführung",chip:"Ohne Extras",exclusive:true} ],
+          match:(p,set)=>{ const need=[...set].filter(k=>k==="fusspedal"||k==="paketbox"); if(!need.length) return 0.5; const ok=need.filter(k=>!!p[k]).length; return ok/need.length; } },
         { key:"optik", type:"single",
           q:"Welche Optik passt zu Ihrem Zuhause?",
-          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Weiß, Grau oder Beige",sw:SW_KLASSISCH,colors:["anthrazit","weiss","grau","beige"],when:a=>mtbHas(a,"optik",p=>["anthrazit","weiss","grau","beige"].indexOf(p.finish)!==-1)}, {v:"holzoptik",label:"Holzoptik",sub:"warme Lamellen-Optik",sw:SW_HOLZ,colors:["holzoptik"],when:a=>mtbHas(a,"optik",p=>p.finish==="holzoptik")}, {v:"edelstahl-akzente",label:"Edelstahl-Akzente",sub:"edle Metall-Details",sw:SW_EDELSTAHL,colors:["edelstahl-akzente"],chip:"Edelstahl-Akzente",when:a=>mtbHas(a,"optik",p=>p.finish==="edelstahl-akzente")} ],
+          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Weiß, Grau oder Beige",sw:SW_KLASSISCH,colors:["anthrazit","weiss","grau","beige"],sat:p=>["anthrazit","weiss","grau","beige"].indexOf(p.finish)!==-1,when:a=>mtbAvail(a,"optik","klassisch")}, {v:"holzoptik",label:"Holzoptik",sub:"warme Lamellen-Optik",sw:SW_HOLZ,colors:["holzoptik"],sat:p=>p.finish==="holzoptik",when:a=>mtbAvail(a,"optik","holzoptik")}, {v:"edelstahl-akzente",label:"Edelstahl-Akzente",sub:"edle Metall-Details",sw:SW_EDELSTAHL,colors:["edelstahl-akzente"],chip:"Edelstahl-Akzente",sat:p=>p.finish==="edelstahl-akzente",when:a=>mtbAvail(a,"optik","edelstahl-akzente")}, {v:"rauputz",label:"Rauputz",sub:"wie verputzt – fügt sich in die Fassade (Weiß, Beige, Grau)",colors:["rauputz"],chip:"Rauputz",sat:p=>p.finish==="rauputz",when:a=>mtbAvail(a,"optik","rauputz")}, {v:"design",label:"Design-Muster",sub:"Prisma, Geo oder Nexus – markante Frontlinien",colors:["design"],chip:"Design-Muster",sat:p=>p.finish==="design",when:a=>mtbAvail(a,"optik","design")} ],
           match:colorsetMatch("finish") },
       ],
+      /* Slice-true catalogue (live für-1..5-Tonnen drill): every size carries the
+         classic quartet (Basis/Pflanzdach/Sichtstreifen/Holzoptik); Fußpedal, Rauputz,
+         Design (Prisma/Geo/Nexus), Aluminium und Edelstahl-Akzente exist for 1–4;
+         the Paketbox-Kombi (Aluminium, höhenverstellbare Füße) for 2–4; the 5er is
+         classic Stahl only. finish:"rauputz"/"design" are their own looks. */
       products: [
+        /* 1er (live: 16 Artikel) */
+        {name:"Mülltonnenbox | 1er | 240 l | Stahl | Türgriff mit Schloss", price:319, reviews:4, anzahl:1, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox mit Pflanzdach | 1er | 240 l | Anthrazit", price:319, reviews:11, anzahl:1, material:"stahl", dach:"pflanzdach", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 1er | 240 l | Anthrazit | mit Sichtstreifen", price:319, reviews:8, anzahl:1, material:"stahl", dach:"standard", sichtstreifen:true, finish:"anthrazit"},
+        {name:"Mülltonnenbox mit Edelstahl-Akzenten | 1er | 240 l | Anthrazit", price:319, reviews:3, anzahl:1, material:"stahl", dach:"standard", sichtstreifen:true, finish:"edelstahl-akzente"},
+        {name:"Mülltonnenbox mit Pflanzdach | 1er | 240 l | Holzoptik", price:359, reviews:3, anzahl:1, material:"stahl", dach:"pflanzdach", sichtstreifen:false, finish:"holzoptik"},
+        {name:"Mülltonnenbox mit Rauputz | 1er | 240 l | Beige", price:499, reviews:0, anzahl:1, material:"stahl", dach:"standard", sichtstreifen:false, finish:"rauputz"},
+        {name:"Design-Mülltonnenbox | 1er | 240 l | Rautenmuster | Prisma", price:469, reviews:5, anzahl:1, material:"stahl", dach:"standard", sichtstreifen:false, finish:"design"},
+        {name:"Mülltonnenbox | freihändig per Fußpedal | 1er | 240 l", price:499, reviews:0, anzahl:1, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit", fusspedal:true},
+        {name:"Mülltonnenbox | 1er | 240 l | aus Aluminium | rostfrei", price:549, reviews:0, anzahl:1, material:"aluminium", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        /* 2er (live: 16 Artikel) */
+        {name:"Mülltonnenbox | 2er | 240 l | aus Stahl", price:649, reviews:0, anzahl:2, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox mit Pflanzdach | 2er | 240 l | Anthrazit", price:649, reviews:2, anzahl:2, material:"stahl", dach:"pflanzdach", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 2er | 240 l | Anthrazit | mit Sichtstreifen", price:649, reviews:1, anzahl:2, material:"stahl", dach:"standard", sichtstreifen:true, finish:"anthrazit"},
+        {name:"Mülltonnenbox mit Edelstahl-Akzenten | 2er | 240 l | Anthrazit", price:649, reviews:1, anzahl:2, material:"stahl", dach:"standard", sichtstreifen:true, finish:"edelstahl-akzente"},
+        {name:"Mülltonnenbox | 2er | 240 l | Holzoptik | Anthrazit", price:729, reviews:2, anzahl:2, material:"stahl", dach:"standard", sichtstreifen:false, finish:"holzoptik"},
+        {name:"Mülltonnenbox mit Rauputz | 2er | 240 l | Grau", price:949, reviews:0, anzahl:2, material:"stahl", dach:"standard", sichtstreifen:false, finish:"rauputz"},
+        {name:"Design-Mülltonnenbox | 2er | 240 l | Quadratmuster | Geo", price:999, reviews:1, anzahl:2, material:"stahl", dach:"standard", sichtstreifen:false, finish:"design"},
+        {name:"Mülltonnenbox | freihändig per Fußpedal | 2er | 240 l", price:949, reviews:0, anzahl:2, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit", fusspedal:true},
+        {name:"Mülltonnenbox mit Pflanzdach | 2er | 240 l | Aluminium", price:1399, reviews:1, anzahl:2, material:"aluminium", dach:"pflanzdach", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 2er mit Paketbox | Aluminium | höhenverstellbare Füße", price:1799, reviews:3, anzahl:2, material:"aluminium", dach:"standard", sichtstreifen:false, finish:"anthrazit", paketbox:true},
+        /* 3er (live: 17 Artikel) */
         {name:"Mülltonnenbox | 3er | 240 l | Stahl | Türgriff mit Schloss", price:799, reviews:85, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
         {name:"Mülltonnenbox mit Pflanzdach | 3er | 240 l | Anthrazit", price:799, reviews:22, anzahl:3, material:"stahl", dach:"pflanzdach", sichtstreifen:false, finish:"anthrazit"},
         {name:"Mülltonnenbox | 3er | 240 l | Anthrazit | mit Sichtstreifen", price:799, reviews:27, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:true, finish:"anthrazit"},
         {name:"Mülltonnenbox mit Edelstahl-Akzenten | 3er | 240 l | Anthrazit", price:799, reviews:31, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:true, finish:"edelstahl-akzente"},
         {name:"Mülltonnenbox | 3er | 240 l | Holzoptik | Anthrazit", price:879, reviews:34, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"holzoptik"},
         {name:"Mülltonnenbox mit Pflanzdach | 3er | 240 l | Holzoptik", price:879, reviews:37, anzahl:3, material:"stahl", dach:"pflanzdach", sichtstreifen:false, finish:"holzoptik"},
-        {name:"Mülltonnenbox mit Rauputz | 3er | 240 l | Grau", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"grau"},
-        {name:"Mülltonnenbox mit Rauputz | 3er | 240 l | Beige", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"beige"},
-        {name:"Mülltonnenbox mit Rauputz | 3er | 240 l | Weiß", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"weiss"},
-        {name:"Mülltonnenbox | freihändig per Fußpedal | 3er | 240 l", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
-        {name:"Design-Mülltonnenbox | 3er | 240 l | Nexus", price:1149, reviews:3, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
-        {name:"Mülltonnenbox | 4er | 240 l | aus Stahl", price:899, reviews:0, anzahl:4, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
-        {name:"Mülltonnenbox | 2er | 240 l | aus Stahl", price:649, reviews:0, anzahl:2, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox mit Rauputz | 3er | 240 l | Grau", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"rauputz"},
+        {name:"Mülltonnenbox mit Rauputz | 3er | 240 l | Beige", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"rauputz"},
+        {name:"Mülltonnenbox mit Rauputz | 3er | 240 l | Weiß", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"rauputz"},
+        {name:"Mülltonnenbox | freihändig per Fußpedal | 3er | 240 l", price:1099, reviews:0, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit", fusspedal:true},
+        {name:"Design-Mülltonnenbox | 3er | 240 l | Nexus", price:1149, reviews:3, anzahl:3, material:"stahl", dach:"standard", sichtstreifen:false, finish:"design"},
         {name:"Mülltonnenbox | 3er | 240 l | aus Aluminium | rostfrei", price:1599, reviews:2, anzahl:3, material:"aluminium", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
         {name:"Mülltonnenbox mit Pflanzdach | 3er | 240 l | Aluminium", price:1599, reviews:5, anzahl:3, material:"aluminium", dach:"pflanzdach", sichtstreifen:false, finish:"anthrazit"},
-        {name:"Mülltonnenbox | 2er mit Paketbox | Aluminium", price:1799, reviews:3, anzahl:2, material:"aluminium", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 3er mit Paketbox | Aluminium | höhenverstellbare Füße", price:1999, reviews:1, anzahl:3, material:"aluminium", dach:"standard", sichtstreifen:false, finish:"anthrazit", paketbox:true},
+        /* 4er (live: 17 Artikel) */
+        {name:"Mülltonnenbox | 4er | 240 l | aus Stahl", price:899, reviews:0, anzahl:4, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox mit Pflanzdach | 4er | 240 l | Anthrazit", price:899, reviews:1, anzahl:4, material:"stahl", dach:"pflanzdach", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 4er | 240 l | Anthrazit | mit Sichtstreifen", price:899, reviews:1, anzahl:4, material:"stahl", dach:"standard", sichtstreifen:true, finish:"anthrazit"},
+        {name:"Mülltonnenbox mit Edelstahl-Akzenten | 4er | 240 l | Anthrazit", price:899, reviews:0, anzahl:4, material:"stahl", dach:"standard", sichtstreifen:true, finish:"edelstahl-akzente"},
+        {name:"Mülltonnenbox | 4er | 240 l | Holzoptik | Anthrazit", price:999, reviews:1, anzahl:4, material:"stahl", dach:"standard", sichtstreifen:false, finish:"holzoptik"},
+        {name:"Mülltonnenbox mit Rauputz | 4er | 240 l | Weiß", price:1249, reviews:0, anzahl:4, material:"stahl", dach:"standard", sichtstreifen:false, finish:"rauputz"},
+        {name:"Design-Mülltonnenbox | 4er | 240 l | horizontale Designlinien | Nexus", price:1299, reviews:0, anzahl:4, material:"stahl", dach:"standard", sichtstreifen:false, finish:"design"},
+        {name:"Mülltonnenbox | freihändig per Fußpedal | 4er | 240 l", price:1249, reviews:0, anzahl:4, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit", fusspedal:true},
+        {name:"Mülltonnenbox | 4er | 240 l | aus Aluminium | rostfrei", price:1799, reviews:0, anzahl:4, material:"aluminium", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 4er mit Paketbox | Aluminium | höhenverstellbare Füße", price:2199, reviews:0, anzahl:4, material:"aluminium", dach:"standard", sichtstreifen:false, finish:"anthrazit", paketbox:true},
+        /* 5er (live: 5 Artikel — nur die klassische Stahl-Linie) */
+        {name:"Mülltonnenbox | 5er | 240 l | aus Stahl | Türgriff mit Schloss", price:1099, reviews:0, anzahl:5, material:"stahl", dach:"standard", sichtstreifen:false, finish:"anthrazit"},
+        {name:"Mülltonnenbox | 5er | 240 l | Anthrazit | mit Sichtstreifen", price:1099, reviews:0, anzahl:5, material:"stahl", dach:"standard", sichtstreifen:true, finish:"anthrazit"},
+        {name:"Mülltonnenbox mit Pflanzdach | 5er | 240 l | Holzoptik", price:1199, reviews:0, anzahl:5, material:"stahl", dach:"pflanzdach", sichtstreifen:false, finish:"holzoptik"},
       ],
     },
 
