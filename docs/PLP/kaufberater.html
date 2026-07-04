@@ -211,6 +211,11 @@
   const SW_KLASSISCH = "linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)";
   const SW_EDELSTAHL = "linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)";
   const SW_HOLZ      = "linear-gradient(135deg,#b07b46,#7a5230)";
+  /* Mülltonnenbox looks: the smooth classic line comes in Anthrazit / Graualuminium /
+     Eisenglimmer only (Weiß & Beige exist solely as Rauputz on the live shop). */
+  const SW_MTB_KLASSISCH = "linear-gradient(135deg,#1A171B,#383E42 45%,#8E9296 75%,#B9BCC0)";
+  const SW_RAUPUTZ = "linear-gradient(135deg,#F4F1EA,#E4DECF 45%,#D9D9D6)";
+  const SW_DESIGN  = "repeating-linear-gradient(90deg,#383E42 0 7px,#2A2F33 7px 10px)";
 
   /* Colorset match helper: product field `field` ∈ option's colors[] → 1, else 0.15 */
   const colorsetMatch = field => (p, v, s) => {
@@ -518,7 +523,7 @@
           match:(p,set)=>{ const need=[...set].filter(k=>k==="fusspedal"||k==="paketbox"); if(!need.length) return 0.5; const ok=need.filter(k=>!!p[k]).length; return ok/need.length; } },
         { key:"optik", type:"single",
           q:"Welche Optik passt zu Ihrem Zuhause?",
-          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Weiß, Grau oder Beige",sw:SW_KLASSISCH,colors:["anthrazit","weiss","grau","beige"],sat:p=>["anthrazit","weiss","grau","beige"].indexOf(p.finish)!==-1,when:a=>mtbAvail(a,"optik","klassisch")}, {v:"holzoptik",label:"Holzoptik",sub:"warme Lamellen-Optik",sw:SW_HOLZ,colors:["holzoptik"],sat:p=>p.finish==="holzoptik",when:a=>mtbAvail(a,"optik","holzoptik")}, {v:"edelstahl-akzente",label:"Edelstahl-Akzente",sub:"edle Metall-Details",sw:SW_EDELSTAHL,colors:["edelstahl-akzente"],chip:"Edelstahl-Akzente",sat:p=>p.finish==="edelstahl-akzente",when:a=>mtbAvail(a,"optik","edelstahl-akzente")}, {v:"rauputz",label:"Rauputz",sub:"wie verputzt – fügt sich in die Fassade (Weiß, Beige, Grau)",colors:["rauputz"],chip:"Rauputz",sat:p=>p.finish==="rauputz",when:a=>mtbAvail(a,"optik","rauputz")}, {v:"design",label:"Design-Muster",sub:"Prisma, Geo oder Nexus – markante Frontlinien",colors:["design"],chip:"Design-Muster",sat:p=>p.finish==="design",when:a=>mtbAvail(a,"optik","design")} ],
+          opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Graualuminium oder Eisenglimmer",sw:SW_MTB_KLASSISCH,colors:["anthrazit","grau","eisenglimmer"],sat:p=>["anthrazit","grau","eisenglimmer"].indexOf(p.finish)!==-1,when:a=>mtbAvail(a,"optik","klassisch")}, {v:"holzoptik",label:"Holzoptik",sub:"warme Lamellen-Optik",sw:SW_HOLZ,colors:["holzoptik"],sat:p=>p.finish==="holzoptik",when:a=>mtbAvail(a,"optik","holzoptik")}, {v:"edelstahl-akzente",label:"Edelstahl-Akzente",sub:"edle Metall-Details",sw:SW_EDELSTAHL,colors:["edelstahl-akzente"],chip:"Edelstahl-Akzente",sat:p=>p.finish==="edelstahl-akzente",when:a=>mtbAvail(a,"optik","edelstahl-akzente")}, {v:"rauputz",label:"Rauputz",sub:"wie verputzt – in Weiß, Beige oder Grau",sw:SW_RAUPUTZ,colors:["rauputz"],chip:"Rauputz",sat:p=>p.finish==="rauputz",when:a=>mtbAvail(a,"optik","rauputz")}, {v:"design",label:"Design-Muster",sub:"Prisma, Geo oder Nexus – markante Frontlinien",sw:SW_DESIGN,colors:["design"],chip:"Design-Muster",sat:p=>p.finish==="design",when:a=>mtbAvail(a,"optik","design")} ],
           match:colorsetMatch("finish") },
       ],
       /* Slice-true catalogue (live für-1..5-Tonnen drill): every size carries the
