@@ -262,6 +262,8 @@
   const pbAvail = (a, stepKey, optV) => catAvail("paketboxen", a, stepKey, optV);
   const spAvail = (a, stepKey, optV) => catAvail("sprechanlage", a, stepKey, optV);
   const mtbAvail = (a, stepKey, optV) => catAvail("muelltonnenboxen", a, stepKey, optV);
+  const stAvail = (a, stepKey, optV) => catAvail("sicherheitstechnik", a, stepKey, optV);
+  const tkAvail = (a, stepKey, optV) => catAvail("tuerklingel", a, stepKey, optV);
 
   /* ──────────────────────────────────────────────────────────────
      Category configs. Add a category = add an entry here + an
@@ -589,9 +591,16 @@
     sicherheitstechnik: {
       img: "Kaufbrater/Sicherheitstechnik.png",
       steps: [
+        /* Live-shop parity (edelstahl-tuerklingel.de/sicherheitstechnik + subcategories):
+           the tree is Alarmanlagen / IP-Kamera-Sets / IP-Kameras / EasyLink-WLAN-Sets /
+           Dual-Objektiv / WLAN-Kameras / Videorekorder. Options are dataset-gated via
+           stAvail; the produktart options carry sat maps so every later step filters by
+           the chosen branch. Live couplings: WLAN-Einzelkameras gibt es nur mit 4 MP;
+           6 MP existiert nur als Set; Sets sind 4×-Kamera (IP, 6MP/4K, Bullet oder
+           Turret) oder 2×-EasyLink (WLAN, 4 MP); Solar/4G ist eine eigene Anschlussart. */
         { key:"produktart", type:"single",
           q:"Wonach suchen Sie?",
-          opts:[ {v:"einzelkamera",label:"Einzelkamera",sub:"eine einzelne Überwachungskamera",chip:"Einzelkamera"}, {v:"set",label:"Komplett-Set",sub:"mehrere Kameras inkl. Rekorder",chip:"Komplett-Set"} ],
+          opts:[ {v:"einzelkamera",label:"Einzelkamera",sub:"eine einzelne Überwachungskamera",chip:"Einzelkamera",sat:p=>p.produktart==="einzelkamera"}, {v:"set",label:"Kamera-Komplett-Set",sub:"mehrere Kameras inkl. Rekorder",chip:"Komplett-Set",sat:p=>p.produktart==="set"}, {v:"alarm",label:"Alarmanlage",sub:"Funk-Alarmanlage & Zubehör",chip:"Alarmanlage",sat:p=>p.produktart==="alarm"}, {v:"rekorder",label:"Videorekorder (NVR)",sub:"Rekorder zum Erweitern bestehender Anlagen",chip:"Videorekorder",sat:p=>p.produktart==="rekorder"} ],
           match:(p,v)=>p.produktart===v?1:0 },
 
         /* ── Einzelkamera ── */
@@ -601,105 +610,183 @@
           match:(p,v)=> v==="beide" ? 1 : v==="aussen" ? (p.einsatz==="aussen"?1:0.1) : (p.einsatz==="innen"?1:(p.einsatz==="aussen"?0.6:0.3)) },
         { key:"anschluss", type:"single", when:a=>a.produktart==="einzelkamera",
           q:"Anschluss & Stromversorgung?",
-          opts:[ {v:"wlan",label:"WLAN",sub:"kabellos · Strom per Netzteil"}, {v:"lan",label:"LAN / PoE",sub:"Strom + Daten über ein Netzwerkkabel",chip:"LAN / PoE"} ],
+          opts:[ {v:"wlan",label:"WLAN",sub:"kabellos · Strom per Netzteil",chip:"WLAN",sat:p=>p.anschluss==="wlan",when:a=>stAvail(a,"anschluss","wlan")}, {v:"lan",label:"LAN / PoE",sub:"Strom + Daten über ein Netzwerkkabel",chip:"LAN / PoE",sat:p=>p.anschluss==="lan",when:a=>stAvail(a,"anschluss","lan")}, {v:"solar",label:"Solar & 4G-SIM",sub:"autark ohne Kabel & WLAN – z. B. Garten, Einfahrt",chip:"Solar / 4G",sat:p=>p.anschluss==="solar",when:a=>stAvail(a,"anschluss","solar")} ],
           match:(p,v)=>p.anschluss===v?1:0.2 },
+        /* 6 MP is gated out here by the data: live gibt es 6 MP nur als Komplett-Set. */
         { key:"aufloesung", type:"single", when:a=>a.produktart==="einzelkamera",
           q:"Welche Bildauflösung soll es sein?",
-          opts:[ {v:2,label:"2 MP",sub:"Full HD"}, {v:4,label:"4 MP",sub:"Full HD+"}, {v:6,label:"6 MP",sub:"hohe Detailschärfe"}, {v:8,label:"8 MP (4K)",sub:"maximale Detailschärfe"} ],
+          opts:[ {v:2,label:"2 MP",sub:"Full HD",sat:p=>p.mp===2,when:a=>stAvail(a,"aufloesung",2)}, {v:4,label:"4 MP",sub:"Full HD+",sat:p=>p.mp===4,when:a=>stAvail(a,"aufloesung",4)}, {v:6,label:"6 MP",sub:"hohe Detailschärfe",sat:p=>p.mp===6,when:a=>stAvail(a,"aufloesung",6)}, {v:8,label:"8 MP (4K)",sub:"maximale Detailschärfe",sat:p=>p.mp===8,when:a=>stAvail(a,"aufloesung",8)} ],
           match:(p,v)=>{ const ord=[2,4,6,8]; const d=Math.abs(ord.indexOf(p.mp)-ord.indexOf(v)); return d===0?1:d===1?0.5:0.2; } },
         { key:"smart", type:"multi", when:a=>a.produktart==="einzelkamera",
           q:"Welche smarten Funktionen sind Ihnen wichtig?",
-          opts:[ {v:"app",label:"Smartphone-App",sub:"Live-Bild & Benachrichtigungen"}, {v:"ki",label:"KI-Erkennung",sub:"erkennt Person / Fahrzeug"}, {v:"farbnacht",label:"Farb-Nachtsicht",sub:"Smart Hybrid Light – Farbe bei Nacht"} ],
+          opts:[ {v:"app",label:"Smartphone-App",sub:"Live-Bild & Benachrichtigungen",sat:p=>(p.smart||[]).includes("app"),when:a=>stAvail(a,"smart","app")}, {v:"ki",label:"KI-Erkennung",sub:"erkennt Person / Fahrzeug",sat:p=>(p.smart||[]).includes("ki"),when:a=>stAvail(a,"smart","ki")}, {v:"farbnacht",label:"Farb-Nachtsicht",sub:"Smart Hybrid Light – Farbe bei Nacht",sat:p=>(p.smart||[]).includes("farbnacht"),when:a=>stAvail(a,"smart","farbnacht")} ],
           match:(p,set)=>{ const need=[...set]; return need.filter(k=>(p.smart||[]).includes(k)).length/need.length; } },
         { key:"kameratyp", type:"single", when:a=>a.produktart==="einzelkamera",
           q:"Welcher Kameratyp?",
-          opts:[ {v:"bullet",label:"Bullet",sub:"länglich, gerichtet"}, {v:"dome",label:"Dome",sub:"kuppelförmig, dezent"}, {v:"turret",label:"Turret",sub:"kompakt, flexibel"}, {v:"ptz",label:"PTZ",sub:"schwenk- & neigbar",chip:"PTZ"}, {v:"dual",label:"Dual-Objektiv",sub:"zwei Linsen, mehr Überblick",chip:"Dual-Objektiv"}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Bauform egal"} ],
+          opts:[ {v:"bullet",label:"Bullet",sub:"länglich, gerichtet",sat:p=>p.kameratyp==="bullet",when:a=>stAvail(a,"kameratyp","bullet")}, {v:"dome",label:"Dome",sub:"kuppelförmig, dezent",sat:p=>p.kameratyp==="dome",when:a=>stAvail(a,"kameratyp","dome")}, {v:"turret",label:"Turret",sub:"kompakt, flexibel",sat:p=>p.kameratyp==="turret",when:a=>stAvail(a,"kameratyp","turret")}, {v:"ptz",label:"PTZ",sub:"schwenk- & neigbar",chip:"PTZ",sat:p=>p.kameratyp==="ptz",when:a=>stAvail(a,"kameratyp","ptz")}, {v:"dual",label:"Dual-Objektiv",sub:"zwei Linsen, mehr Überblick",chip:"Dual-Objektiv",sat:p=>p.kameratyp==="dual",when:a=>stAvail(a,"kameratyp","dual")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Bauform egal"} ],
           match:(p,v)=>p.kameratyp===v?1:0.3 },
 
-        /* ── Komplett-Set ── */
+        /* ── Komplett-Set (live: IP-Sets = 4× Kameras 6MP/4K Bullet|Turret;
+              EasyLink = 2× Kameras 4MP WLAN — anzahl & Auflösung folgen der Wahl) ── */
         { key:"set_anschluss", type:"single", when:a=>a.produktart==="set",
           q:"Welche Verkabelung soll das Set haben?",
-          opts:[ {v:"ip",label:"IP-Set (PoE)",sub:"verkabelt, dauerhaft stabil",chip:"IP-Set"}, {v:"wlan",label:"EasyLink WLAN-Set",sub:"kabellos, einfache Montage",chip:"WLAN-Set"} ],
+          opts:[ {v:"ip",label:"IP-Set (PoE)",sub:"verkabelt, dauerhaft stabil",chip:"IP-Set",sat:p=>p.anschluss==="ip",when:a=>stAvail(a,"set_anschluss","ip")}, {v:"wlan",label:"EasyLink WLAN-Set",sub:"kabellos, einfache Montage",chip:"WLAN-Set",sat:p=>p.anschluss==="wlan",when:a=>stAvail(a,"set_anschluss","wlan")} ],
           match:(p,v)=>p.anschluss===v?1:0.2 },
         { key:"set_anzahl", type:"single", when:a=>a.produktart==="set",
           q:"Wie viele Kameras benötigen Sie?",
-          opts:[ {v:2,label:"2 Kameras",chip:"2 Kameras"}, {v:4,label:"4 Kameras",chip:"4 Kameras"} ],
+          opts:[ {v:2,label:"2 Kameras",chip:"2 Kameras",sat:p=>p.anzahl===2,when:a=>stAvail(a,"set_anzahl",2)}, {v:4,label:"4 Kameras",chip:"4 Kameras",sat:p=>p.anzahl===4,when:a=>stAvail(a,"set_anzahl",4)} ],
           match:(p,v)=>p.anzahl===v?1:0.4 },
         { key:"set_aufloesung", type:"single", when:a=>a.produktart==="set",
           q:"Welche Bildauflösung soll das Set haben?",
-          opts:[ {v:4,label:"4 MP",sub:"Full HD+"}, {v:6,label:"6 MP",sub:"hohe Detailschärfe"}, {v:8,label:"8 MP (4K)",sub:"maximale Detailschärfe"} ],
+          opts:[ {v:4,label:"4 MP",sub:"Full HD+",sat:p=>p.mp===4,when:a=>stAvail(a,"set_aufloesung",4)}, {v:6,label:"6 MP",sub:"hohe Detailschärfe",sat:p=>p.mp===6,when:a=>stAvail(a,"set_aufloesung",6)}, {v:8,label:"8 MP (4K)",sub:"maximale Detailschärfe",sat:p=>p.mp===8,when:a=>stAvail(a,"set_aufloesung",8)} ],
           match:(p,v)=>{ const ord=[4,6,8]; const d=Math.abs(ord.indexOf(p.mp)-ord.indexOf(v)); return d===0?1:d===1?0.5:0.2; } },
+        { key:"set_bauform", type:"single", when:a=>a.produktart==="set",
+          q:"Welche Kamera-Bauform bevorzugen Sie?",
+          opts:[ {v:"bullet",label:"Bullet",sub:"länglich, sichtbar abschreckend",chip:"Bullet",sat:p=>p.bauform==="bullet",when:a=>stAvail(a,"set_bauform","bullet")}, {v:"turret",label:"Turret",sub:"kompakt & dezent",chip:"Turret",sat:p=>p.bauform==="turret",when:a=>stAvail(a,"set_bauform","turret")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Bauform egal"} ],
+          match:(p,v)=> v==="egal" ? 0.5 : (p.bauform===v?1:0.3) },
         { key:"set_smart", type:"multi", when:a=>a.produktart==="set",
           q:"Welche smarten Funktionen sind Ihnen wichtig?",
-          opts:[ {v:"app",label:"Smartphone-App",sub:"Live-Bild & Benachrichtigungen"}, {v:"ki",label:"KI-Erkennung",sub:"erkennt Person / Fahrzeug"}, {v:"farbnacht",label:"Farb-Nachtsicht",sub:"Smart Hybrid Light – Farbe bei Nacht"} ],
+          opts:[ {v:"app",label:"Smartphone-App",sub:"Live-Bild & Benachrichtigungen",sat:p=>(p.smart||[]).includes("app")}, {v:"ki",label:"KI-Erkennung",sub:"erkennt Person / Fahrzeug",sat:p=>(p.smart||[]).includes("ki")}, {v:"farbnacht",label:"Farb-Nachtsicht",sub:"Smart Hybrid Light – Farbe bei Nacht",sat:p=>(p.smart||[]).includes("farbnacht")} ],
           match:(p,set)=>{ const need=[...set]; return need.filter(k=>(p.smart||[]).includes(k)).length/need.length; } },
 
+        /* ── Alarmanlage (live /alarmanlagen: 2 Sets + 6 Funk-Komponenten) ── */
+        { key:"alarm_umfang", type:"single", when:a=>a.produktart==="alarm",
+          q:"Was benötigen Sie?",
+          opts:[ {v:"komplett",label:"Komplett-Set (6-teilig)",sub:"Hub + Melder + Sirene + Fernbedienung",chip:"Komplett-Set",sat:p=>p.umfang==="komplett"}, {v:"basis",label:"Basis-Set",sub:"Hub + Melder + Fernbedienung",chip:"Basis-Set",sat:p=>p.umfang==="basis"}, {v:"komponente",label:"Einzelne Komponente",sub:"bestehende Anlage erweitern",chip:"Erweiterung",sat:p=>p.umfang==="komponente"} ],
+          match:satMatch },
+        { key:"alarm_komponente", type:"single", when:a=>a.produktart==="alarm"&&a.alarm_umfang==="komponente",
+          q:"Welche Komponente möchten Sie ergänzen?",
+          opts:[ {v:"melder",label:"Melder & Kontakte",sub:"Bewegungsmelder, Tür-/Fensterkontakt",chip:"Melder",sat:p=>p.komp==="melder"}, {v:"sirene",label:"Sirene",sub:"innen oder außen, mit LED-Blitzlicht",chip:"Sirene",sat:p=>p.komp==="sirene"}, {v:"bedienung",label:"Bedienung",sub:"Keypad oder Funk-Fernbedienung",chip:"Bedienung",sat:p=>p.komp==="bedienung"} ],
+          match:satMatch },
+
+        /* ── Videorekorder (live /videorekorder: NVR mit 4 / 8 / 16 Kanälen) ── */
+        { key:"kanaele", type:"single", when:a=>a.produktart==="rekorder",
+          q:"Wie viele Kameras soll der Rekorder verwalten?",
+          opts:[ {v:4,label:"Bis 4 Kameras",sub:"4-Kanal NVR",chip:"4 Kanäle",sat:p=>p.kanaele===4,when:a=>stAvail(a,"kanaele",4)}, {v:8,label:"Bis 8 Kameras",sub:"8-Kanal NVR",chip:"8 Kanäle",sat:p=>p.kanaele===8,when:a=>stAvail(a,"kanaele",8)}, {v:16,label:"Bis 16 Kameras",sub:"16-Kanal NVR mit PoE",chip:"16 Kanäle",sat:p=>p.kanaele===16,when:a=>stAvail(a,"kanaele",16)} ],
+          match:satMatch },
       ],
+      /* Slice-true catalogue (live subcategory drill): 6 MP existiert nur als Set
+         (kein 6-MP-Einzelmodell); WLAN-Einzelkameras nur 4 MP; Solar/4G-Kameras sind
+         eine eigene Linie; IP-Sets = 4× (6MP/4K, Bullet oder Turret), EasyLink = 2×
+         (4 MP, WLAN, ab 139 €); dazu die Alarmanlagen-Familie und die NVR-Rekorder. */
       products: [
         /* Einzelkameras */
+        {name:"HiLook IP Bullet Kamera | Full HD | 2 MP | IR-Nachtsicht | LAN + PoE", price:49.99, reviews:1, produktart:"einzelkamera", einsatz:"aussen", mp:2, anschluss:"lan", kameratyp:"bullet", smart:["app"]},
         {name:"HiLook 4 MP WLAN Bullet IPC-B140HA-D", price:69.99, reviews:4, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"wlan", kameratyp:"bullet", smart:["app"]},
         {name:"HiLook 4 MP WLAN Dome IPC-D140HA-D", price:99.99, reviews:2, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"wlan", kameratyp:"dome", smart:["app"]},
         {name:"HiLook 4 MP WLAN PT-Kamera PTZ-N2C400I-W", price:79.99, reviews:1, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"wlan", kameratyp:"ptz", smart:["app","ki"]},
         {name:"HiLook 4 MP Smart Hybrid Light Mini PT PTZ-N2C400M-DE(B)", price:79.99, reviews:2, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"lan", kameratyp:"ptz", smart:["app","ki","farbnacht"]},
         {name:"HiLook 4 MP TandemVu PT-Kamera PTZ-N2D400M | Dual-Objektiv", price:180, reviews:1, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"lan", kameratyp:"dual", smart:["app","ki"]},
+        {name:"HiLook Solar-Überwachungskamera | 4 MP | 4G-SIM | 24/7-Aufnahme | IPC-CFS04", price:179, reviews:0, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"solar", kameratyp:"bullet", smart:["app","ki"]},
+        {name:"HiLook Solar-Überwachungskamera | 4 MP | schwenkbar | 4G-SIM | IPC-CFSP4", price:199, reviews:0, produktart:"einzelkamera", einsatz:"aussen", mp:4, anschluss:"solar", kameratyp:"ptz", smart:["app","ki"]},
         {name:"HiLook 4K Bullet IPC-B180HA-LUF", price:89.99, reviews:2, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"bullet", smart:["app","ki","farbnacht"]},
         {name:"HiLook 4K Dome IPC-D180HA-LU", price:89.99, reviews:2, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"dome", smart:["app","ki"]},
         {name:"HiLook 4K Turret IPC-T280HA-LUF", price:89.99, reviews:7, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"turret", smart:["app","ki","farbnacht"]},
-        {name:"HiLook 8 MP 180° Turret IPC-T280HAD-LUF/SL", price:149, reviews:2, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"turret", smart:["app","ki","farbnacht"]},
-        {name:"HiLook 8 MP Bullet IPC-B480HAD-LUF/SL", price:159, reviews:0, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"bullet", smart:["app","ki","farbnacht"]},
-        {name:"HiLook 6 MP Turret IPC-T260HA", price:74.99, reviews:0, produktart:"einzelkamera", einsatz:"aussen", mp:6, anschluss:"lan", kameratyp:"turret", smart:["app"]},
+        {name:"HiLook 8 MP 180° Weitwinkel Turret IPC-T280HAD-LUF/SL | Dual-Objektiv", price:149, reviews:2, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"dual", smart:["app","ki","farbnacht"]},
+        {name:"HiLook 8 MP Bullet IPC-B480HAD-LUF/SL | Personen- & Fahrzeugerkennung", price:159, reviews:0, produktart:"einzelkamera", einsatz:"aussen", mp:8, anschluss:"lan", kameratyp:"bullet", smart:["app","ki","farbnacht"]},
         {name:"HiLook 4 MP Innen-Dome IPC-D140H", price:59.99, reviews:0, produktart:"einzelkamera", einsatz:"innen", mp:4, anschluss:"lan", kameratyp:"dome", smart:["app"]},
         /* Komplett-Sets */
-        {name:"HiLook 4K Überwachungskamera-Set | 4× Bullet | NVR 8-CH | 2 TB", price:499, reviews:7, produktart:"set", anschluss:"ip", mp:8, anzahl:4, smart:["app","ki","farbnacht"]},
-        {name:"HiLook 4K Überwachungskamera-Set | 4× Turret | NVR 8-CH | 2 TB", price:499, reviews:10, produktart:"set", anschluss:"ip", mp:8, anzahl:4, smart:["app","ki","farbnacht"]},
-        {name:"HiLook 6 MP Überwachungskamera-Set | 4× Bullet | NVR 8-CH | 2 TB", price:429, reviews:3, produktart:"set", anschluss:"ip", mp:6, anzahl:4, smart:["app","ki","farbnacht"]},
-        {name:"HiLook 6 MP Überwachungskamera-Set | 4× Turret | NVR 8-CH | 2 TB", price:429, reviews:2, produktart:"set", anschluss:"ip", mp:6, anzahl:4, smart:["app","ki","farbnacht"]},
-        {name:"HiLook 8 MP Set | 180° Sichtfeld | 4× Turret | NVR 16-CH | 4 TB", price:739.50, reviews:1, produktart:"set", anschluss:"ip", mp:8, anzahl:4, smart:["app","ki","farbnacht"]},
-        {name:"HiLook EasyLink WLAN-Kit | 2× 4 MP Bullet | WiFi NVS | Farbnachtsicht", price:299, reviews:0, produktart:"set", anschluss:"wlan", mp:4, anzahl:2, smart:["app","ki","farbnacht"]},
-        {name:"HiLook EasyLink WLAN-Kit | 4 MP Bullet + PT Turret | WiFi NVS", price:399, reviews:0, produktart:"set", anschluss:"wlan", mp:4, anzahl:2, smart:["app","ki","farbnacht"]},
+        {name:"HiLook 4K Überwachungskamera-Set | 4× Bullet | NVR 8-CH | 2 TB", price:499, reviews:7, produktart:"set", anschluss:"ip", mp:8, anzahl:4, bauform:"bullet", smart:["app","ki","farbnacht"]},
+        {name:"HiLook 4K Überwachungskamera-Set | 4× Turret | NVR 8-CH | 2 TB", price:499, reviews:10, produktart:"set", anschluss:"ip", mp:8, anzahl:4, bauform:"turret", smart:["app","ki","farbnacht"]},
+        {name:"HiLook 6 MP Überwachungskamera-Set | 4× Bullet | NVR 8-CH | 2 TB", price:429, reviews:3, produktart:"set", anschluss:"ip", mp:6, anzahl:4, bauform:"bullet", smart:["app","ki","farbnacht"]},
+        {name:"HiLook 6 MP Überwachungskamera-Set | 4× Turret | NVR 8-CH | 2 TB", price:429, reviews:2, produktart:"set", anschluss:"ip", mp:6, anzahl:4, bauform:"turret", smart:["app","ki","farbnacht"]},
+        {name:"HiLook 8 MP Set | 180° Sichtfeld | 4× Turret | NVR 16-CH | 4 TB", price:739.50, reviews:1, produktart:"set", anschluss:"ip", mp:8, anzahl:4, bauform:"turret", smart:["app","ki","farbnacht"]},
+        {name:"HiLook 8 MP Set | 180° Sichtfeld | 4× Bullet | NVR 16-CH | 4 TB", price:739.50, reviews:0, produktart:"set", anschluss:"ip", mp:8, anzahl:4, bauform:"bullet", smart:["app","ki","farbnacht"]},
+        {name:"HiLook EasyLink WLAN-Kit | 2× 4 MP Bullet | WiFi NVS | Farbnachtsicht | IKS-2044BH-PH/W", price:139, reviews:3, produktart:"set", anschluss:"wlan", mp:4, anzahl:2, smart:["app","ki","farbnacht"]},
+        {name:"HiLook EasyLink WLAN-Kit | 4 MP Bullet + PT Turret | WiFi NVS | IKS-2044BTH-PH/W", price:139, reviews:2, produktart:"set", anschluss:"wlan", mp:4, anzahl:2, smart:["app","ki","farbnacht"]},
+        /* Alarmanlagen */
+        {name:"HiLook Funk-Alarmanlage | 6-teiliges Komplettset | Hub + Melder + Sirene + Fernbedienung", price:239, reviews:0, produktart:"alarm", umfang:"komplett"},
+        {name:"HiLook Funk-Alarmanlage | Basis-Set | Hub + Melder + Fernbedienung", price:199.99, reviews:0, produktart:"alarm", umfang:"basis"},
+        {name:"HiLook Funk-Bewegungsmelder | PIR | haustierimmun bis 25 kg", price:32.99, reviews:0, produktart:"alarm", umfang:"komponente", komp:"melder"},
+        {name:"HiLook Tür- & Fensterkontakt | Funk-Magnetkontakt | kabellos", price:23.99, reviews:0, produktart:"alarm", umfang:"komponente", komp:"melder"},
+        {name:"HiLook Funk-Innensirene | 95 dB | LED-Blitzlicht", price:32.99, reviews:0, produktart:"alarm", umfang:"komponente", komp:"sirene"},
+        {name:"HiLook Funk-Außensirene ALARM-S201-E-WE | 110 dB | IP65", price:99, reviews:0, produktart:"alarm", umfang:"komponente", komp:"sirene"},
+        {name:"HiLook Funk-Keypad | LED-Statusanzeige | Bedienfeld", price:53.99, reviews:0, produktart:"alarm", umfang:"komponente", komp:"bedienung"},
+        {name:"HiLook Funk-Fernbedienung | 4 Tasten | Scharf/Unscharf", price:17.99, reviews:0, produktart:"alarm", umfang:"komponente", komp:"bedienung"},
+        /* Videorekorder */
+        {name:"HiLook Netzwerk Videorekorder | NVR | 4 Kanäle", price:99, reviews:0, produktart:"rekorder", kanaele:4},
+        {name:"HiLook Netzwerk Videorekorder | NVR | 8 Kanäle", price:139, reviews:0, produktart:"rekorder", kanaele:8},
+        {name:"HiLook Netzwerk-Videorekorder | 8-Kanal PoE NVR | 4K | NVR-208MH-K/8P", price:229, reviews:0, produktart:"rekorder", kanaele:8},
+        {name:"HiLook Network Video Recorder | 16-Kanal PoE | 4K AcuSense | NVR-216MH-K/16P", price:329, reviews:0, produktart:"rekorder", kanaele:16},
       ],
     },
 
     tuerklingel: {
       img: "Kaufbrater/Türklingel.png",
       steps: [
-        { key:"taster", type:"single",
+        /* Live-shop parity (edelstahl-tuerklingel.de/tuerklingel + subcategories):
+           the tree splits into Klingeln (Funk / Aufputz-kabelgebunden / Unterputz /
+           Mehrfamilien bis 7 Taster) and Türgongs (elektronisch / mechanisch /
+           Funk-Empfänger / Unterputz — the indoor half of the system). Options are
+           dataset-gated via tkAvail. Live couplings: Funkklingeln sind Aufputz-only,
+           Unterputz-Klingeln enden bei 3 Tastern. */
+        { key:"produktart", type:"single",
+          q:"Wonach suchen Sie?",
+          opts:[ {v:"klingel",label:"Türklingel / Klingelplatte",sub:"Taster & Namensschild am Eingang",chip:"Türklingel",sat:p=>p.produktart==="klingel"}, {v:"gong",label:"Türgong (Innenbereich)",sub:"der Klang im Haus – elektronisch, mechanisch oder per Funk",chip:"Türgong",sat:p=>p.produktart==="gong"} ],
+          match:(p,v)=>p.produktart===v?1:0 },
+
+        /* ── Türklingel / Klingelplatte ── */
+        { key:"taster", type:"single", when:a=>a.produktart==="klingel",
           q:"Wie viele Klingeltaster benötigen Sie?",
-          opts:[ {v:1,label:"1 Taster",sub:"Einfamilienhaus",chip:"1 Taster"}, {v:2,label:"2 Taster",sub:"Zweifamilienhaus",chip:"2 Taster"}, {v:3,label:"3 Taster",sub:"Mehrfamilienhaus",chip:"3 Taster"}, {v:4,label:"4 Taster",sub:"Mehrfamilienhaus",chip:"4 Taster"}, {v:5,label:"5+ Taster",sub:"Großanlage",chip:"5+ Taster"} ],
+          opts:[ {v:1,label:"1 Taster",sub:"Einfamilienhaus",chip:"1 Taster",sat:p=>p.taster===1,when:a=>tkAvail(a,"taster",1)}, {v:2,label:"2 Taster",sub:"Zweifamilienhaus",chip:"2 Taster",sat:p=>p.taster===2,when:a=>tkAvail(a,"taster",2)}, {v:3,label:"3 Taster",sub:"Mehrfamilienhaus",chip:"3 Taster",sat:p=>p.taster===3,when:a=>tkAvail(a,"taster",3)}, {v:4,label:"4 Taster",sub:"Mehrfamilienhaus",chip:"4 Taster",sat:p=>p.taster===4,when:a=>tkAvail(a,"taster",4)}, {v:5,label:"5+ Taster",sub:"bis 7 Parteien",chip:"5+ Taster",sat:p=>p.taster>=5,when:a=>tkAvail(a,"taster",5)} ],
           match:(p,v)=>{ const d=Math.abs(p.taster-v); return d===0?1:d===1?0.4:0.1; } },
-        { key:"anschluss", type:"single",
+        { key:"anschluss", type:"single", when:a=>a.produktart==="klingel",
           q:"Funkklingel oder verkabelt?",
-          opts:[ {v:"funk",label:"Funkklingel",sub:"kabellos, einfach nachrüstbar",chip:"Funkklingel"}, {v:"kabel",label:"Kabelgebunden",sub:"fest verdrahtet",chip:"Kabelgebunden"} ],
+          opts:[ {v:"funk",label:"Funkklingel",sub:"kabellos, einfach nachrüstbar",chip:"Funkklingel",sat:p=>p.anschluss==="funk",when:a=>tkAvail(a,"anschluss","funk")}, {v:"kabel",label:"Kabelgebunden",sub:"fest verdrahtet",chip:"Kabelgebunden",sat:p=>p.anschluss==="kabel",when:a=>tkAvail(a,"anschluss","kabel")} ],
           match:(p,v)=>p.anschluss===v?1:0.2 },
-        { key:"montage", type:"single", when:a=>a.anschluss==="kabel",
+        /* Funkklingeln sind Aufputz-only (live: Montageart Aufputz (21) in /funkklingeln)
+           → the step only appears for kabelgebunden; Unterputz gates out above 3 Taster. */
+        { key:"montage", type:"single", when:a=>a.produktart==="klingel"&&a.anschluss==="kabel",
           q:"Welche Montageart?",
-          opts:[ {v:"aufputz",label:"Aufputz",sub:"auf der Wand",chip:"Aufputz"}, {v:"unterputz",label:"Unterputz",sub:"in der Wand",chip:"Unterputz"} ],
+          opts:[ {v:"aufputz",label:"Aufputz",sub:"auf der Wand",chip:"Aufputz",sat:p=>p.montage==="aufputz",when:a=>tkAvail(a,"montage","aufputz")}, {v:"unterputz",label:"Unterputz",sub:"in der Wand",chip:"Unterputz",sat:p=>p.montage==="unterputz",when:a=>tkAvail(a,"montage","unterputz")} ],
           match:(p,v)=>p.montage===v?1:0.2 },
-        { key:"namensschild", type:"single",
+        { key:"namensschild", type:"single", when:a=>a.produktart==="klingel",
           q:"Welchen Namensschild-Typ bevorzugen Sie?",
-          opts:[ {v:"gravur",label:"Lasergravur",sub:"dauerhaft eingraviert",chip:"Gravur"}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Wechselschild"}, {v:"led3d",label:"LED-3D-Namensschild",sub:"beleuchtet, plastisch",chip:"LED-3D-Schild"}, {v:"ohne",label:"Ohne",sub:"neutral",neutral:true} ],
+          opts:[ {v:"gravur",label:"Lasergravur",sub:"dauerhaft eingraviert",chip:"Gravur",sat:p=>p.namensschild==="gravur",when:a=>tkAvail(a,"namensschild","gravur")}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Wechselschild",sat:p=>p.namensschild==="wechsel",when:a=>tkAvail(a,"namensschild","wechsel")}, {v:"led3d",label:"LED-3D-Namensschild",sub:"beleuchtet, plastisch",chip:"LED-3D-Schild",sat:p=>p.namensschild==="led3d",when:a=>tkAvail(a,"namensschild","led3d")}, {v:"ohne",label:"Ohne",sub:"neutral",neutral:true} ],
           match:(p,v)=>p.namensschild===v?1:0.2 },
-        { key:"optik", type:"single",
+        { key:"optik", type:"single", when:a=>a.produktart==="klingel",
           q:"Welche Optik passt zu Ihrem Eingang?",
-          opts:[ {v:"edelstahl",label:"Edelstahl",sub:"rostfrei V2A, zeitlos",sw:SW_EDELSTAHL,colors:["edelstahl"]}, {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Eisenglimmer, Grau, Schwarz oder Weiß",sw:SW_KLASSISCH,colors:["anthrazit","eisenglimmer","grau","schwarz","weiss"]} ],
+          opts:[ {v:"edelstahl",label:"Edelstahl",sub:"rostfrei V2A, zeitlos",sw:SW_EDELSTAHL,colors:["edelstahl"],sat:p=>p.finish==="edelstahl",when:a=>tkAvail(a,"optik","edelstahl")}, {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Eisenglimmer, Grau, Schwarz oder Weiß",sw:SW_KLASSISCH,colors:["anthrazit","eisenglimmer","grau","schwarz","weiss"],sat:p=>["anthrazit","eisenglimmer","grau","schwarz","weiss"].indexOf(p.finish)!==-1,when:a=>tkAvail(a,"optik","klassisch")} ],
           match:colorsetMatch("finish") },
+
+        /* ── Türgong (live /gong: 24 Artikel, Grothe) ── */
+        { key:"gong_typ", type:"single", when:a=>a.produktart==="gong",
+          q:"Welcher Gong-Typ passt zu Ihnen?",
+          opts:[ {v:"elektronisch",label:"Elektronischer Gong",sub:"12–17 Melodien, teils mit LED-Blitzlicht",chip:"Elektronisch",sat:p=>p.gongTyp==="elektronisch",when:a=>tkAvail(a,"gong_typ","elektronisch")}, {v:"mechanisch",label:"Mechanischer Gong",sub:"klassischer Zweiklang",chip:"Mechanisch",sat:p=>p.gongTyp==="mechanisch",when:a=>tkAvail(a,"gong_typ","mechanisch")}, {v:"funk",label:"Funk-Gong",sub:"Empfänger für Steckdose oder mit Batterie",chip:"Funk-Gong",sat:p=>p.gongTyp==="funk",when:a=>tkAvail(a,"gong_typ","funk")}, {v:"unterputz",label:"Unterputz-Gong",sub:"unsichtbar in der Wand",chip:"Unterputz-Gong",sat:p=>p.gongTyp==="unterputz",when:a=>tkAvail(a,"gong_typ","unterputz")} ],
+          match:satMatch },
       ],
+      /* Slice-true catalogue (live subcategory drill): Funkklingeln = Aufputz-only,
+         1–6 Taster; Unterputz-Klingeln enden bei 3 Tastern; Mehrfamilien-Platten gehen
+         Aufputz bis 7 Taster; dazu die Türgong-Familie (Grothe: elektronisch /
+         mechanisch / Funk-Empfänger / Unterputz). */
       products: [
-        {name:"Stella — Türklingel mit Gravur (LED-Taster optional)", price:24.99, reviews:132, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
-        {name:"Vera — Funkklingel Aufputz mit Gravur", price:69.99, reviews:27, taster:1, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
-        {name:"Vitus — Funkklingel kabellos Edelstahl V2A (IP67, 150 m)", price:79.99, reviews:88, taster:1, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
-        {name:"Vitus — Aufputz Türklingel mit Gravur", price:59.99, reviews:45, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
-        {name:"Parisa — Aufputz Türklingel, austauschbares Schild", price:39.99, reviews:12, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
-        {name:"Otis — Aufputz Klingel, austauschbar | Anthrazit", price:34.99, reviews:23, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"wechsel", finish:"anthrazit"},
-        {name:"Alan — Funkklingel für Einfamilienhaus mit Gravur", price:89.99, reviews:49, taster:1, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
-        {name:"Parisa — Funkklingel Aufputz, austauschbares Schild", price:59.99, reviews:17, taster:1, anschluss:"funk", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
-        {name:"Tara M2 — Funkklingel mit austauschbaren Namensschildern", price:119, reviews:14, taster:2, anschluss:"funk", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
-        {name:"Otto — Türklingel mit LED-3D-Namensschild", price:49.99, reviews:11, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"led3d", finish:"edelstahl"},
-        {name:"Heidi — Türklingel aus Edelstahl (LED-Taster optional)", price:49.99, reviews:14, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
-        {name:"Vitus M2 — Funkklingel für Zweifamilienhaus mit Gravur", price:89.99, reviews:24, taster:2, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
-        {name:"Tara M3 — Funkklingel für drei Parteien", price:139, reviews:8, taster:3, anschluss:"funk", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
-        {name:"Mehrfamilien-Klingelplatte | 3 Taster | Unterputz", price:179, reviews:5, taster:3, anschluss:"kabel", montage:"unterputz", namensschild:"gravur", finish:"edelstahl"},
-        {name:"Otis — Aufputz Klingel, austauschbar | Edelstahl", price:34.99, reviews:19, taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        {name:"Stella — Türklingel mit Gravur (LED-Taster optional)", price:24.99, reviews:132, produktart:"klingel", taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Vera — Funkklingel Aufputz mit Gravur", price:69.99, reviews:27, produktart:"klingel", taster:1, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Vitus — Funkklingel kabellos Edelstahl V2A (IP67, 150 m)", price:79.99, reviews:88, produktart:"klingel", taster:1, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Vitus — Aufputz Türklingel mit Gravur", price:59.99, reviews:45, produktart:"klingel", taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Parisa — Aufputz Türklingel, austauschbares Schild", price:39.99, reviews:12, produktart:"klingel", taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        {name:"Otis — Aufputz Klingel, austauschbar | Anthrazit", price:34.99, reviews:23, produktart:"klingel", taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"wechsel", finish:"anthrazit"},
+        {name:"Alan — Funkklingel für Einfamilienhaus mit Gravur", price:89.99, reviews:49, produktart:"klingel", taster:1, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Parisa — Funkklingel Aufputz, austauschbares Schild", price:59.99, reviews:17, produktart:"klingel", taster:1, anschluss:"funk", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        {name:"Tara M2 — Funkklingel mit austauschbaren Namensschildern", price:119, reviews:14, produktart:"klingel", taster:2, anschluss:"funk", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        {name:"Otto — Türklingel mit LED-3D-Namensschild", price:49.99, reviews:11, produktart:"klingel", taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"led3d", finish:"edelstahl"},
+        {name:"Heidi — Türklingel aus Edelstahl (LED-Taster optional)", price:49.99, reviews:14, produktart:"klingel", taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Vitus M2 — Funkklingel für Zweifamilienhaus mit Gravur", price:89.99, reviews:24, produktart:"klingel", taster:2, anschluss:"funk", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Tara M3 — Funkklingel für drei Parteien", price:139, reviews:8, produktart:"klingel", taster:3, anschluss:"funk", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        {name:"Mehrfamilien-Klingelplatte | 3 Taster | Unterputz", price:179, reviews:5, produktart:"klingel", taster:3, anschluss:"kabel", montage:"unterputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Otis — Aufputz Klingel, austauschbar | Edelstahl", price:34.99, reviews:19, produktart:"klingel", taster:1, anschluss:"kabel", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        {name:"Tara M4 — Funkklingel für vier Parteien", price:159, reviews:3, produktart:"klingel", taster:4, anschluss:"funk", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        {name:"Mehrfamilien-Klingelplatte | 5 Taster | Aufputz | mit Gravur", price:219, reviews:2, produktart:"klingel", taster:5, anschluss:"kabel", montage:"aufputz", namensschild:"gravur", finish:"edelstahl"},
+        {name:"Tara M6 — Funkklingel für sechs Parteien", price:199, reviews:1, produktart:"klingel", taster:6, anschluss:"funk", montage:"aufputz", namensschild:"wechsel", finish:"edelstahl"},
+        /* Türgongs (Grothe) */
+        {name:"Grothe Elektronischer Gong Croma 100A | 17 Melodien", price:34.99, reviews:0, produktart:"gong", gongTyp:"elektronisch"},
+        {name:"Grothe Elektronischer Gong Croma 150 | LED-Blitzlicht | 12 Melodien", price:49.99, reviews:0, produktart:"gong", gongTyp:"elektronisch"},
+        {name:"Grothe Elektronischer Gong Croma 250 | 230 V oder 8–12 V | LED-Blitz", price:59.99, reviews:0, produktart:"gong", gongTyp:"elektronisch"},
+        {name:"Grothe Mechanischer Zweiklang-Gong 465A", price:29.99, reviews:0, produktart:"gong", gongTyp:"mechanisch"},
+        {name:"Steckdosen-Empfänger | 25 Melodien | Funk-Gong", price:29.99, reviews:0, produktart:"gong", gongTyp:"funk"},
+        {name:"Batterie-Empfänger | 25 Melodien | Funk-Gong", price:24.99, reviews:0, produktart:"gong", gongTyp:"funk"},
+        {name:"Grothe Unterputz-Gong elektronisch 120ws | 8–12 V | 17 Melodien", price:39.99, reviews:0, produktart:"gong", gongTyp:"unterputz"},
+        {name:"Grothe Unterputz-Gong elektronisch 230ws | 230 V AC | 17 Melodien", price:49.99, reviews:0, produktart:"gong", gongTyp:"unterputz"},
       ],
     },
   };
