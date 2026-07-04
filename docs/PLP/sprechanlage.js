@@ -139,7 +139,9 @@
     { id:'vdm10-pb', name:'Video-Türsprechanlage mit Paketbox | personalisiert mit Gravur | VDM10', line:'IP-System', price:1019.15, uvp:1199.00, rating:5, reviews:5,
       badge:SALE, colors:['anthrazit'], system:'ip', klingel:'1', tuer:['rfid','fingerprint'], type:'video', briefkasten:true, img:SP+'briefkasten-paketbox.png' },
     { id:'vdm10-zf-bk', name:'Standbriefkasten mit Video-Türsprechanlage für Zweifamilienhaus | VDM10', line:'IP-System', price:1351.50, uvp:1590.00, rating:5, reviews:3,
-      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'2', tuer:['rfid'], type:'video', briefkasten:true, img:SP+'briefkasten-paketbox.png' }
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'2', tuer:['rfid'], type:'video', briefkasten:true, img:SP+'briefkasten-paketbox.png' },
+    { id:'vdm10-anlage-bk', name:'Modulare Standbriefkastenanlage mit Video-Türsprechanlage | VDM10 | flexibel', line:'IP-System', price:1999.00, uvp:null, rating:5, reviews:null,
+      badge:null, colors:['anthrazit'], system:'ip', klingel:'flex', tuer:['rfid'], type:'video', briefkasten:true, img:SP+'briefkasten-paketbox.png' }
   ];
 
   var TOTAL = 38; // catalogue headline figure (live total)
