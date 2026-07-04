@@ -25,16 +25,11 @@
   .advisor__qrow .advisor__q{ margin:0; }
   .advisor__qhint{ margin:4px 0 0; font-size: var(--text-body-sm); color: var(--ink-60); }
   .advisor__q-wrap{ flex:0 1 auto; min-width:0; }   /* shrink-to-content so the ℹ️ sits right after the question, not pushed to the far edge */
-  .advisor__info{ position:relative; flex:0 0 auto; }
-  .advisor__info-btn{ width:20px; height:20px; border-radius:50%; border:1px solid var(--teal); background:transparent; color:var(--teal); cursor:pointer; padding:0; display:grid; place-items:center; font-size:12px; font-weight:700; line-height:1; transition:background .15s ease, color .15s ease; }
-  .advisor__info-btn:hover, .advisor__info.is-open .advisor__info-btn{ background:var(--teal); color:#fff; }
-  .advisor__info-pop{ display:none; position:absolute; left:0; top:30px; z-index:20; width:min(330px,78vw); padding:14px 16px; border-radius: var(--r-xl); background:#fff; color:var(--schwarz); box-shadow: var(--shadow-lg); border:1px solid var(--graphite-300); font-size: var(--text-body-sm); line-height:1.5; }
-  .advisor__info.is-open .advisor__info-pop{ display:block; }
-  .advisor__info-pop h4{ margin:0 0 8px; font-size: var(--text-body-sm); font-weight:700; }
-  .advisor__info-pop dl{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:4px 10px; }
-  .advisor__info-pop dt{ font-weight:700; color:var(--teal-700); }
-  .advisor__info-pop dd{ margin:0; color:var(--ink-60); }
-  .advisor__info-pop .note{ margin:10px 0 0; color:var(--ink-60); font-size: var(--text-caption); }
+  /* The info button + popover are styled by the premium tooltip rules in plp.css
+     (accent-bar header, dot-led stacked dl, caret, layered shadow, pop-in) —
+     do NOT redeclare them here, an inline copy would override that design.
+     Only the size-guide footnote is page-specific: */
+  .advisor__info-pop .note{ margin:12px 0 0; padding-top:10px; border-top:1px solid var(--graphite-100); color:var(--ink-60); font-size: var(--text-caption); line-height:1.5; }
 </style>
 </head>
 <body class="plp">
