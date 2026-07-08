@@ -70,7 +70,7 @@
     { t: 'Audio-Sprechanlagen', n: 6, img: SP + 'audio-station.png' },
     { t: 'Mehrfamilien-Anlagen', n: 12, img: SP + 'mehrfamilien-anlage.png' },
     { t: 'Mit Gesichtserkennung', n: 3, img: SP + 'touch-display-station.png' },
-    { t: 'Zubehör', n: 8, img: SP + 'zubehoer.png' },
+    { t: 'Erweiterungen & Zubehör', n: 8, img: SP + 'zubehoer.png' },
     { t: '2-Draht-BUS (XDM10)', n: 3, img: SP + 'bus-xdm10.png' },
     { t: 'Innenstationen', n: 5, img: SP + 'innenstation.png' }
   ];

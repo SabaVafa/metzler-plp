@@ -1006,14 +1006,17 @@
 .mega-card:hover .mega-card__label,
 .mega-card:focus-visible .mega-card__label { color: var(--teal); }
 
-/* Both dropdowns: cards fill their 5 columns with a fixed 20px gap (instead of
-   146px cards + space-between, whose gap grows past the 46px card→poster gap on wide
-   screens). Keeps the inter-card gap clearly SMALLER than the gap to the poster, and
-   the Sprechanlage cards the same size as the Briefkasten ones (its 8 tiles → 5+3). */
+/* Both dropdowns: cards fill their 5 columns with a fixed 20px gap, and the
+   Sprechanlage cards match the Briefkasten ones (its 8 tiles → 5+3). The tile media
+   is capped (max-width) so the square tiles don't balloon on wide monitors — without
+   the cap, a 1fr column on a 2560px screen makes each square ~264px tall (the whole
+   menu reads "stretched"). align-content:start packs the rows to the top so a taller
+   poster doesn't spread them apart vertically (the grid still stretches to the
+   poster's height, leaving empty space below rather than gapping the rows). */
 #mm-panel-briefkasten .mega-grid,
-#mm-panel-sprechanlagen .mega-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: var(--sp-5); }
+#mm-panel-sprechanlagen .mega-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: var(--sp-5); align-content: start; }
 #mm-panel-briefkasten .mega-card__media,
-#mm-panel-sprechanlagen .mega-card__media { max-width: none; }
+#mm-panel-sprechanlagen .mega-card__media { max-width: 176px; }
 
 /* ── Right-zone variant: XDM10 product POSTER (Sprechanlage) ──
    Premium split layout: scaled device photo in the UPPER section, copy on a solid
@@ -1035,7 +1038,7 @@
    flex:1 1 0 + min-height:0 lets it grow to fill the space ABOVE the copy; the img is
    absolutely positioned so its (very tall) intrinsic size can't drive the poster height. */
 .mega-panel .mega-poster__media {
-  position: relative; flex: 0 0 auto; aspect-ratio: 1 / 1; overflow: hidden;   /* square box → image fills the width and scales with it (responsive) */
+  position: relative; flex: 0 0 auto; overflow: hidden;   /* height hugs the (square) image — no forced square box. A fixed 1/1 box was taller than the contained image and centred it, so the gap above the device came out larger than the copy's bottom padding; letting the box hug the image makes the banner's top gap == bottom gap. */
   display: flex; align-items: center; justify-content: center;
   padding: clamp(14px, 6%, 22px) clamp(14px, 6%, 22px) 0;   /* no bottom padding → image sits close to the copy */
   background: radial-gradient(ellipse 76% 64% at 50% 44%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 72%);   /* soft spotlight behind the device */
