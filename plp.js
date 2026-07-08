@@ -641,9 +641,9 @@
          skips the step entirely). */
       { q: 'Welche Optik passt zu Ihrem Zuhause?', opts: [
         { label: 'Klassische Farbe',     sub: 'z. B. Anthrazit, Schwarz, Weiß oder Grau',      group: 'colorset', values: ['anthrazit','braun','schwarz','eisenglimmer','weiss','grau'], chip: 'Klassische Farbe', swatch: 'linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)', hideWhen: gateHide },
-        { label: 'Edelstahl-Optik',      sub: 'gebürstete Edelstahl-Elemente, zeitlos',         group: 'colorset', values: ['edelstahl'], chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)', hideWhen: gateHide },
-        { label: 'Natürliche Holzoptik', sub: 'Eiche oder Lärche',                             group: 'material', value: 'holz', chip: 'Holzoptik', swatch: 'linear-gradient(135deg,#b07b46,#7a5230)', hideWhen: gateHide },
-        { label: 'Wunschfarbe',          sub: 'individuell nach RAL',                          group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)', hideWhen: gateHide }
+        { label: 'Edelstahl-Optik',      sub: 'gebürstete Edelstahl-Elemente, zeitlos',         group: 'colorset', values: ['edelstahl'], chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)', hideWhen: function () { return doorIs('seite') || gateHide.call(this); } },
+        { label: 'Natürliche Holzoptik', sub: 'Eiche oder Lärche',                             group: 'material', value: 'holz', chip: 'Holzoptik', swatch: 'linear-gradient(135deg,#b07b46,#7a5230)', hideWhen: function () { return doorIs('seite') || gateHide.call(this); } },
+        { label: 'Wunschfarbe',          sub: 'individuell nach RAL',                          group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)', hideWhen: function () { return doorIs('seite') || gateHide.call(this); } }
       ]},
       { q: 'Wie möchten Sie Ihren Briefkasten beschriften?', opts: [
         { label: 'Dauerhafte Lasergravur',       sub: 'UV- und witterungsbeständig, freie Schriftwahl', group: 'pref', value: 'Lasergravur' },
@@ -695,6 +695,9 @@
     function optVisible(o) { return !(o.hideWhen && o.hideWhen()); }
     /* Has the shopper chosen the given Wohnsituation (Fächer count)? */
     function wohnIs(val) { return (picks[IDX_WOHN] || []).some(function (o) { return o.group === 'faecher' && o.value === val; }); }
+    /* Has the shopper chosen a given Öffnungsrichtung? Used to keep the side-door
+       path classic-colour-only (side boxes aren't offered in Edelstahl/Holz/Wunschfarbe). */
+    function doorIs(val) { return picks.some(function (arr) { return (arr || []).some(function (o) { return o.group === 'door' && o.value === val; }); }); }
     /* A step is skipped when its own `hideWhen` holds OR it offers no real choice
        (a single visible option). */
     function stepHidden(i) {
