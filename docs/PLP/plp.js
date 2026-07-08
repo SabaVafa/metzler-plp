@@ -41,7 +41,8 @@
     montage: { title: 'montage', items: [
       { key: 'wand', label: 'Wandmontage', count: 49 },
       { key: 'stand', label: 'Standmontage', count: 14 },
-      { key: 'unterputz', label: 'Unterputzmontage', count: 12 }
+      { key: 'unterputz', label: 'Unterputzmontage', count: 10 },
+      { key: 'durchwurf', label: 'Mauerdurchwurf', count: 2 }
     ]},
     zusatz: { title: 'zusatz', items: [
       { key: 'paket', label: 'Mit Paketfach', count: 9 },
@@ -73,13 +74,13 @@
   /* ---- Product catalogue (single placeholder image for all) ---- */
   var PRODUCTS = [
     { id:'siebert', name:'Briefkasten aus hochwertigem Stahl | Siebert', line:'Bestseller', price:89.99, uvp:null, rating:5, reviews:657,
-      badge:null, colors:['anthrazit','weiss','grau','schwarz'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
+      badge:null, colors:['anthrazit','weiss','grau','schwarz'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand', seitentuer:true },
     { id:'ebenhard', name:'Briefkasten mit austauschbarem Namensschild | Ebenhard', line:'Beliebt', price:89.99, uvp:null, rating:5, reviews:219,
       badge:null, colors:['anthrazit','weiss','grau'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
     { id:'ebenhard-v2a', name:'Briefkasten mit gebürsteter V2A-Edelstahl-Front | Ebenhard', line:null, price:119.00, uvp:null, rating:5, reviews:64,
       badge:null, colors:['anthrazit','weiss','grau','eisenglimmer','schwarz','edelstahl','wunschfarbe'], faecher:'1', material:'edelstahl', zeitung:'integriert', montage:'wand' },
     { id:'hermann', name:'Briefkasten mit Lasergravur | Hermann', line:null, price:99.99, uvp:117.99, rating:5, reviews:142,
-      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','weiss','grau','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
+      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','weiss','grau','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand', seitentuer:true },
     { id:'moris', name:'Briefkasten aus Edelstahl | personalisiert | Moris', line:'Edelstahl V4A', price:149.00, uvp:null, rating:4.5, reviews:25,
       badge:null, colors:['edelstahl','anthrazit','weiss','wunschfarbe'], faecher:'1', material:'edelstahl', zeitung:'optional', montage:'wand', paket:true },
     { id:'lessing', name:'Standbriefkasten mit Zeitungsfach | Lessing', line:null, price:199.00, uvp:null, rating:5, reviews:38,
@@ -87,9 +88,9 @@
     { id:'gienger', name:'Briefkasten Design | Modell G | Gienger', line:null, price:99.99, uvp:null, rating:5, reviews:31,
       badge:null, colors:['anthrazit','weiss','grau'], faecher:'1', material:'stahl', zeitung:'ohne', montage:'wand' },
     { id:'schneider', name:'Durchwurf-Briefkasten | Mauerdurchwurf | Schneider', line:null, price:120.00, uvp:null, rating:5, reviews:2,
-      badge:null, colors:['anthrazit','edelstahl'], faecher:'1', material:'edelstahl', zeitung:'ohne', montage:'unterputz' },
+      badge:null, colors:['anthrazit','edelstahl'], faecher:'1', material:'edelstahl', zeitung:'ohne', montage:'durchwurf' },
     { id:'lepo', name:'Briefkasten Anthrazit RAL 7016 | Lepo 2', line:null, price:149.00, uvp:175.00, rating:4.5, reviews:64,
-      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','schwarz','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand' },
+      badge:{type:'sale', text:'−15 %'}, colors:['anthrazit','schwarz','wunschfarbe'], faecher:'1', material:'stahl', zeitung:'integriert', montage:'wand', seitentuer:true },
     { id:'zaun', name:'Zaunbriefkasten | personalisiert mit Gravur', line:null, price:149.00, uvp:null, rating:5, reviews:18,
       badge:null, colors:['anthrazit','weiss','eisenglimmer'], faecher:'1', material:'stahl', zeitung:'optional', montage:'wand' },
     { id:'flora', name:'Briefkasten mit Blumenkasten | personalisiert | Flora', line:null, price:159.00, uvp:null, rating:4.5, reviews:12,
@@ -131,7 +132,7 @@
   var TOTAL = 80; // catalogue headline figure
 
   /* ---- State ---- */
-  var active = { color: [], zeitung: [], faecher: [], montage: [], zusatz: [], material: [] };
+  var active = { color: [], zeitung: [], faecher: [], montage: [], zusatz: [], material: [], door: [] };
   var page = 1;
   var advisorChips = false;   /* true while the active filters were set by the KI advisor → don't echo them as toolbar chips */
 
@@ -249,6 +250,7 @@
     }
     if (a.zeitung.length && a.zeitung.indexOf(p.zeitung) === -1) return false;
     if (a.montage.length && a.montage.indexOf(p.montage) === -1) return false;
+    if (a.door && a.door.length && !a.door.some(function (v) { return p.montage === 'wand' && (v === 'seite' ? !!p.seitentuer : true); })) return false;   /* Öffnungsrichtung — Aufputz only; 'seite' needs the side-hinge flag */
     if (a.material && a.material.length && a.material.indexOf(p.material) === -1) return false;   /* sidebar Material facet + advisor (Witterung/Optik/Sichtfenster) */
     if (a.zusatz.length) {
       /* Extra functions — boolean attributes on the product (p.klingel / p.sprech).
@@ -587,12 +589,13 @@
          Wand (Duo) + Stand, Mehrfamilien keeps Stand (Trias) + Unterputz (Quartett).
          Only "Am Zaun" stays curated to single-family (all Zaunbriefkästen are 1er). */
       { q: 'Wo möchten Sie Ihren Briefkasten anbringen?',
-        info: '<h4>Montagearten</h4><dl><dt>An der Hauswand</dt><dd>aufgeschraubt – die häufigste und einfachste Lösung</dd><dt>Freistehend</dt><dd>mit Standfuß, unabhängig von einer Wand (z. B. an der Grundstücksgrenze)</dd><dt>In die Mauer integriert</dt><dd>Unterputz oder Mauerdurchwurf: bündig eingelassen, die Post wird bequem von innen entnommen</dd></dl>', infoLabel: 'Montagearten erklärt',
+        info: '<h4>Montagearten</h4><dl><dt>An der Hauswand</dt><dd>aufgeschraubt – die häufigste und einfachste Lösung</dd><dt>Freistehend</dt><dd>mit Standfuß, unabhängig von einer Wand (z. B. an der Grundstücksgrenze)</dd><dt>Unterputz</dt><dd>flächenbündig in die Wand eingelassen, Entnahme wie üblich von vorne</dd><dt>Mauerdurchwurf</dt><dd>durch die Wand geführt: Einwurf außen, Post bequem von innen im Haus entnehmen</dd></dl>', infoLabel: 'Montagearten erklärt',
         opts: [
         { label: 'An der Hauswand',          sub: 'klassische Wandmontage',         group: 'montage', value: 'wand',      chip: 'Wandmontage', hideWhen: gateHide },
         { label: 'Freistehend mit Standfuß', sub: 'z. B. am Weg oder in der Einfahrt', group: 'montage', value: 'stand',  chip: 'Standmontage', hideWhen: gateHide },
         { label: 'Am Zaun',                  sub: 'als Zaunbriefkasten',            group: 'montage', value: 'stand',      chip: 'Zaunmontage', hideWhen: function () { return wohnIs('2') || wohnIs('3') || gateHide.call(this); } },
-        { label: 'In die Mauer integriert',  sub: 'Mauerdurchwurf oder Unterputz',  group: 'montage', value: 'unterputz', chip: 'Unterputz', hideWhen: gateHide }
+        { label: 'Unterputz – bündig in der Wand', sub: 'flächenbündig eingelassen, Entnahme von vorne', group: 'montage', value: 'unterputz', chip: 'Unterputz', hideWhen: gateHide },
+        { label: 'Mauerdurchwurf',                 sub: 'Einwurf außen, Post bequem von innen entnehmen', group: 'montage', value: 'durchwurf', chip: 'Mauerdurchwurf', hideWhen: gateHide }
       ]},
       /* Paketfach/Zeitungsfach are dataset-gated: e.g. Mehrfamilien keeps "Auch
          Pakete" (Trias/Quartett anlagen have one) but loses "Zeitungen & Post";
@@ -613,6 +616,17 @@
         { label: 'Sichtfenster',             sub: 'Ihren Posteingang auf einen Blick erkennen', group: 'material', value: 'acrylglas',     chip: 'Sichtfenster', hideWhen: gateHide },
         { label: 'Mit Blumenkasten',         sub: 'integrierter Pflanzkasten als Blickfang',   group: 'zusatz',   value: 'blumenkasten',   chip: 'Blumenkasten', hideWhen: gateHide },
         { label: 'Keine Zusatzfunktion',     sub: 'ein reiner Briefkasten',                    neutral: true }
+      ]},
+      /* Öffnungsrichtung — Aufputz (Wandmontage) only. Both options require montage:'wand',
+         so Stand/Unterputz/Mauerdurchwurf skip this step. "Von der Seite" is offered only on
+         the few wall-mount models flagged seitentuer, and never on Klingel/Sprechanlage boxes
+         — so once a bell was chosen it gates out (and if only "Von oben" remains the step
+         auto-skips). Recommendation images stay the shared placeholders. */
+      { q: 'Wie soll sich die Klappe öffnen?',
+        info: '<h4>Öffnungsrichtung</h4><dl><dt>Von oben</dt><dd>die Klappe öffnet nach unten – die klassische Bauform</dd><dt>Von der Seite</dt><dd>seitlich angeschlagene Tür; nicht mit Klingel/Sprechanlage kombinierbar</dd></dl>', infoLabel: 'Öffnungsrichtung erklärt',
+        opts: [
+        { label: 'Von oben',      sub: 'Klappe öffnet nach unten',   group: 'door', value: 'oben',  chip: 'Klappe oben',  hideWhen: gateHide },
+        { label: 'Von der Seite', sub: 'seitlich angeschlagene Tür',  group: 'door', value: 'seite', chip: 'Tür seitlich', hideWhen: gateHide }
       ]},
       /* V4A option is dataset-gated too: when no rust-free model fits the answers
          so far (e.g. Mehrfamilien anlagen), the step is left with the neutral
@@ -773,7 +787,7 @@
     function pickImg(p) {
       if (p.montage === 'stand')      return 'Product%20Image/standbriefkaesten.webp';
       if (p.faecher === '3')          return 'Product%20Image/mehrfamilien-briefkaesten.webp';
-      if (p.montage === 'unterputz')  return 'Product%20Image/unterputz-briefkaesten.webp';
+      if (p.montage === 'unterputz' || p.montage === 'durchwurf') return 'Product%20Image/unterputz-briefkaesten.webp';
       return 'Product%20Image/einfamilien-briefkasten.png';
     }
     /* Does product p satisfy a single facet pick? (mirrors matches()) */
@@ -785,6 +799,7 @@
       if (o.group === 'zusatz')   return o.value.indexOf('+') !== -1 ? o.value.split('+').every(function (x) { return !!p[x]; }) : !!p[o.value];
       if (o.group === 'zeitung')  return p.zeitung === o.value;
       if (o.group === 'montage')  return p.montage === o.value;
+      if (o.group === 'door')     return p.montage === 'wand' && (o.value === 'seite' ? !!p.seitentuer : true);
       return false;
     }
     function recCardHTML(p) {

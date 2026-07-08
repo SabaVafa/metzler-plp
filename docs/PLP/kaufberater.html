@@ -286,9 +286,9 @@
            the live shop where multi-family anlagen genuinely split freistehend vs
            Unterputz. Only "Am Zaun" stays curated to single-family. */
         { key:"montage", type:"single", match:satMatch,
-          info:'<h4>Montagearten</h4><dl><dt>An der Hauswand</dt><dd>aufgeschraubt – die häufigste und einfachste Lösung</dd><dt>Freistehend</dt><dd>mit Standfuß, unabhängig von einer Wand (z. B. an der Grundstücksgrenze)</dd><dt>In die Mauer integriert</dt><dd>Unterputz oder Mauerdurchwurf: bündig eingelassen, die Post wird bequem von innen entnommen</dd></dl>', infoLabel:'Montagearten erklärt',
+          info:'<h4>Montagearten</h4><dl><dt>An der Hauswand</dt><dd>aufgeschraubt – die häufigste und einfachste Lösung</dd><dt>Freistehend</dt><dd>mit Standfuß, unabhängig von einer Wand (z. B. an der Grundstücksgrenze)</dd><dt>Unterputz</dt><dd>flächenbündig in die Wand eingelassen, Entnahme wie üblich von vorne</dd><dt>Mauerdurchwurf</dt><dd>durch die Wand geführt: Einwurf außen, Post bequem von innen im Haus entnehmen</dd></dl>', infoLabel:'Montagearten erklärt',
           q:"Wo möchten Sie Ihren Briefkasten anbringen?",
-          opts:[ {v:"wand",label:"An der Hauswand",sub:"klassische Wandmontage",chip:"Wandmontage",sat:p=>p.montage==="wand",when:a=>bkAvail(a,"montage","wand")}, {v:"stand",label:"Freistehend mit Standfuß",sub:"z. B. am Weg oder in der Einfahrt",chip:"Standmontage",sat:p=>p.montage==="stand",when:a=>bkAvail(a,"montage","stand")}, {v:"zaun",label:"Am Zaun",sub:"als Zaunbriefkasten",chip:"Zaunmontage",sat:p=>p.montage==="stand",when:a=>a.wohnsituation!=="zf"&&a.wohnsituation!=="mf"&&bkAvail(a,"montage","zaun")}, {v:"unterputz",label:"In die Mauer integriert",sub:"Mauerdurchwurf oder Unterputz",chip:"Unterputz",sat:p=>p.montage==="unterputz",when:a=>bkAvail(a,"montage","unterputz")} ] },
+          opts:[ {v:"wand",label:"An der Hauswand",sub:"klassische Wandmontage",chip:"Wandmontage",sat:p=>p.montage==="wand",when:a=>bkAvail(a,"montage","wand")}, {v:"stand",label:"Freistehend mit Standfuß",sub:"z. B. am Weg oder in der Einfahrt",chip:"Standmontage",sat:p=>p.montage==="stand",when:a=>bkAvail(a,"montage","stand")}, {v:"zaun",label:"Am Zaun",sub:"als Zaunbriefkasten",chip:"Zaunmontage",sat:p=>p.montage==="stand",when:a=>a.wohnsituation!=="zf"&&a.wohnsituation!=="mf"&&bkAvail(a,"montage","zaun")}, {v:"unterputz",label:"Unterputz – bündig in der Wand",sub:"flächenbündig eingelassen, Entnahme von vorne",chip:"Unterputz",sat:p=>p.montage==="unterputz",when:a=>bkAvail(a,"montage","unterputz")}, {v:"durchwurf",label:"Mauerdurchwurf",sub:"Einwurf außen, Post bequem von innen entnehmen",chip:"Mauerdurchwurf",sat:p=>p.montage==="durchwurf",when:a=>bkAvail(a,"montage","durchwurf")} ] },
         /* Paketfach/Zeitungsfach are dataset-gated: Mehrfamilien keeps "Auch Pakete"
            (Trias/Quartett anlagen have one) but loses "Zeitungen & Post"; after
            Unterputz the step collapses and auto-skips — like the live shop's facets.
@@ -305,6 +305,14 @@
         { key:"zusatz", type:"single", match:satMatch,
           q:"Welche Zusatzfunktion wünschen Sie sich?",
           opts:[ {v:"klingel",label:"Funkklingel",sub:"kabellos und einfach nachrüstbar",chip:"Funkklingel",sat:p=>!!p.klingel,when:a=>bkAvail(a,"zusatz","klingel")}, {v:"klingel-sprech",label:"Klingel mit Sprechanlage",sub:"sehen und sprechen, wer vor der Tür steht",chip:"Klingel & Sprechanlage",sat:p=>!!p.klingel&&!!p.sprech,when:a=>bkAvail(a,"zusatz","klingel-sprech")}, {v:"sichtfenster",label:"Sichtfenster",sub:"Ihren Posteingang auf einen Blick erkennen",chip:"Sichtfenster",sat:p=>p.material==="acrylglas",when:a=>bkAvail(a,"zusatz","sichtfenster")}, {v:"blumenkasten",label:"Mit Blumenkasten",sub:"integrierter Pflanzkasten als Blickfang",chip:"Blumenkasten",sat:p=>!!p.blumenkasten,when:a=>bkAvail(a,"zusatz","blumenkasten")}, {v:"keine",label:"Keine Zusatzfunktion",sub:"ein reiner Briefkasten",neutral:true} ] },
+        /* Öffnungsrichtung — Aufputz (Wandmontage) only: both options require montage==="wand",
+           so Stand/Unterputz/Mauerdurchwurf skip the step. "Von der Seite" is offered only on
+           the few wall-mount models flagged seitentuer, never on Klingel/Sprechanlage boxes —
+           so choosing a bell gates it out (and if only "Von oben" remains the step auto-skips). */
+        { key:"tuerrichtung", type:"single", match:satMatch,
+          info:'<h4>Öffnungsrichtung</h4><dl><dt>Von oben</dt><dd>die Klappe öffnet nach unten – die klassische Bauform</dd><dt>Von der Seite</dt><dd>seitlich angeschlagene Tür; nicht mit Klingel/Sprechanlage kombinierbar</dd></dl>', infoLabel:'Öffnungsrichtung erklärt',
+          q:"Wie soll sich die Klappe öffnen?",
+          opts:[ {v:"oben",label:"Von oben",sub:"Klappe öffnet nach unten",chip:"Klappe oben",sat:p=>p.montage==="wand",when:a=>bkAvail(a,"tuerrichtung","oben")}, {v:"seite",label:"Von der Seite",sub:"seitlich angeschlagene Tür",chip:"Tür seitlich",sat:p=>p.montage==="wand"&&!!p.seitentuer,when:a=>bkAvail(a,"tuerrichtung","seite")} ] },
         /* V4A is dataset-gated too: with no rust-free model consistent with the
            answers (e.g. Mehrfamilien anlagen), only the neutral option remains and
            the step auto-skips — no dead-end answers. */
@@ -319,15 +327,15 @@
           opts:[ {v:"laser",label:"Dauerhafte Lasergravur",sub:"UV- und witterungsbeständig, freie Schriftwahl",chip:"Lasergravur",noScore:true}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Wechselschild",noScore:true}, {v:"edelstahl-schild",label:"Edelstahl-Namensschild",sub:"hochwertig graviert",chip:"Edelstahl-Schild",noScore:true}, {v:"ohne",label:"Ohne Beschriftung",sub:"neutral",neutral:true} ] },
       ],
       products: [
-        {name:"Briefkasten aus hochwertigem Stahl | Siebert", price:89.99, reviews:657, faecher:"1", montage:"wand", zeitung:"integriert", material:"stahl", colors:["anthrazit","weiss","grau","schwarz"]},
+        {name:"Briefkasten aus hochwertigem Stahl | Siebert", price:89.99, reviews:657, faecher:"1", montage:"wand", zeitung:"integriert", material:"stahl", colors:["anthrazit","weiss","grau","schwarz"], seitentuer:true},
         {name:"Briefkasten mit austauschbarem Namensschild | Ebenhard", price:89.99, reviews:219, faecher:"1", montage:"wand", zeitung:"integriert", material:"stahl", colors:["anthrazit","weiss","grau"]},
         {name:"Briefkasten mit gebürsteter V2A-Edelstahl-Front | Ebenhard", price:119, reviews:64, faecher:"1", montage:"wand", zeitung:"integriert", material:"edelstahl", colors:["anthrazit","weiss","grau","eisenglimmer","schwarz","edelstahl","wunschfarbe"]},
-        {name:"Briefkasten mit Lasergravur | Hermann", price:99.99, reviews:142, faecher:"1", montage:"wand", zeitung:"integriert", material:"stahl", colors:["anthrazit","weiss","grau","eisenglimmer"]},
+        {name:"Briefkasten mit Lasergravur | Hermann", price:99.99, reviews:142, faecher:"1", montage:"wand", zeitung:"integriert", material:"stahl", colors:["anthrazit","weiss","grau","eisenglimmer"], seitentuer:true},
         {name:"Briefkasten aus Edelstahl | personalisiert | Moris", price:149, reviews:25, faecher:"1", montage:"wand", zeitung:"optional", material:"edelstahl", colors:["edelstahl","anthrazit","weiss","wunschfarbe"], paket:true},
         {name:"Standbriefkasten mit Zeitungsfach | Lessing", price:199, reviews:38, faecher:"1", montage:"stand", zeitung:"integriert", material:"stahl", colors:["anthrazit","eisenglimmer","schwarz"], paket:true},
         {name:"Briefkasten Design | Modell G | Gienger", price:99.99, reviews:31, faecher:"1", montage:"wand", zeitung:"ohne", material:"stahl", colors:["anthrazit","weiss","grau"]},
-        {name:"Durchwurf-Briefkasten | Mauerdurchwurf | Schneider", price:120, reviews:2, faecher:"1", montage:"unterputz", zeitung:"ohne", material:"edelstahl", colors:["anthrazit","edelstahl"]},
-        {name:"Briefkasten Anthrazit RAL 7016 | Lepo 2", price:149, reviews:64, faecher:"1", montage:"wand", zeitung:"integriert", material:"stahl", colors:["anthrazit","schwarz","wunschfarbe"]},
+        {name:"Durchwurf-Briefkasten | Mauerdurchwurf | Schneider", price:120, reviews:2, faecher:"1", montage:"durchwurf", zeitung:"ohne", material:"edelstahl", colors:["anthrazit","edelstahl"]},
+        {name:"Briefkasten Anthrazit RAL 7016 | Lepo 2", price:149, reviews:64, faecher:"1", montage:"wand", zeitung:"integriert", material:"stahl", colors:["anthrazit","schwarz","wunschfarbe"], seitentuer:true},
         {name:"Zaunbriefkasten | personalisiert mit Gravur", price:149, reviews:18, faecher:"1", montage:"stand", zeitung:"optional", material:"stahl", colors:["anthrazit","weiss","eisenglimmer"]},
         {name:"Briefkasten mit Blumenkasten | personalisiert | Flora", price:159, reviews:12, faecher:"1", montage:"wand", zeitung:"integriert", material:"stahl", colors:["anthrazit","weiss","braun","wunschfarbe"], blumenkasten:true},
         {name:"Unterputz-Briefkasten aus Edelstahl | Castor", price:179, reviews:21, faecher:"1", montage:"unterputz", zeitung:"optional", material:"edelstahl", colors:["edelstahl","anthrazit"]},
