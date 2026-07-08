@@ -1024,6 +1024,12 @@
 .mega-panel .mega-poster {
   position: relative; overflow: hidden;
   display: flex; flex-direction: column;
+  /* Anchor the device image to the top and the copy/CTA to the bottom. When the
+     poster stretches taller than its content (tile column taller than the poster —
+     e.g. a narrower browser window), the leftover height becomes a gap BETWEEN the
+     image and the copy instead of piling up under the button, so the banner's top
+     and bottom padding stay small and equal. */
+  justify-content: space-between;
   height: 100%; min-height: 360px;
   border-radius: var(--r-l);
   /* premium surface: soft cool gradient + faint teal hairline + depth */
