@@ -450,10 +450,11 @@
           match:(p,v)=>p.klingeltaster===v?1:(p.klingeltaster?0.4:0) },
         /* LED = the live shop's "Paketboxen beleuchtet" subcategory — a real
            differentiator, dataset-gated per direction ("Egal" is never gated).
-           The step self-skips unless BOTH a beleuchtet and an unbeleuchtet variant
-           exist for the answers so far — otherwise the ungated "Egal" would keep a
-           dead step alive (e.g. 4/5 Fächer, 3-Fach, Klingel lines have no LED). */
-        { key:"led", type:"single", when:a=>!a.kombi.has("sprechanlage")&&pbAvail(a,"led","ja")&&pbAvail(a,"led","nein"),
+           The step only appears when a beleuchtet variant actually exists for the
+           answers so far (pbAvail "ja"); otherwise the ungated "Egal" would keep a
+           dead step alive. So 4/5-Fächer & Klingel lines (no LED product) skip it,
+           while 1-/2-/3-Fächer that do have an LED model keep the choice. */
+        { key:"led", type:"single", when:a=>!a.kombi.has("sprechanlage")&&pbAvail(a,"led","ja"),
           q:"Soll die Paketbox beleuchtet sein?",
           opts:[ {v:"ja",label:"Mit LED-Beleuchtung",sub:"beleuchtetes Namensschild",chip:"Mit LED",sat:p=>!!p.led,when:a=>pbAvail(a,"led","ja")}, {v:"nein",label:"Ohne Beleuchtung",chip:"Ohne LED",sat:p=>!p.led,when:a=>pbAvail(a,"led","nein")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"LED egal"} ],
           match:(p,v)=>(v==="ja"?!!p.led:!p.led)?1:0.2 },
