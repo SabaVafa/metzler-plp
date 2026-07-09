@@ -449,8 +449,11 @@
           opts:[ {v:1,label:"1 Taster",sub:"für 1 Partei",chip:"1 Klingeltaster",sat:p=>p.klingeltaster===1,when:a=>pbAvail(a,"klingeltaster",1)}, {v:2,label:"2 Taster",sub:"für 2 Parteien",chip:"2 Klingeltaster",sat:p=>p.klingeltaster===2,when:a=>pbAvail(a,"klingeltaster",2)}, {v:3,label:"3 Taster",sub:"für 3 Parteien",chip:"3 Klingeltaster",sat:p=>p.klingeltaster===3,when:a=>pbAvail(a,"klingeltaster",3)} ],
           match:(p,v)=>p.klingeltaster===v?1:(p.klingeltaster?0.4:0) },
         /* LED = the live shop's "Paketboxen beleuchtet" subcategory — a real
-           differentiator, dataset-gated per direction ("Egal" is never gated). */
-        { key:"led", type:"single", when:a=>!a.kombi.has("sprechanlage"),
+           differentiator, dataset-gated per direction ("Egal" is never gated).
+           The step self-skips unless BOTH a beleuchtet and an unbeleuchtet variant
+           exist for the answers so far — otherwise the ungated "Egal" would keep a
+           dead step alive (e.g. 4/5 Fächer, 3-Fach, Klingel lines have no LED). */
+        { key:"led", type:"single", when:a=>!a.kombi.has("sprechanlage")&&pbAvail(a,"led","ja")&&pbAvail(a,"led","nein"),
           q:"Soll die Paketbox beleuchtet sein?",
           opts:[ {v:"ja",label:"Mit LED-Beleuchtung",sub:"beleuchtetes Namensschild",chip:"Mit LED",sat:p=>!!p.led,when:a=>pbAvail(a,"led","ja")}, {v:"nein",label:"Ohne Beleuchtung",chip:"Ohne LED",sat:p=>!p.led,when:a=>pbAvail(a,"led","nein")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"LED egal"} ],
           match:(p,v)=>(v==="ja"?!!p.led:!p.led)?1:0.2 },
