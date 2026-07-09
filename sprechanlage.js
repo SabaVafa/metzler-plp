@@ -357,6 +357,7 @@
   function verwOf(p) { return p.klingel === 'flex' ? 'flexibel' : (p.klingel === '1' ? 'einfamilien' : 'mehrfamilien'); }
   function nsOf(p) {
     if (/austauschbar/i.test(p.name)) return 'wechsel';
+    if (/Hausnummer|Türsprechsäule|Klingelstele/i.test(p.name)) return 'display-hn';   /* Display-Modelle mit beleuchteter Hausnummer (SDM10H, SDM10S-Säule) */
     if (/SDM10|Touch-Display|Display/i.test(p.name)) return 'display';
     return 'gravur';
   }
@@ -676,7 +677,7 @@
       { q: 'Neubau oder Modernisierung Ihrer bestehenden Anlage?', opts: [
         { label: 'IP-System',  sub: 'Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung', group: 'system', value: 'ip',  chip: 'IP-System', hideWhen: gateHide },
         { label: 'BUS-System', sub: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung',  group: 'system', value: 'bus', chip: '2-Draht-BUS', hideWhen: gateHide },
-        { label: 'Weiß ich nicht', sub: 'wir empfehlen passende Modelle für beide Systeme',             neutral: true }
+        { label: 'Weiß ich nicht', sub: 'wir empfehlen passende Modelle für beide Systeme',             neutral: true, hideWhen: function () { var pool = poolBefore(stepOfOpt(this)); return !(pool.some(function (p) { return p.system === 'ip'; }) && pool.some(function (p) { return p.system === 'bus'; })); } }   /* nur zeigen, wenn wirklich beide Systeme möglich sind — sonst bleibt nur eine echte Option und der Schritt wird übersprungen */
       ]},
       /* Zutritt methods are gated per option: only the methods a product consistent
          with the answers so far actually carries are offered (Türöffner Bedienung is
@@ -690,9 +691,10 @@
         { label: 'Keine Zutrittsfunktion', sub: 'nur klingeln und sprechen', neutral: true }
       ]},
       { q: 'Welches Namensschild bevorzugen Sie?', opts: [
-        { label: 'Lasergravur',               sub: 'dauerhaft eingraviert',     group: 'namensschild', value: 'gravur',  chip: 'Gravur', hideWhen: gateHide },
+        { label: 'Lasergravur',               sub: 'dauerhaft eingraviert',     group: 'namensschild', value: 'gravur',  chip: 'Gravur', hideWhen: function () { return picked('verwendung', 'flexibel') || gateHide.call(this); } },   /* Ein-/Mehrfamilien: Laser-Namensgravur. Flexible Großanlagen sind display-basiert → hier ausgeblendet. */
         { label: 'Austauschbares Namensschild', sub: 'jederzeit wechselbar',    group: 'namensschild', value: 'wechsel', chip: 'Austauschbar', hideWhen: gateHide },
         { label: 'Display / digital',         sub: 'Namen am Touch-Display',    group: 'namensschild', value: 'display', chip: 'Display', hideWhen: gateHide },
+        { label: 'Display + Hausnummer',      sub: 'Touch-Display mit beleuchteter Hausnummer', group: 'namensschild', value: 'display-hn', chip: 'Display + Hausnummer', hideWhen: gateHide },   /* Display-Modelle mit beleuchteter Hausnummer (SDM10H, SDM10S) — nur flexible Großanlage */
         { label: 'Egal',                      sub: 'keine Präferenz',           neutral: true }
       ]},
       { q: 'Soll die Anlage mit einem Briefkasten kombiniert sein?', opts: [
@@ -701,7 +703,7 @@
       ]},
       { q: 'Welche Optik passt zu Ihrem Eingang?', opts: [
         { label: 'Klassische Farbe', sub: 'z. B. Anthrazit, Schwarz, Weiß oder Grau', group: 'colorset', values: ['anthrazit','braun','schwarz','eisenglimmer','weiss','grau'], chip: 'Klassische Farbe', swatch: 'linear-gradient(135deg,#1A171B,#383E42 38%,#B9BCC0 70%,#FFFFFF)', hideWhen: gateHide },
-        { label: 'Edelstahl',        sub: 'rostfrei und zeitlos',                     group: 'material', value: 'edelstahl', chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)', hideWhen: gateHide },
+        { label: 'Edelstahl',        sub: 'rostfrei und zeitlos',                     group: 'material', value: 'edelstahl', chip: 'Edelstahl-Optik', swatch: 'linear-gradient(135deg,#e9ebee,#a7adb4 55%,#d6d9dd)', hideWhen: function () { return busChosen() || gateHide.call(this); } },   /* BUS-Serie (XDM10) hat keine Edelstahl-Optik */
         { label: 'Wunschfarbe',      sub: 'individuell nach RAL',                     group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)', hideWhen: gateHide }
       ]}
     ];
@@ -713,12 +715,13 @@
 
     /* Resolve the system step (IP/BUS) and the Zutritt step by content, so the
        skip logic survives any re-ordering of QUIZ. */
-    var IDX_SYSTEM = -1, IDX_ZUTRITT = -1, IDX_TYPE = -1;
+    var IDX_SYSTEM = -1, IDX_ZUTRITT = -1, IDX_TYPE = -1, IDX_NAMENSSCHILD = -1;
     QUIZ.forEach(function (s, i) {
       (s.opts || []).forEach(function (o) {
         if (o.group === 'system') IDX_SYSTEM = i;
         if (o.group === 'tuer')   IDX_ZUTRITT = i;
         if (o.group === 'type')    IDX_TYPE = i;
+        if (o.group === 'namensschild') IDX_NAMENSSCHILD = i;
       });
     });
     /* Has the shopper chosen option `value` for facet `group` anywhere so far?
@@ -765,6 +768,9 @@
          verified on the live shop: the BUS-Serie & Audio categories carry no
          "Türöffner Bedienung" facet at all. */
       if (i === IDX_ZUTRITT && IDX_ZUTRITT !== -1 && (busChosen() || picked('type', 'audio'))) return true;
+      /* BUS-Serie (XDM10) ships only with an austauschbares Namensschild — no gravur/
+         display choice — so the Namensschild step offers no real decision for BUS → skip. */
+      if (i === IDX_NAMENSSCHILD && IDX_NAMENSSCHILD !== -1 && busChosen()) return true;
       /* Flexible Großanlagen are video-only, so the Video/Audio step has no choice → skip it. */
       if (i === IDX_TYPE && IDX_TYPE !== -1 && picked('verwendung', 'flexibel')) return true;
       /* Generic rule (live-shop parity): a step left with ≤1 real option offers
