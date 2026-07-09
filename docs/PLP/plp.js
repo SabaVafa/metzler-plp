@@ -631,7 +631,9 @@
       /* V4A option is dataset-gated too: when no rust-free model fits the answers
          so far (e.g. Mehrfamilien anlagen), the step is left with the neutral
          option only and auto-skips — no dead-end answers. */
-      { q: 'Wie stark ist der Standort der Witterung ausgesetzt?', opts: [
+      { q: 'Wie stark ist der Standort der Witterung ausgesetzt?',
+        hideWhen: function () { return picks.some(function (arr) { return (arr || []).some(function (o) { return o.group === 'montage' && o.value === 'durchwurf'; }); }); },   /* Mauerdurchwurf sitzt geschützt in der Wand → Witterungsfrage entfällt */
+        opts: [
         { label: 'Übliche, geschützte Lage',          sub: 'pulverbeschichteter Stahl genügt',         neutral: true },
         { label: 'Rau, exponiert oder in Küstennähe', sub: 'mit rostfreien V4A-Edelstahlleisten, salzwasserfest', group: 'material', value: 'edelstahl', chip: 'V4A-Edelstahl', hideWhen: gateHide }
       ]},

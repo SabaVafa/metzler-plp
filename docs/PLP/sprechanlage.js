@@ -336,12 +336,12 @@
      object; matches(p) uses the live one. The indirection lets the facet
      engine compute per-option counts by overriding a single group. */
   function matchesWith(p, a) {
-    if (a.color.length && !a.color.some(function (c) { return p.colors.indexOf(c) !== -1; })) return false;
+    if (a.color.length && !a.color.some(function (c) { return c === 'wunschfarbe' || p.colors.indexOf(c) !== -1; })) return false;   /* Wunschfarbe (RAL nach Wunsch) ist auf allen Modellen möglich */
     if (a.system.length && a.system.indexOf(p.system) === -1) return false;
     if (a.klingel.length && a.klingel.indexOf(p.klingel) === -1) return false;   /* '1'..'7' or 'flex' */
     if (a.type.length && a.type.indexOf(p.type) === -1) return false;            /* advisor-only: video / audio */
     if (a.material.length && a.material.indexOf(p.material) === -1) return false;
-    if (a.verwendung.length && a.verwendung.indexOf(verwOf(p)) === -1) return false;     /* advisor-only: Verwendungszweck */
+    if (a.verwendung.length && a.verwendung.indexOf(verwOf(p)) === -1 && verwOf(p) !== 'flexibel') return false;     /* advisor-only: Verwendungszweck — flexible Großanlage (1–500) passt für jede Verwendung */
     if (a.namensschild.length && a.namensschild.indexOf(nsOf(p)) === -1) return false;   /* advisor-only: Namensschildtyp */
     if (a.kombi.length && !a.kombi.some(function (k) { return k === 'briefkasten' && !!p.briefkasten; })) return false;   /* advisor-only: Kombination */
     if (a.tuer.length) {
@@ -674,9 +674,9 @@
         { label: 'Mit Kamera (Video)', sub: 'Live-HD-Bild der Besucher', group: 'type', value: 'video', chip: 'Video', hideWhen: gateHide },
         { label: 'Audio-only',         sub: 'nur sprechen, ohne Kamera',  group: 'type', value: 'audio', chip: 'Audio', hideWhen: gateHide }
       ]},
-      { q: 'Neubau oder Modernisierung Ihrer bestehenden Anlage?', opts: [
-        { label: 'IP-System',  sub: 'Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung', group: 'system', value: 'ip',  chip: 'IP-System', hideWhen: gateHide },
-        { label: 'BUS-System', sub: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung',  group: 'system', value: 'bus', chip: '2-Draht-BUS', hideWhen: gateHide },
+      { q: 'Neubau und Neuverkabelung oder Modernisierung und bestehende Verkabelung?', opts: [
+        { label: 'Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung', sub: 'IP-System', group: 'system', value: 'ip',  chip: 'IP-System', hideWhen: gateHide },
+        { label: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung', sub: 'BUS-System', group: 'system', value: 'bus', chip: '2-Draht-BUS', hideWhen: gateHide },
         { label: 'Weiß ich nicht', sub: 'wir empfehlen passende Modelle für beide Systeme',             neutral: true, hideWhen: function () { var pool = poolBefore(stepOfOpt(this)); return !(pool.some(function (p) { return p.system === 'ip'; }) && pool.some(function (p) { return p.system === 'bus'; })); } }   /* nur zeigen, wenn wirklich beide Systeme möglich sind — sonst bleibt nur eine echte Option und der Schritt wird übersprungen */
       ]},
       /* Zutritt methods are gated per option: only the methods a product consistent
@@ -691,10 +691,10 @@
         { label: 'Keine Zutrittsfunktion', sub: 'nur klingeln und sprechen', neutral: true }
       ]},
       { q: 'Welches Namensschild bevorzugen Sie?', opts: [
-        { label: 'Lasergravur',               sub: 'dauerhaft eingraviert',     group: 'namensschild', value: 'gravur',  chip: 'Gravur', hideWhen: function () { return picked('verwendung', 'flexibel') || gateHide.call(this); } },   /* Ein-/Mehrfamilien: Laser-Namensgravur. Flexible Großanlagen sind display-basiert → hier ausgeblendet. */
-        { label: 'Austauschbares Namensschild', sub: 'jederzeit wechselbar',    group: 'namensschild', value: 'wechsel', chip: 'Austauschbar', hideWhen: gateHide },
-        { label: 'Display / digital',         sub: 'Namen am Touch-Display',    group: 'namensschild', value: 'display', chip: 'Display', hideWhen: gateHide },
-        { label: 'Display + Hausnummer',      sub: 'Touch-Display mit beleuchteter Hausnummer', group: 'namensschild', value: 'display-hn', chip: 'Display + Hausnummer', hideWhen: gateHide },   /* Display-Modelle mit beleuchteter Hausnummer (SDM10H, SDM10S) — nur flexible Großanlage */
+        { label: 'Lasergraviertes Namensschild', sub: 'jederzeit wechselbar',  group: 'namensschild', value: 'gravur',  chip: 'Lasergravur', hideWhen: function () { return picked('verwendung', 'flexibel') || gateHide.call(this); } },   /* Ein-/Mehrfamilien: Laser-Namensgravur. Flexible Großanlagen sind display-basiert → hier ausgeblendet. */
+        { label: 'Namensschild mit Papiereinleger', sub: 'jederzeit wechselbar', group: 'namensschild', value: 'wechsel', chip: 'Papiereinleger', hideWhen: gateHide },
+        { label: 'Digitales Namensschild',    sub: 'editierbar',                group: 'namensschild', value: 'display', chip: 'Digitales Schild', hideWhen: gateHide },
+        { label: 'Digitales Namensschild + Hausnummer', sub: 'editierbar, mit beleuchteter Hausnummer', group: 'namensschild', value: 'display-hn', chip: 'Digital + Hausnummer', hideWhen: gateHide },   /* Display-Modelle mit beleuchteter Hausnummer (SDM10H, SDM10S) — nur flexible Großanlage */
         { label: 'Egal',                      sub: 'keine Präferenz',           neutral: true }
       ]},
       { q: 'Soll die Anlage mit einem Briefkasten kombiniert sein?', opts: [
@@ -891,14 +891,14 @@
     function pickImg(p) { return p.img || IMG; }
     /* Does product p satisfy a single facet pick? (mirrors matches()) */
     function sat(p, o) {
-      if (o.group === 'color')    return p.colors.indexOf(o.value) !== -1;
+      if (o.group === 'color')    return o.value === 'wunschfarbe' || p.colors.indexOf(o.value) !== -1;   /* Wunschfarbe (RAL) auf allen Modellen möglich */
       if (o.group === 'colorset') return (o.values || []).some(function (c) { return p.colors.indexOf(c) !== -1; });
       if (o.group === 'material') return p.material === o.value;
       if (o.group === 'system')   return p.system === o.value;
       if (o.group === 'klingel')  return p.klingel === o.value;
       if (o.group === 'tuer')     return (p.tuer || []).indexOf(o.value) !== -1;
       if (o.group === 'type')     return p.type === o.value;
-      if (o.group === 'verwendung')   return verwOf(p) === o.value;
+      if (o.group === 'verwendung')   return verwOf(p) === o.value || verwOf(p) === 'flexibel';   /* flexible Großanlage (1–500 Taster) passt auch für Ein-/Mehrfamilien */
       if (o.group === 'namensschild') return nsOf(p) === o.value;
       if (o.group === 'kombi')        return o.value === 'briefkasten' ? !!p.briefkasten : false;
       return false;
