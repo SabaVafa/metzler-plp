@@ -648,7 +648,7 @@
         { label: 'Wunschfarbe',          sub: 'individuell nach RAL',                          group: 'color', value: 'wunschfarbe', chip: 'Wunschfarbe', swatch: 'conic-gradient(from 90deg,#e53935,#fb8c00,#fdd835,#43a047,#1e88e5,#8e24aa,#e53935)', hideWhen: function () { return doorIs('seite') || gateHide.call(this); } }
       ]},
       { q: 'Wie möchten Sie Ihren Briefkasten beschriften?', opts: [
-        { label: 'Lasergraviertes Namensschild', sub: 'UV- und witterungsbeständig, freie Schriftwahl', group: 'pref', value: 'Lasergravur' },
+        { label: 'Lasergraviertes Namensschild', sub: 'jederzeit wechselbar', group: 'pref', value: 'Lasergravur' },
         { label: 'Namensschild mit Papiereinleger', sub: 'jederzeit wechselbar',                        group: 'pref', value: 'Namensschild' },
         { label: 'Edelstahl-Namensschild',       sub: 'hochwertig graviert',                            group: 'pref', value: 'Edelstahl-Namensschild' },
         { label: 'Ohne Beschriftung',            sub: 'neutral',                                        neutral: true }

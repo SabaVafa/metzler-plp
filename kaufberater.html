@@ -324,7 +324,7 @@
           opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Schwarz, Weiß oder Grau",sw:SW_KLASSISCH,chip:"Klassische Farbe",sat:p=>["anthrazit","braun","schwarz","eisenglimmer","weiss","grau"].some(c=>p.colors.includes(c)),when:a=>bkAvail(a,"optik","klassisch")}, {v:"edelstahl",label:"Edelstahl-Optik",sub:"gebürstete Edelstahl-Elemente, zeitlos",sw:SW_EDELSTAHL,chip:"Edelstahl-Optik",sat:p=>p.material==="edelstahl"||(p.colors||[]).includes("edelstahl"),when:a=>a.tuerrichtung!=="seite"&&bkAvail(a,"optik","edelstahl")}, {v:"holz",label:"Natürliche Holzoptik",sub:"Eiche oder Lärche",sw:SW_HOLZ,chip:"Holzoptik",sat:p=>p.material==="holz",when:a=>a.tuerrichtung!=="seite"&&bkAvail(a,"optik","holz")}, {v:"wunsch",label:"Wunschfarbe",sub:"individuell nach RAL",sw:SW_CONIC,chip:"Wunschfarbe",sat:p=>p.colors.includes("wunschfarbe"),when:a=>a.tuerrichtung!=="seite"&&bkAvail(a,"optik","wunsch")} ] },
         { key:"beschriftung", type:"single", match:satMatch,
           q:"Wie möchten Sie Ihren Briefkasten beschriften?",
-          opts:[ {v:"laser",label:"Lasergraviertes Namensschild",sub:"UV- und witterungsbeständig, freie Schriftwahl",chip:"Lasergravur",noScore:true}, {v:"wechsel",label:"Namensschild mit Papiereinleger",sub:"jederzeit wechselbar",chip:"Papiereinleger",noScore:true}, {v:"edelstahl-schild",label:"Edelstahl-Namensschild",sub:"hochwertig graviert",chip:"Edelstahl-Schild",noScore:true}, {v:"ohne",label:"Ohne Beschriftung",sub:"neutral",neutral:true} ] },
+          opts:[ {v:"laser",label:"Lasergraviertes Namensschild",sub:"jederzeit wechselbar",chip:"Lasergravur",noScore:true}, {v:"wechsel",label:"Namensschild mit Papiereinleger",sub:"jederzeit wechselbar",chip:"Papiereinleger",noScore:true}, {v:"edelstahl-schild",label:"Edelstahl-Namensschild",sub:"hochwertig graviert",chip:"Edelstahl-Schild",noScore:true}, {v:"ohne",label:"Ohne Beschriftung",sub:"neutral",neutral:true} ] },
       ],
       products: [
         {name:"Briefkasten aus hochwertigem Stahl | Siebert", price:89.99, reviews:657, faecher:"1", montage:"wand", zeitung:"integriert", material:"stahl", colors:["anthrazit","weiss","grau","schwarz"], seitentuer:true},
@@ -426,7 +426,7 @@
         { key:"kombi", type:"multi",
           q:"Womit möchten Sie Ihre Paketbox kombinieren?",
           hint:"Mehrfachauswahl möglich · „Nur Paketbox“ schließt die anderen aus.",
-          opts:[ {v:"briefkasten",label:"Briefkasten",sat:p=>p.kombi.includes("briefkasten")}, {v:"klingel",label:"Klingel & Briefkasten",sat:p=>p.kombi.includes("klingel")}, {v:"sprechanlage",label:"Sprechanlage",sat:p=>p.kombi.includes("sprechanlage")}, {v:"paketbox",label:"Nur Paketbox",exclusive:true,sat:p=>p.kombi.length===1&&p.kombi[0]==="paketbox"} ],
+          opts:[ {v:"briefkasten",label:"Briefkasten",sat:p=>p.kombi.includes("briefkasten")}, {v:"klingel",label:"Klingel & Briefkasten",sat:p=>p.kombi.includes("klingel")}, {v:"sprechanlage",label:"Video-Türsprechanlage",sub:"2-in-1: Paketbox + Video-Sprechanlage",sat:p=>p.kombi.includes("sprechanlage")}, {v:"paketbox",label:"Nur Paketbox",exclusive:true,sat:p=>p.kombi.length===1&&p.kombi[0]==="paketbox"} ],
           match:(p,set)=>{ if(set.has("paketbox")) return (p.kombi.length===1 && p.kombi[0]==="paketbox")?1:0.2; const need=[...set]; return need.filter(k=>p.kombi.includes(k)).length/need.length; } },
         { key:"montage", type:"single",
           q:"Wie soll Ihre Paketbox montiert werden?",
@@ -473,7 +473,7 @@
            legitimate preference). */
         { key:"gravur", type:"single", when:a=>!a.kombi.has("sprechanlage"),
           q:"Wie möchten Sie Ihre Box beschriften?",
-          opts:[ {v:"lasergravur",label:"Lasergravur",sub:"individuell, dauerhaft",sat:p=>p.gravur==="lasergravur",when:a=>pbAvail(a,"gravur","lasergravur")}, {v:"namensschild",label:"Austauschbares Schild",sub:"flexibel wechselbar",chip:"Wechselschild",sat:p=>p.gravur==="namensschild",when:a=>pbAvail(a,"gravur","namensschild")}, {v:"ohne",label:"Ohne Beschriftung",chip:"Ohne Gravur"} ] },
+          opts:[ {v:"lasergravur",label:"Lasergraviertes Namensschild",sub:"jederzeit wechselbar",chip:"Lasergravur",sat:p=>p.gravur==="lasergravur",when:a=>pbAvail(a,"gravur","lasergravur")}, {v:"namensschild",label:"Namensschild mit Papiereinleger",sub:"jederzeit wechselbar",chip:"Papiereinleger",sat:p=>p.gravur==="namensschild",when:a=>pbAvail(a,"gravur","namensschild")}, {v:"ohne",label:"Ohne Beschriftung",chip:"Ohne Gravur"} ] },
       ],
       products: [
         {name:"Bispo 2 — Paketbox mit Briefkasten & Gravur", price:329, reviews:173, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"anthrazit", gravur:"lasergravur"},
@@ -758,7 +758,7 @@
           match:(p,v)=>p.montage===v?1:0.2 },
         { key:"namensschild", type:"single", when:a=>a.produktart==="klingel",
           q:"Welchen Namensschild-Typ bevorzugen Sie?",
-          opts:[ {v:"gravur",label:"Lasergravur",sub:"dauerhaft eingraviert",chip:"Gravur",sat:p=>p.namensschild==="gravur",when:a=>tkAvail(a,"namensschild","gravur")}, {v:"wechsel",label:"Austauschbares Namensschild",sub:"jederzeit wechselbar",chip:"Wechselschild",sat:p=>p.namensschild==="wechsel",when:a=>tkAvail(a,"namensschild","wechsel")}, {v:"led3d",label:"LED-3D-Namensschild",sub:"beleuchtet, plastisch",chip:"LED-3D-Schild",sat:p=>p.namensschild==="led3d",when:a=>tkAvail(a,"namensschild","led3d")}, {v:"ohne",label:"Ohne",sub:"neutral",neutral:true} ],
+          opts:[ {v:"gravur",label:"Lasergraviertes Namensschild",sub:"jederzeit wechselbar",chip:"Lasergravur",sat:p=>p.namensschild==="gravur",when:a=>tkAvail(a,"namensschild","gravur")}, {v:"wechsel",label:"Namensschild mit Papiereinleger",sub:"jederzeit wechselbar",chip:"Papiereinleger",sat:p=>p.namensschild==="wechsel",when:a=>tkAvail(a,"namensschild","wechsel")}, {v:"led3d",label:"LED-3D-Namensschild",sub:"beleuchtet, plastisch",chip:"LED-3D-Schild",sat:p=>p.namensschild==="led3d",when:a=>tkAvail(a,"namensschild","led3d")}, {v:"ohne",label:"Ohne",sub:"neutral",neutral:true} ],
           match:(p,v)=>p.namensschild===v?1:0.2 },
         { key:"optik", type:"single", when:a=>a.produktart==="klingel",
           q:"Welche Optik passt zu Ihrem Eingang?",
