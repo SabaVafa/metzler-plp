@@ -373,7 +373,7 @@
           opts:[ {v:"video",label:"Mit Kamera (Video)",sub:"Live-HD-Bild der Besucher",chip:"Video",sat:p=>p.type==="video",when:a=>spAvail(a,"type","video")}, {v:"audio",label:"Audio-only",sub:"nur sprechen, ohne Kamera",chip:"Audio",sat:p=>p.type==="audio",when:a=>spAvail(a,"type","audio")} ] },
         { key:"system", type:"single", match:satMatch,
           q:"Neubau und Neuverkabelung oder Modernisierung und bestehende Verkabelung?",
-          opts:[ {v:"ip",label:"Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung",sub:"IP-System",chip:"IP-System",sat:p=>p.system==="ip",when:a=>spAvail(a,"system","ip")}, {v:"bus",label:"Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung",sub:"BUS-System",chip:"2-Draht-BUS",sat:p=>p.system==="bus",when:a=>spAvail(a,"system","bus")}, {v:"weiss",label:"Weiß ich nicht",sub:"wir empfehlen passende Modelle für beide Systeme",neutral:true,when:a=>spAvail(a,"system","ip")&&spAvail(a,"system","bus")} ] },
+          opts:[ {v:"ip",label:"Neubau und Neuverkabelung",sub:"Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung · IP-System",chip:"IP-System",sat:p=>p.system==="ip",when:a=>spAvail(a,"system","ip")}, {v:"bus",label:"Modernisierung und bestehende Verkabelung",sub:"Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung · BUS-System",chip:"2-Draht-BUS",sat:p=>p.system==="bus",when:a=>spAvail(a,"system","bus")}, {v:"weiss",label:"Weiß ich nicht",sub:"wir empfehlen passende Modelle für beide Systeme",neutral:true,when:a=>spAvail(a,"system","ip")&&spAvail(a,"system","bus")} ] },
         /* Step-level rule straight from the live shop: the BUS-Serie and Audio
            categories carry no "Türöffner Bedienung" facet at all → the whole
            Zutritt step disappears for them. Within the step each method is gated
@@ -458,7 +458,7 @@
           q:"Soll die Paketbox beleuchtet sein?",
           opts:[ {v:"ja",label:"Mit LED-Beleuchtung",sub:"beleuchteter Innenraum",chip:"Mit LED",sat:p=>!!p.led,when:a=>pbAvail(a,"led","ja")}, {v:"nein",label:"Ohne Beleuchtung",chip:"Ohne LED",sat:p=>!p.led,when:a=>pbAvail(a,"led","nein")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"LED egal"} ],
           match:(p,v)=>(v==="ja"?!!p.led:!p.led)?1:0.2 },
-        { key:"entnahme", type:"single", when:a=>!a.kombi.has("sprechanlage")&&!a.kombi.has("klingel"),   /* Klingel/Sprechanlage lines have no rear-entnahme variant */
+        { key:"entnahme", type:"single", when:a=>!a.kombi.has("sprechanlage")&&!a.kombi.has("klingel")&&pbAvail(a,"entnahme","rueckseite"),   /* Klingel/Sprechanlage lines have no rear-entnahme variant. Self-skip unless a Rückentnahme variant exists for the answers so far — otherwise only "Vorderseite" + ungated "Egal" remain (dead step, e.g. 5 Fächer). */
           q:"Von welcher Seite möchten Sie Ihre Sendungen entnehmen?",
           opts:[ {v:"vorne",label:"Von der Vorderseite",sub:"Standard – Entnahme an der Front",chip:"Entnahme vorne",sat:p=>(p.entnahme||"vorne")==="vorne",when:a=>pbAvail(a,"entnahme","vorne")}, {v:"rueckseite",label:"Von der Rückseite",sub:"bequem von innen, z. B. durch die Wand",chip:"Rückentnahme",sat:p=>p.entnahme==="rueckseite",when:a=>pbAvail(a,"entnahme","rueckseite")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Entnahme egal"} ],
           match:(p,v)=>(p.entnahme||"vorne")===v?1:0.3 },
@@ -466,14 +466,16 @@
           q:"Welche Optik passt zu Ihrem Zuhause?",
           opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Grau, Schwarz oder Weiß",sw:SW_KLASSISCH,colors:["anthrazit","eisenglimmer","grau","schwarz","weiss"]} ],
           match:colorsetMatch("farbe") },
-        /* Gravur mirrors the live shop's mit-/ohne-Gravur split. Lasergravur and
-           Wechselschild are dataset-gated; "Ohne Beschriftung" stays ungated — the
-           live shop sells a whole "Paketboxen ohne Gravur" subcategory, the demo
-           catalogue just doesn't carry one yet (the gate would silently erase a
-           legitimate preference). */
-        { key:"gravur", type:"single", when:a=>!a.kombi.has("sprechanlage"),
+        /* Gravur mirrors the live shop's mit-/ohne-Gravur split. Each option is
+           dataset-gated (incl. "Ohne Beschriftung", which the Avalon "nur Paketbox"
+           line actually carries). The step self-skips unless ≥2 distinct beschriftung
+           outcomes exist for the answers so far — otherwise only one real choice
+           remains and the ungated preference would leave a dead step (e.g. 4/5 Fächer
+           carry Lasergravur only). "Ohne" keeps no `when`, so it still appears whenever
+           the step is shown. */
+        { key:"gravur", type:"single", when:a=>!a.kombi.has("sprechanlage")&&[pbAvail(a,"gravur","lasergravur"),pbAvail(a,"gravur","namensschild"),pbAvail(a,"gravur","ohne")].filter(Boolean).length>1,
           q:"Wie möchten Sie Ihre Box beschriften?",
-          opts:[ {v:"lasergravur",label:"Lasergraviertes Namensschild",sub:"jederzeit wechselbar",chip:"Lasergravur",sat:p=>p.gravur==="lasergravur",when:a=>pbAvail(a,"gravur","lasergravur")}, {v:"namensschild",label:"Namensschild mit Papiereinleger",sub:"jederzeit wechselbar",chip:"Papiereinleger",sat:p=>p.gravur==="namensschild",when:a=>pbAvail(a,"gravur","namensschild")}, {v:"ohne",label:"Ohne Beschriftung",chip:"Ohne Gravur"} ] },
+          opts:[ {v:"lasergravur",label:"Lasergraviertes Namensschild",sub:"jederzeit wechselbar",chip:"Lasergravur",sat:p=>p.gravur==="lasergravur",when:a=>pbAvail(a,"gravur","lasergravur")}, {v:"namensschild",label:"Namensschild mit Papiereinleger",sub:"jederzeit wechselbar",chip:"Papiereinleger",sat:p=>p.gravur==="namensschild",when:a=>pbAvail(a,"gravur","namensschild")}, {v:"ohne",label:"Ohne Beschriftung",chip:"Ohne Gravur",sat:p=>p.gravur==="ohne"} ] },
       ],
       products: [
         {name:"Bispo 2 — Paketbox mit Briefkasten & Gravur", price:329, reviews:173, kombi:["briefkasten"], montage:"wand", groesse:"M", faecher:1, farbe:"anthrazit", gravur:"lasergravur"},

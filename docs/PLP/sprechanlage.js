@@ -675,8 +675,8 @@
         { label: 'Audio-only',         sub: 'nur sprechen, ohne Kamera',  group: 'type', value: 'audio', chip: 'Audio', hideWhen: gateHide }
       ]},
       { q: 'Neubau und Neuverkabelung oder Modernisierung und bestehende Verkabelung?', opts: [
-        { label: 'Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung', sub: 'IP-System', group: 'system', value: 'ip',  chip: 'IP-System', hideWhen: gateHide },
-        { label: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung', sub: 'BUS-System', group: 'system', value: 'bus', chip: '2-Draht-BUS', hideWhen: gateHide },
+        { label: 'Neubau und Neuverkabelung', sub: 'Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung · IP-System', group: 'system', value: 'ip',  chip: 'IP-System', hideWhen: gateHide },
+        { label: 'Modernisierung und bestehende Verkabelung', sub: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung · BUS-System', group: 'system', value: 'bus', chip: '2-Draht-BUS', hideWhen: gateHide },
         { label: 'Weiß ich nicht', sub: 'wir empfehlen passende Modelle für beide Systeme',             neutral: true, hideWhen: function () { var pool = poolBefore(stepOfOpt(this)); return !(pool.some(function (p) { return p.system === 'ip'; }) && pool.some(function (p) { return p.system === 'bus'; })); } }   /* nur zeigen, wenn wirklich beide Systeme möglich sind — sonst bleibt nur eine echte Option und der Schritt wird übersprungen */
       ]},
       /* Zutritt methods are gated per option: only the methods a product consistent
