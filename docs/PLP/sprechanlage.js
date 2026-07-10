@@ -715,13 +715,14 @@
 
     /* Resolve the system step (IP/BUS) and the Zutritt step by content, so the
        skip logic survives any re-ordering of QUIZ. */
-    var IDX_SYSTEM = -1, IDX_ZUTRITT = -1, IDX_TYPE = -1, IDX_NAMENSSCHILD = -1;
+    var IDX_SYSTEM = -1, IDX_ZUTRITT = -1, IDX_TYPE = -1, IDX_NAMENSSCHILD = -1, IDX_OPTIK = -1;
     QUIZ.forEach(function (s, i) {
       (s.opts || []).forEach(function (o) {
         if (o.group === 'system') IDX_SYSTEM = i;
         if (o.group === 'tuer')   IDX_ZUTRITT = i;
         if (o.group === 'type')    IDX_TYPE = i;
         if (o.group === 'namensschild') IDX_NAMENSSCHILD = i;
+        if (o.group === 'colorset') IDX_OPTIK = i;
       });
     });
     /* Has the shopper chosen option `value` for facet `group` anywhere so far?
@@ -773,6 +774,9 @@
       if (i === IDX_NAMENSSCHILD && IDX_NAMENSSCHILD !== -1 && busChosen()) return true;
       /* Flexible Großanlagen are video-only, so the Video/Audio step has no choice → skip it. */
       if (i === IDX_TYPE && IDX_TYPE !== -1 && picked('verwendung', 'flexibel')) return true;
+      /* Optik is a per-product config (Farbe/Edelstahl/Wunschfarbe), not a differentiator —
+         once only one product remains there is nothing to choose (e.g. Audio + Papiereinleger). */
+      if (i === IDX_OPTIK && IDX_OPTIK !== -1 && poolBefore(i).length <= 1) return true;
       /* Generic rule (live-shop parity): a step left with ≤1 real option offers
          no choice → skip it. */
       var n = 0;

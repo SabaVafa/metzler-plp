@@ -388,7 +388,7 @@
         { key:"kombi", type:"single", match:satMatch,
           q:"Soll die Anlage mit einem Briefkasten kombiniert sein?",
           opts:[ {v:"nur",label:"Nur Türstation",sub:"klassische Außenstation",neutral:true}, {v:"briefkasten",label:"Mit Briefkasten & Paketbox",sub:"integrierte Brief-/Paketbox",chip:"Mit Briefkasten",sat:p=>!!p.kombi,when:a=>spAvail(a,"kombi","briefkasten")} ] },
-        { key:"optik", type:"single", match:satMatch,
+        { key:"optik", type:"single", match:satMatch, when:a=>catPool("sprechanlage",a,"optik").length>1,   /* skip when only one product remains — Optik is a per-product config (Klassisch/Edelstahl/Wunschfarbe), not a differentiator, so there is nothing to choose (e.g. Audio + Papiereinleger narrows to a single Kai model) */
           q:"Welche Optik passt zu Ihrem Eingang?",
           opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Schwarz, Weiß oder Grau",sw:SW_KLASSISCH,chip:"Klassische Farbe",sat:p=>["anthrazit","braun","schwarz","eisenglimmer","weiss","grau"].some(c=>p.colors.includes(c)),when:a=>spAvail(a,"optik","klassisch")}, {v:"edelstahl",label:"Edelstahl",sub:"rostfrei und zeitlos",sw:SW_EDELSTAHL,chip:"Edelstahl-Optik",sat:p=>p.material==="edelstahl"||p.material==="v2a",when:a=>a.system!=="bus"&&spAvail(a,"optik","edelstahl")}, {v:"wunsch",label:"Wunschfarbe",sub:"individuell nach RAL",sw:SW_CONIC,chip:"Wunschfarbe",sat:p=>true,when:a=>spAvail(a,"optik","wunsch")}   /* Wunschfarbe (RAL) auf allen Modellen möglich */ ] },
       ],
