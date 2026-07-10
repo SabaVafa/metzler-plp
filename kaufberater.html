@@ -376,7 +376,7 @@
           q:"Möchten Sie sehen, wer vor der Tür steht?",
           opts:[ {v:"video",label:"Mit Kamera (Video)",sub:"Live-HD-Bild der Besucher",chip:"Video",sat:p=>p.type==="video",when:a=>spAvail(a,"type","video")}, {v:"audio",label:"Audio-only",sub:"nur sprechen, ohne Kamera",chip:"Audio",sat:p=>p.type==="audio",when:a=>spAvail(a,"type","audio")} ] },
         { key:"system", type:"single", match:satMatch,
-          q:"Neubau und Neuverkabelung oder Modernisierung und bestehende Verkabelung?",
+          q:"Planen Sie einen Neubau oder eine Modernisierung?",
           opts:[ {v:"ip",label:"Neubau und Neuverkabelung",sub:"Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung · IP-System",chip:"IP-System",sat:p=>p.system==="ip",when:a=>spAvail(a,"system","ip")}, {v:"bus",label:"Modernisierung und bestehende Verkabelung",sub:"Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung · BUS-System",chip:"2-Draht-BUS",sat:p=>p.system==="bus",when:a=>spAvail(a,"system","bus")}, {v:"weiss",label:"Weiß ich nicht",sub:"wir empfehlen passende Modelle für beide Systeme",neutral:true,when:a=>spAvail(a,"system","ip")&&spAvail(a,"system","bus")} ] },
         /* Step-level rule straight from the live shop: the BUS-Serie and Audio
            categories carry no "Türöffner Bedienung" facet at all → the whole
@@ -392,7 +392,7 @@
         { key:"kombi", type:"single", match:satMatch,
           q:"Soll die Anlage mit einem Briefkasten kombiniert sein?",
           opts:[ {v:"nur",label:"Nur Türstation",sub:"klassische Außenstation",neutral:true}, {v:"briefkasten",label:"Mit Briefkasten & Paketbox",sub:"integrierte Brief-/Paketbox",chip:"Mit Briefkasten",sat:p=>!!p.kombi,when:a=>spAvail(a,"kombi","briefkasten")} ] },
-        { key:"optik", type:"single", match:satMatch, when:a=>catPool("sprechanlage",a,"optik").length>1,   /* skip when only one product remains — Optik is a per-product config (Klassisch/Edelstahl/Wunschfarbe), not a differentiator, so there is nothing to choose (e.g. Audio + Papiereinleger narrows to a single Kai model) */
+        { key:"optik", type:"single", match:satMatch, when:a=>a.system!=="bus"&&catPool("sprechanlage",a,"optik").length>1,   /* skip when only one product remains — Optik is a per-product config (Klassisch/Edelstahl/Wunschfarbe), not a differentiator (e.g. Audio + Papiereinleger narrows to a single Kai model). Also skip for BUS: the XDM10-Serie has no Optik choice, so the color step is redundant. */
           q:"Welche Optik passt zu Ihrem Eingang?",
           opts:[ {v:"klassisch",label:"Klassische Farbe",sub:"z. B. Anthrazit, Schwarz, Weiß oder Grau",sw:SW_KLASSISCH,chip:"Klassische Farbe",sat:p=>["anthrazit","braun","schwarz","eisenglimmer","weiss","grau"].some(c=>p.colors.includes(c)),when:a=>spAvail(a,"optik","klassisch")}, {v:"edelstahl",label:"Edelstahl",sub:"rostfrei und zeitlos",sw:SW_EDELSTAHL,chip:"Edelstahl-Optik",sat:p=>p.material==="edelstahl"||p.material==="v2a",when:a=>a.system!=="bus"&&spAvail(a,"optik","edelstahl")}, {v:"wunsch",label:"Wunschfarbe",sub:"individuell nach RAL",sw:SW_CONIC,chip:"Wunschfarbe",sat:p=>true,when:a=>spAvail(a,"optik","wunsch")}   /* Wunschfarbe (RAL) auf allen Modellen möglich */ ] },
       ],

@@ -677,7 +677,7 @@
         { label: 'Mit Kamera (Video)', sub: 'Live-HD-Bild der Besucher', group: 'type', value: 'video', chip: 'Video', hideWhen: gateHide },
         { label: 'Audio-only',         sub: 'nur sprechen, ohne Kamera',  group: 'type', value: 'audio', chip: 'Audio', hideWhen: gateHide }
       ]},
-      { q: 'Neubau und Neuverkabelung oder Modernisierung und bestehende Verkabelung?', opts: [
+      { q: 'Planen Sie einen Neubau oder eine Modernisierung?', opts: [
         { label: 'Neubau und Neuverkabelung', sub: 'Ideal für Neubauten – LAN- oder 2-Draht-Sternverkabelung · IP-System', group: 'system', value: 'ip',  chip: 'IP-System', hideWhen: gateHide },
         { label: 'Modernisierung und bestehende Verkabelung', sub: 'Perfekt zum Modernisieren – nutzt die vorhandene 2-Draht-Leitung · BUS-System', group: 'system', value: 'bus', chip: '2-Draht-BUS', hideWhen: gateHide },
         { label: 'Weiß ich nicht', sub: 'wir empfehlen passende Modelle für beide Systeme',             neutral: true, hideWhen: function () { var pool = poolBefore(stepOfOpt(this)); return !(pool.some(function (p) { return p.system === 'ip'; }) && pool.some(function (p) { return p.system === 'bus'; })); } }   /* nur zeigen, wenn wirklich beide Systeme möglich sind — sonst bleibt nur eine echte Option und der Schritt wird übersprungen */
@@ -779,7 +779,7 @@
       if (i === IDX_TYPE && IDX_TYPE !== -1 && picked('verwendung', 'flexibel')) return true;
       /* Optik is a per-product config (Farbe/Edelstahl/Wunschfarbe), not a differentiator —
          once only one product remains there is nothing to choose (e.g. Audio + Papiereinleger). */
-      if (i === IDX_OPTIK && IDX_OPTIK !== -1 && poolBefore(i).length <= 1) return true;
+      if (i === IDX_OPTIK && IDX_OPTIK !== -1 && (busChosen() || poolBefore(i).length <= 1)) return true;   /* BUS (XDM10) has no Optik choice → color step redundant */
       /* Generic rule (live-shop parity): a step left with ≤1 real option offers
          no choice → skip it. */
       var n = 0;
