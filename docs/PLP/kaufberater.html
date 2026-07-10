@@ -530,7 +530,7 @@
         { key:"dach", type:"single",
           q:"Welche Dachoption möchten Sie?",
           opts:[ {v:"pflanzdach",label:"Mit Pflanzdach",sub:"begrünbar",chip:"Pflanzdach",sat:p=>p.dach==="pflanzdach",when:a=>mtbAvail(a,"dach","pflanzdach")}, {v:"standard",label:"Standard-Ausführung",sub:"Flachdach",chip:"Standard-Dach",sat:p=>p.dach==="standard",when:a=>mtbAvail(a,"dach","standard")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Dach egal"} ] },
-        { key:"sichtstreifen", type:"single",
+        { key:"sichtstreifen", type:"single", when:a=>mtbAvail(a,"sichtstreifen","ja"),   /* self-skip unless a Sichtstreifen variant exists for the answers so far — otherwise only "Ohne" + ungated "Egal" remain (dead step, e.g. 4er Aluminium) */
           q:"Möchten Sie dekorative Sichtstreifen?",
           opts:[ {v:"ja",label:"Mit Sichtstreifen",sub:"dekorative Akzentstreifen",chip:"Mit Sichtstreifen",sat:p=>!!p.sichtstreifen,when:a=>mtbAvail(a,"sichtstreifen","ja")}, {v:"nein",label:"Ohne Sichtstreifen",sub:"glatte, geschlossene Front",chip:"Ohne Sichtstreifen",sat:p=>!p.sichtstreifen,when:a=>mtbAvail(a,"sichtstreifen","nein")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"Sichtstreifen egal"} ],
           match:(p,v)=>(v==="ja"?p.sichtstreifen:!p.sichtstreifen)?1:0.2 },
