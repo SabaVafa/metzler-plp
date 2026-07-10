@@ -456,7 +456,7 @@
            while 1-/2-/3-Fächer that do have an LED model keep the choice. */
         { key:"led", type:"single", when:a=>!a.kombi.has("sprechanlage")&&pbAvail(a,"led","ja"),
           q:"Soll die Paketbox beleuchtet sein?",
-          opts:[ {v:"ja",label:"Mit LED-Beleuchtung",sub:"beleuchtetes Namensschild",chip:"Mit LED",sat:p=>!!p.led,when:a=>pbAvail(a,"led","ja")}, {v:"nein",label:"Ohne Beleuchtung",chip:"Ohne LED",sat:p=>!p.led,when:a=>pbAvail(a,"led","nein")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"LED egal"} ],
+          opts:[ {v:"ja",label:"Mit LED-Beleuchtung",sub:"beleuchteter Innenraum",chip:"Mit LED",sat:p=>!!p.led,when:a=>pbAvail(a,"led","ja")}, {v:"nein",label:"Ohne Beleuchtung",chip:"Ohne LED",sat:p=>!p.led,when:a=>pbAvail(a,"led","nein")}, {v:"egal",label:"Egal",sub:"keine Präferenz",chip:"LED egal"} ],
           match:(p,v)=>(v==="ja"?!!p.led:!p.led)?1:0.2 },
         { key:"entnahme", type:"single", when:a=>!a.kombi.has("sprechanlage")&&!a.kombi.has("klingel"),   /* Klingel/Sprechanlage lines have no rear-entnahme variant */
           q:"Von welcher Seite möchten Sie Ihre Sendungen entnehmen?",
