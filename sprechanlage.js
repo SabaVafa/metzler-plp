@@ -109,6 +109,8 @@
       badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'2', tuer:['rfid'], type:'video', img:I84 },
     { id:'kai1', name:'ADM10 Audio-Türsprechanlage | 1 Klingeltaster | Mit austauschbarem Namensschild | Kai', line:'IP-System', price:424.15, uvp:499.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit','weiss','grau'], system:'ip', klingel:'1', tuer:[], type:'audio', img:I83 },
+    { id:'domaudio1', name:'ADM10 Audio-Türsprechanlage | 1 Klingeltaster | RAL 7016 Anthrazit | Dominik', line:'IP-System', price:424.15, uvp:499.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit'], system:'ip', klingel:'1', tuer:[], type:'audio', img:I83 },
     { id:'kian2', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 2 Klingeltaster | Kian', line:'IP-System', price:628.15, uvp:739.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','braun','wunschfarbe'], system:'ip', klingel:'2', tuer:['rfid','pin'], type:'video', img:I84 },
     { id:'niko2', name:'VDM10 2.0 Video-Türsprechanlage | mit Fingerprint | 2 Klingeltaster | Niko', line:'IP-System', price:849.15, uvp:999.00, rating:5, reviews:2,
@@ -357,6 +359,7 @@
   function verwOf(p) { return p.klingel === 'flex' ? 'flexibel' : (p.klingel === '1' ? 'einfamilien' : 'mehrfamilien'); }
   function nsOf(p) {
     if (/austauschbar/i.test(p.name)) return 'wechsel';
+    if (p.type === 'audio') return 'fest';   /* Audio (ADM10) hat keine Laser-Gravur-Option — fester Namensschild (Kai ist oben schon als wechsel erfasst) */
     if (/Hausnummer|Türsprechsäule|Klingelstele/i.test(p.name)) return 'display-hn';   /* Display-Modelle mit beleuchteter Hausnummer (SDM10H, SDM10S-Säule) */
     if (/SDM10|Touch-Display|Display/i.test(p.name)) return 'display';
     return 'gravur';
