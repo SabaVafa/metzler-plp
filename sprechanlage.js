@@ -94,11 +94,11 @@
     { id:'colson1', name:'VDM10 2.0 Video-Türsprechanlage | 1 Klingeltaster | Colson', line:'IP-System', price:594.15, uvp:699.00, rating:5, reviews:63,
       badge:SALE, showMeta:true, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','wunschfarbe'], system:'ip', klingel:'1', tuer:['rfid'], type:'video', img:I82 },
     { id:'horizon', name:'VDM10 2.0 modulare Video-Türsprechanlage | Ein- & Mehrfamilien | Horizon', line:'IP-System', price:849.15, uvp:999.00, rating:5, reviews:21,
-      badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'flex', tuer:['rfid','pin','qr'], type:'video', img:I84 },
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'flex', tuer:['rfid'], type:'video', img:I84 },
     { id:'sdm10h', name:'Türsprechanlage mit Kamera | Gesichtserkennung | Touch-Display | Hausnummer beleuchtet | SDM10H', line:'IP-System', price:1351.50, uvp:1590.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit','edelstahl','schwarz'], system:'ip', klingel:'flex', tuer:['rfid','gesicht','pin','qr'], material:'edelstahl', type:'video', img:I84 },
     { id:'kian1', name:'VDM10 2.0 Video-Türsprechanlage | 1 Klingeltaster | Kian', line:'IP-System', price:577.15, uvp:679.00, rating:5, reviews:19,
-      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','braun','wunschfarbe'], system:'ip', klingel:'1', tuer:['rfid','pin'], type:'video', img:I82 },
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','braun','wunschfarbe'], system:'ip', klingel:'1', tuer:['rfid'], type:'video', img:I82 },
     { id:'niko1', name:'VDM10 2.0 Video-Türsprechanlage | mit Fingerprint | 1 Klingeltaster | Niko', line:'IP-System', price:721.65, uvp:849.00, rating:5, reviews:12,
       badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'1', tuer:['fingerprint','rfid'], type:'video', img:I82 },
     { id:'neo1', name:'VDM10 2.0 Video-Türsprechanlage mit austauschbarem Namensschild | 1 Klingeltaster | Neo', line:'IP-System', price:551.65, uvp:649.00, rating:5, reviews:4,
@@ -112,7 +112,7 @@
     { id:'domaudio1', name:'ADM10 Audio-Türsprechanlage | 1 Klingeltaster | RAL 7016 Anthrazit | Dominik', line:'IP-System', price:424.15, uvp:499.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit'], system:'ip', klingel:'1', tuer:[], type:'audio', img:I83 },
     { id:'kian2', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 2 Klingeltaster | Kian', line:'IP-System', price:628.15, uvp:739.00, rating:5, reviews:2,
-      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','braun','wunschfarbe'], system:'ip', klingel:'2', tuer:['rfid','pin'], type:'video', img:I84 },
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','braun','wunschfarbe'], system:'ip', klingel:'2', tuer:['rfid'], type:'video', img:I84 },
     { id:'niko2', name:'VDM10 2.0 Video-Türsprechanlage | mit Fingerprint | 2 Klingeltaster | Niko', line:'IP-System', price:849.15, uvp:999.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'2', tuer:['fingerprint','rfid'], type:'video', img:I84 },
     { id:'neo2', name:'VDM10 2.0 Video-Türsprechanlage mit austauschbarem Namensschild | 2 Klingeltaster | Neo', line:'IP-System', price:577.15, uvp:679.00, rating:5, reviews:6,
@@ -120,11 +120,11 @@
     { id:'kai2', name:'ADM10 Audio-Türsprechanlage | 2 Klingeltaster | Mit austauschbarem Namensschild | Kai', line:'IP-System', price:466.65, uvp:549.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit','weiss','grau'], system:'ip', klingel:'2', tuer:[], type:'audio', img:I83 },
     { id:'maxior2', name:'XDM10 Video-Türsprechanlage mit austauschbarem Namensschild | 2-Draht-BUS | 2 Klingeltaster | Maxior', line:'BUS-System', price:806.65, uvp:949.00, rating:5, reviews:null,
-      badge:SALE, colors:['anthrazit','eisenglimmer','grau','schwarz','weiss','wunschfarbe'], system:'bus', klingel:'2', tuer:['rfid'], material:'edelstahl', type:'video', img:I87 },
+      badge:SALE, colors:['anthrazit','eisenglimmer','grau','schwarz','weiss','wunschfarbe'], system:'bus', klingel:'2', tuer:[], material:'edelstahl', type:'video', img:I87 },
     { id:'colson3', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 3 Klingeltaster | Colson', line:'IP-System', price:696.15, uvp:819.00, rating:5, reviews:5,
       badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'3', tuer:['rfid'], type:'video', img:I84 },
     { id:'kian3', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 3 Klingeltaster | Kian', line:'IP-System', price:679.15, uvp:799.00, rating:5, reviews:2,
-      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','braun','wunschfarbe'], system:'ip', klingel:'3', tuer:['rfid','pin'], type:'video', img:I84 },
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer','braun','wunschfarbe'], system:'ip', klingel:'3', tuer:['rfid'], type:'video', img:I84 },
     { id:'niko3', name:'VDM10 2.0 Video-Türsprechanlage | mit Fingerprint | 3 Klingeltaster | Niko', line:'IP-System', price:892.50, uvp:1050.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit','weiss','grau','schwarz'], system:'ip', klingel:'3', tuer:['fingerprint','rfid'], type:'video', img:I84 },
     { id:'neo3', name:'VDM10 2.0 Video-Türsprechanlage mit austauschbarem Namensschild | 3 Klingeltaster | Neo', line:'IP-System', price:602.65, uvp:709.00, rating:5, reviews:5,
@@ -132,14 +132,27 @@
     { id:'kai3', name:'ADM10 Audio-Türsprechanlage | 3 Klingeltaster | Mit austauschbarem Namensschild | Kai', line:'IP-System', price:509.15, uvp:599.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit','weiss','grau'], system:'ip', klingel:'3', tuer:[], type:'audio', img:I83 },
     { id:'maxior3', name:'XDM10 Video-Türsprechanlage mit austauschbarem Namensschild | 2-Draht-BUS | 3 Klingeltaster | Maxior', line:'BUS-System', price:849.15, uvp:999.00, rating:5, reviews:null,
-      badge:SALE, colors:['anthrazit','eisenglimmer','grau','schwarz','weiss','wunschfarbe'], system:'bus', klingel:'3', tuer:['rfid'], material:'v2a', type:'video', img:I87 },
+      badge:SALE, colors:['anthrazit','eisenglimmer','grau','schwarz','weiss','wunschfarbe'], system:'bus', klingel:'3', tuer:[], material:'v2a', type:'video', img:I87 },
     { id:'colson4', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 4 Klingeltaster | Colson', line:'IP-System', price:798.15, uvp:939.00, rating:5, reviews:2,
       badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'4', tuer:['rfid'], type:'video', img:I87 },
+    /* Exakte Klingeltaster-Staffel (live-Drill p2): Colson 5–7, Kai 4–6 */
+    { id:'colson5', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 5 Klingeltaster | Colson', line:'IP-System', price:849.15, uvp:999.00, rating:5, reviews:1,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'5', tuer:['rfid'], type:'video', img:I87 },
+    { id:'colson6', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 6 Klingeltaster | Colson', line:'IP-System', price:900.15, uvp:1059.00, rating:5, reviews:1,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'6', tuer:['rfid'], type:'video', img:I87 },
+    { id:'colson7', name:'VDM10 2.0 Mehrfamilien Video-Türsprechanlage | 7 Klingeltaster | Colson', line:'IP-System', price:951.15, uvp:1119.00, rating:5, reviews:1,
+      badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'7', tuer:['rfid'], type:'video', img:I87 },
+    { id:'kai4', name:'ADM10 Audio-Türsprechanlage | 4 Klingeltaster | Mit austauschbarem Namensschild | Kai', line:'IP-System', price:551.65, uvp:649.00, rating:5, reviews:3,
+      badge:SALE, colors:['anthrazit','weiss','grau'], system:'ip', klingel:'4', tuer:[], type:'audio', img:I83 },
+    { id:'kai5', name:'ADM10 Audio-Türsprechanlage | 5 Klingeltaster | Mit austauschbarem Namensschild | Kai', line:'IP-System', price:594.15, uvp:699.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit','weiss','grau'], system:'ip', klingel:'5', tuer:[], type:'audio', img:I83 },
+    { id:'kai6', name:'ADM10 Audio-Türsprechanlage | 6 Klingeltaster | Mit austauschbarem Namensschild | Kai', line:'IP-System', price:551.65, uvp:649.00, rating:5, reviews:2,
+      badge:SALE, colors:['anthrazit','weiss','grau'], system:'ip', klingel:'6', tuer:[], type:'audio', img:I83 },
     /* Briefkasten/Paketbox-Kombis (live /sprechanlage-briefkasten, 9 Artikel: Fächer 1–2,
        Taster 1/2/Flexibel, alle IP) — flagged briefkasten:true so the advisor's Kombi
        step is dataset-backed instead of silently skipping. */
     { id:'vdm10-pb', name:'Video-Türsprechanlage mit Paketbox | personalisiert mit Gravur | VDM10', line:'IP-System', price:1019.15, uvp:1199.00, rating:5, reviews:5,
-      badge:SALE, colors:['anthrazit'], system:'ip', klingel:'1', tuer:['rfid','fingerprint'], type:'video', briefkasten:true, img:SP+'briefkasten-paketbox.png' },
+      badge:SALE, colors:['anthrazit'], system:'ip', klingel:'1', tuer:['rfid'], type:'video', briefkasten:true, img:SP+'briefkasten-paketbox.png' },
     { id:'vdm10-zf-bk', name:'Standbriefkasten mit Video-Türsprechanlage für Zweifamilienhaus | VDM10', line:'IP-System', price:1351.50, uvp:1590.00, rating:5, reviews:3,
       badge:SALE, colors:['anthrazit','weiss','grau','schwarz','eisenglimmer'], system:'ip', klingel:'2', tuer:['rfid'], type:'video', briefkasten:true, img:SP+'briefkasten-paketbox.png' },
     { id:'vdm10-anlage-bk', name:'Modulare Standbriefkastenanlage mit Video-Türsprechanlage | VDM10 | flexibel', line:'IP-System', price:1999.00, uvp:null, rating:5, reviews:null,
@@ -340,7 +353,7 @@
   function matchesWith(p, a) {
     if (a.color.length && !a.color.some(function (c) { return c === 'wunschfarbe' || p.colors.indexOf(c) !== -1; })) return false;   /* Wunschfarbe (RAL nach Wunsch) ist auf allen Modellen möglich */
     if (a.system.length && a.system.indexOf(p.system) === -1) return false;
-    if (a.klingel.length && a.klingel.indexOf(p.klingel) === -1) return false;   /* '1'..'7' or 'flex' */
+    if (a.klingel.length && a.klingel.indexOf(p.klingel) === -1 && p.klingel !== 'flex') return false;   /* flexible Großanlagen (1–500) matchen jede Taster-Anzahl */   /* '1'..'7' or 'flex' */
     if (a.type.length && a.type.indexOf(p.type) === -1) return false;            /* advisor-only: video / audio */
     if (a.material.length && a.material.indexOf(p.material) === -1) return false;
     if (a.verwendung.length && a.verwendung.indexOf(verwOf(p)) === -1 && verwOf(p) !== 'flexibel') return false;     /* advisor-only: Verwendungszweck — flexible Großanlage (1–500) passt für jede Verwendung */
@@ -669,6 +682,18 @@
         { label: 'Mehrfamilienhaus',    sub: 'mehrere Parteien & Klingeltasten', group: 'verwendung', value: 'mehrfamilien', chip: 'Mehrfamilienhaus' },
         { label: 'Flexible Großanlage', sub: 'flexibel von 1–500 Tasten',        group: 'verwendung', value: 'flexibel',     chip: 'Großanlage' }
       ]},
+      /* Exakte Klingeltaster-Staffel (live: Colson 1–7, Kai 1–6, Maxior 1–3). Nur für
+         Mehrfamilienhaus; flexible Großanlagen (klingel 'flex', 1–500) erfüllen jede
+         Anzahl und bleiben immer im Pool — spätere Schritte blenden sich je nach
+         gewählter Anzahl automatisch aus (BUS ab 4, Audio ab 7). */
+      { q: 'Wie viele Klingeltaster benötigen Sie?', opts: [
+        { label: '2 Taster', sub: 'für 2 Parteien', group: 'klingel', value: '2', chip: '2 Klingeltaster', hideWhen: gateHide },
+        { label: '3 Taster', sub: 'für 3 Parteien', group: 'klingel', value: '3', chip: '3 Klingeltaster', hideWhen: gateHide },
+        { label: '4 Taster', sub: 'für 4 Parteien', group: 'klingel', value: '4', chip: '4 Klingeltaster', hideWhen: gateHide },
+        { label: '5 Taster', sub: 'für 5 Parteien', group: 'klingel', value: '5', chip: '5 Klingeltaster', hideWhen: gateHide },
+        { label: '6 Taster', sub: 'für 6 Parteien', group: 'klingel', value: '6', chip: '6 Klingeltaster', hideWhen: gateHide },
+        { label: '7 Taster', sub: 'für 7 Parteien', group: 'klingel', value: '7', chip: '7 Klingeltaster', hideWhen: gateHide }
+      ]},
       /* Facet options are dataset-gated via gateHide (live-shop parity): e.g. no
          Audio-Großanlage exists → "Audio-only" vanishes for Flexibel and the step
          auto-skips; the BUS line stops at Video-Ein-/Mehrfamilien → "BUS-System"
@@ -686,11 +711,11 @@
          with the answers so far actually carries are offered (Türöffner Bedienung is
          a multi-value attribute on the live shop — premium devices carry several). */
       { q: 'Wie möchten Sie Zutritt gewähren?', sub: 'Mehrfachauswahl möglich', opts: [
-        { label: 'Fingerabdrucksensor', sub: 'schlüsselloser Zutritt',   group: 'tuer', value: 'fingerprint', chip: 'Fingerprint', hideWhen: gateHide },
-        { label: 'RFID-Chip',           sub: 'Transponder oder Karte',   group: 'tuer', value: 'rfid',        chip: 'RFID', hideWhen: gateHide },
-        { label: 'Gesichtserkennung',   sub: 'Tür öffnet beim Erkennen', group: 'tuer', value: 'gesicht',     chip: 'Gesichtserkennung', hideWhen: gateHide },
-        { label: 'PIN-Code',            sub: 'Zahlencode am Tastenfeld', group: 'tuer', value: 'pin',         chip: 'PIN-Code', hideWhen: gateHide },
-        { label: 'QR-Code',             sub: 'Zutritt per QR-Scan',      group: 'tuer', value: 'qr',          chip: 'QR-Code', hideWhen: gateHide },
+        { label: 'Fingerabdrucksensor', sub: 'schlüsselloser Zutritt',   group: 'tuer', value: 'fingerprint', chip: 'Fingerprint', hideWhen: tuerGate },
+        { label: 'RFID-Chip',           sub: 'Transponder oder Karte',   group: 'tuer', value: 'rfid',        chip: 'RFID', hideWhen: tuerGate },
+        { label: 'Gesichtserkennung',   sub: 'Tür öffnet beim Erkennen', group: 'tuer', value: 'gesicht',     chip: 'Gesichtserkennung', hideWhen: tuerGate },
+        { label: 'PIN-Code',            sub: 'Zahlencode am Tastenfeld', group: 'tuer', value: 'pin',         chip: 'PIN-Code', hideWhen: tuerGate },
+        { label: 'QR-Code',             sub: 'Zutritt per QR-Scan',      group: 'tuer', value: 'qr',          chip: 'QR-Code', hideWhen: tuerGate },
         { label: 'Keine Zutrittsfunktion', sub: 'nur klingeln und sprechen', neutral: true }
       ]},
       { q: 'Welches Namensschild bevorzugen Sie?', opts: [
@@ -718,7 +743,7 @@
 
     /* Resolve the system step (IP/BUS) and the Zutritt step by content, so the
        skip logic survives any re-ordering of QUIZ. */
-    var IDX_SYSTEM = -1, IDX_ZUTRITT = -1, IDX_TYPE = -1, IDX_NAMENSSCHILD = -1, IDX_OPTIK = -1;
+    var IDX_SYSTEM = -1, IDX_ZUTRITT = -1, IDX_TYPE = -1, IDX_NAMENSSCHILD = -1, IDX_OPTIK = -1, IDX_KLINGEL = -1;
     QUIZ.forEach(function (s, i) {
       (s.opts || []).forEach(function (o) {
         if (o.group === 'system') IDX_SYSTEM = i;
@@ -726,6 +751,7 @@
         if (o.group === 'type')    IDX_TYPE = i;
         if (o.group === 'namensschild') IDX_NAMENSSCHILD = i;
         if (o.group === 'colorset') IDX_OPTIK = i;
+        if (o.group === 'klingel') IDX_KLINGEL = i;
       });
     });
     /* Has the shopper chosen option `value` for facet `group` anywhere so far?
@@ -766,15 +792,26 @@
     }
     /* Option hideWhen — `this` is the option (called as o.hideWhen()). */
     function gateHide() { var o = this; return !poolBefore(stepOfOpt(o)).some(function (p) { return sat(p, o); }); }
+    /* Progressive AND-gating for the multi-select Zutritt step: a method stays offered
+       only while a product carries every already-picked method plus this one — so the
+       shopper can only build combinations a real product fully satisfies. */
+    function tuerGate() {
+      var o = this, idx = stepOfOpt(o);
+      var picked = (picks[idx] || []).filter(function (x) { return x && x.group === 'tuer' && x.value !== o.value; });
+      return !poolBefore(idx).some(function (p) { return sat(p, o) && picked.every(function (x) { return sat(p, x); }); });
+    }
     function optVisible(o) { return !(o.hideWhen && o.hideWhen()); }
     function stepHidden(i) {
       /* Zutritt features don't apply to BUS or to Audio-only models (no Türöffner) —
          verified on the live shop: the BUS-Serie & Audio categories carry no
          "Türöffner Bedienung" facet at all. */
+      /* Klingeltaster-Anzahl nur für Mehrfamilienhaus — Einfamilien ist immer 1 Taster,
+         flexible Großanlagen wählen frei (1–500). */
+      if (i === IDX_KLINGEL && IDX_KLINGEL !== -1 && !picked('verwendung', 'mehrfamilien')) return true;
       if (i === IDX_ZUTRITT && IDX_ZUTRITT !== -1 && (busChosen() || picked('type', 'audio'))) return true;
       /* BUS-Serie (XDM10) ships only with an austauschbares Namensschild — no gravur/
          display choice — so the Namensschild step offers no real decision for BUS → skip. */
-      if (i === IDX_NAMENSSCHILD && IDX_NAMENSSCHILD !== -1 && busChosen()) return true;
+      if (i === IDX_NAMENSSCHILD && IDX_NAMENSSCHILD !== -1 && (busChosen() || new Set(poolBefore(i).map(nsOf)).size <= 1)) return true;   /* skip unless ≥2 distinct Namensschild-Typen remain — otherwise only one real type + "Egal" (dead step, e.g. Fingerprint = Lasergravur only) */
       /* Flexible Großanlagen are video-only, so the Video/Audio step has no choice → skip it. */
       if (i === IDX_TYPE && IDX_TYPE !== -1 && picked('verwendung', 'flexibel')) return true;
       /* Optik is a per-product config (Farbe/Edelstahl/Wunschfarbe), not a differentiator —
@@ -902,7 +939,7 @@
       if (o.group === 'colorset') return (o.values || []).some(function (c) { return p.colors.indexOf(c) !== -1; });
       if (o.group === 'material') return p.material === o.value;
       if (o.group === 'system')   return p.system === o.value;
-      if (o.group === 'klingel')  return p.klingel === o.value;
+      if (o.group === 'klingel')  return p.klingel === o.value || p.klingel === 'flex';   /* flex (1–500) erfüllt jede Anzahl */
       if (o.group === 'tuer')     return (p.tuer || []).indexOf(o.value) !== -1;
       if (o.group === 'type')     return p.type === o.value;
       if (o.group === 'verwendung')   return verwOf(p) === o.value || verwOf(p) === 'flexibel';   /* flexible Großanlage (1–500 Taster) passt auch für Ein-/Mehrfamilien */
