@@ -250,6 +250,10 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--sp-6);
 }
+/* Column count mirrors the live shop grid (edelstahl-tuerklingel.de, #p-l .p-w):
+   3-up ONLY on wide desktop (≥1200px), 2-up on everything narrower — the live
+   grid never collapses to a single column, even on phones. */
+@media (max-width: 1199px) { .pgrid { grid-template-columns: repeat(2, 1fr); } }
 
 .pcard {
   position: relative;
@@ -867,10 +871,8 @@
   .subtile__label { min-height: 2.7em; display: flex; align-items: center; justify-content: center; }
 }
 
-/* Very small phones — keep grid usable */
-@media (max-width: 360px) {
-  .pgrid { grid-template-columns: 1fr; }
-}
+/* NB: intentionally NO 1-column breakpoint — the live shop keeps the grid 2-up
+   even on the smallest phones (#p-l .p-w stays calc(50%) down to ≤499px). */
 
 /* ============================================================
    Rich mega-menu (desktop nav drop-panel)
