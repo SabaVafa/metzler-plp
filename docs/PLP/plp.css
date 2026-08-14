@@ -28,6 +28,14 @@
   --card-radius: var(--r-l);
 }
 
+/* ── Wide-screen container cap — match the PDP (pdp-b.css) ──
+   The home design system (styles-v2.css) grows .container to 1560/1760/2040 at
+   1440/1920/2560. The PDP overrides that to a fixed 100rem (1600px) with a 100px
+   inline gutter at >=1440 for live-shop parity. Mirror it here so the PLP pages
+   stop stretching on wide screens. Loaded after styles-v2.css, so it wins. */
+:root { --container: 100rem; }
+@media (min-width: 1440px) { .container { padding-inline: 100px; } }
+
 /* ============================================================
    Breadcrumb
    ============================================================ */
